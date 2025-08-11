@@ -1,6 +1,13 @@
 // @ts-check
-import withNuxt from './.nuxt/eslint.config.mjs'
+import { createConfigForNuxt } from "@nuxt/eslint-config/flat";
 
-export default withNuxt(
-  // Your custom configs here
-)
+export default createConfigForNuxt({
+  features: {
+    stylistic: {
+      semi: true,
+      indent: 2,
+      quotes: "double",
+      commaDangle: "always-multiline",
+    },
+  },
+});
