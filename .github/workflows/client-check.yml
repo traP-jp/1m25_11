@@ -29,6 +29,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
           eslint_flags: "."
+          workdir: client
 
   typecheck:
     runs-on: ubuntu-latest
