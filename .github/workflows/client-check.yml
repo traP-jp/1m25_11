@@ -28,7 +28,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
-          eslint_flags: "."
+          eslint_flags: "./**/*.{js,ts,jsx,tsx,vue}"
           workdir: client
 
   typecheck:
