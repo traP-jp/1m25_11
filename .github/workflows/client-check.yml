@@ -9,7 +9,7 @@ on:
       - "client/**"
 
 jobs:
-  lint-format-typecheck-build:
+  lint:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -17,17 +17,32 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-
       - name: Install dependencies
         run: npm ci
+      - name: ESLint
+        uses: reviewdog/action-eslint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          eslint_flags: "."
 
-      - name: Run ESLint
-        run: npm run lint
-
+  typecheck:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: npm ci
       - name: TypeScript type check
         run: npm run typecheck || npx tsc --noEmit
