@@ -10,6 +10,7 @@ on:
 
 jobs:
   lint:
+    if: github.event_name == 'push' && !startsWith(github.ref, 'refs/pull/') || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -32,6 +33,7 @@ jobs:
           workdir: client
 
   typecheck:
+    if: github.event_name == 'push' && !startsWith(github.ref, 'refs/pull/') || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     defaults:
       run:
