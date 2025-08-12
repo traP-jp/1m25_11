@@ -19,4 +19,3 @@ const items = [
     >
   </UCarousel>
 </template>
-
