@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "vue.volar",
+    "bradlc.vscode-tailwindcss",
+    "ms-azuretools.vscode-docker",
+    "vitest.explorer",
+    "github.vscode-github-actions"
+  ]
+}
