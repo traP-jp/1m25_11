@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"backend/internal/repository"
+	"github.com/traP-jp/1m25_11/server/internal/repository"
 
 	"github.com/labstack/echo/v4"
 )

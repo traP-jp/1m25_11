@@ -1,9 +1,9 @@
 package main
 
 import (
-	"backend/cmd/server/server"
-	"backend/pkg/config"
-	"backend/pkg/database"
+	"github.com/traP-jp/1m25_11/server/cmd/server/server"
+	"github.com/traP-jp/1m25_11/server/pkg/config"
+	"github.com/traP-jp/1m25_11/server/pkg/database"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"

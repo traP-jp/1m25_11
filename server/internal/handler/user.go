@@ -1,9 +1,10 @@
 package handler
 
 import (
-	"backend/internal/repository"
 	"fmt"
 	"net/http"
+
+	"github.com/traP-jp/1m25_11/server/internal/repository"
 
 	vd "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
