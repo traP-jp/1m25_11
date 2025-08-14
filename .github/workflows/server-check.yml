@@ -1,20 +1,27 @@
-name: CI
+name: Server
 
 on:
   push:
+    paths:
+      - "server/**"
     branches:
       - main
   pull_request:
+    paths:
+      - "server/**"
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: ./go.mod
+          go-version-file: ./server/go.mod
       - name: Build with xc
         run: go run github.com/joerdav/xc/cmd/xc@latest build
 
@@ -23,26 +30,33 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build
+    defaults:
+      run:
+        working-directory: server
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: ./go.mod
+          go-version-file: ./server/go.mod
       - uses: golangci/golangci-lint-action@v7
         with:
           version: latest
           args: --timeout=10m
+          working-directory: server
 
   test-unit:
     name: Unit Test
     runs-on: ubuntu-latest
     needs:
       - build
+    defaults:
+      run:
+        working-directory: server
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: ./go.mod
+          go-version-file: ./server/go.mod
       - name: Unit test with xc
         run: go run github.com/joerdav/xc/cmd/xc@latest test-unit
 
@@ -51,11 +65,14 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build
+    defaults:
+      run:
+        working-directory: server
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: ./go.mod
+          go-version-file: ./server/go.mod
       - name: Integration test with xc
         run: go run github.com/joerdav/xc/cmd/xc@latest test-integration
 

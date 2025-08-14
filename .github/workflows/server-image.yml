@@ -1,13 +1,17 @@
-name: Build Docker Image
+name: Build Server Docker Image
 
 on:
   workflow_dispatch:
   push:
+    paths:
+      - "server/**"
     branches:
       - main
     tags:
       - v*
   pull_request:
+    paths:
+      - "server/**"
     branches:
       - main
 
@@ -26,7 +30,7 @@ jobs:
         uses: docker/metadata-action@v5
         id: meta
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ghcr.io/${{ github.repository }}/server
       - name: Login to GitHub Container Registry
         if: env.CAN_PUSH
         uses: docker/login-action@v3
@@ -37,7 +41,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./server
           push: ${{ env.CAN_PUSH }}
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
