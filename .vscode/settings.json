@@ -20,4 +20,10 @@
     ]
   ],
   "editor.defaultFormatter": null,
+  "yaml.schemas": {
+    "openapi:v3": "file:///home/y-aki/document/traP/1m25/1m25_11/swagger.yml"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
 }
