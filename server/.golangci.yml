@@ -4,7 +4,7 @@ linters:
     - nlreturn
     - revive
   exclusions:
-    generated: disable
+    generated: strict
     presets:
       - comments
       - common-false-positives
@@ -16,7 +16,7 @@ linters:
       - examples$
 formatters:
   exclusions:
-    generated: lax
+    generated: strict
     paths:
       - third_party$
       - builtin$
