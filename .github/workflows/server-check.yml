@@ -49,7 +49,7 @@ jobs:
           go_version: 1.24.4                            # 解析に使用するGoバージョン設定
           reporter: github-pr-review                    # リント結果をレビューとして出力する設定
           level: warning                                # 検出されたissueのレベルをwarningにする設定
-          golangci_lint_flags: "--config=server/.golangci.yml" # .golangci.ymlの内容でリントを実行させる設定
+          golangci_lint_flags: "--config=.golangci.yml" # .golangci.ymlの内容でリントを実行させる設定
 
   test-unit:
     name: Unit Test
