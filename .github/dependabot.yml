@@ -1,0 +1,23 @@
+version: 2
+updates:
+  # Client dependencies (Node.js)
+  - package-ecosystem: "npm"
+    directory: "/client"
+    schedule:
+      interval: "monthly"
+
+  # Server dependencies (Go)
+  - package-ecosystem: "docker"
+    directory: "/server"
+    schedule:
+      interval: "monthly"
+  - package-ecosystem: "gomod"
+    directory: "/server"
+    schedule:
+      interval: "monthly"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
