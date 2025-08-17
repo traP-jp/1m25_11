@@ -2,18 +2,18 @@ name: Build Server Docker Image
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "server/**"
-    branches:
-      - main
-    tags:
-      - v*
-  pull_request:
-    paths:
-      - "server/**"
-    branches:
-      - main
+  # push:
+  #   paths:
+  #     - "server/**"
+  #   branches:
+  #     - main
+  #   tags:
+  #     - v*
+  # pull_request:
+  #   paths:
+  #     - "server/**"
+  #   branches:
+  #     - main
 
 jobs:
   build:
