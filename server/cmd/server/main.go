@@ -25,8 +25,12 @@ func main() {
 
 	s := server.Inject(db)
 
+	// Setup existing v1 API routes
 	v1API := e.Group("/api/v1")
 	s.SetupRoutes(v1API)
+
+	// Setup OpenAPI routes (at /api root)
+	s.SetupAPIRoutes(e)
 
 	e.Logger.Fatal(e.Start(config.AppAddr()))
 }
