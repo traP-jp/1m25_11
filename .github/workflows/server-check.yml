@@ -10,6 +10,11 @@ on:
     paths:
       - "server/**"
 
+permissions:
+  checks: write        # リント結果の表示権限
+  contents: read       # リポジトリのファイルの読み取り権限
+  pull-requests: write # プルリクにコメントする権限
+
 jobs:
   build:
     name: Build
@@ -26,23 +31,25 @@ jobs:
         run: go run github.com/joerdav/xc/cmd/xc@latest build
 
   lint:
-    name: Lint
+    name: lint
     runs-on: ubuntu-latest
-    needs:
-      - build
     defaults:
       run:
         working-directory: server
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      # リポジトリからソースコードを取得
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Reviewdogによるgolangci-lintの実行
+      - name: Run golangci-lint with Reviewdog
+        uses: reviewdog/action-golangci-lint@v2
         with:
-          go-version-file: ./server/go.mod
-      - uses: golangci/golangci-lint-action@v7
-        with:
-          version: latest
-          args: --timeout=10m
-          working-directory: server
+          github_token: ${{ secrets.GITHUB_TOKEN }}     # GithubAPI実行用のトークン設定
+          go_version: 1.24.4                            # 解析に使用するGoバージョン設定
+          reporter: github-pr-review                    # リント結果をレビューとして出力する設定
+          level: warning                                # 検出されたissueのレベルをwarningにする設定
+          golangci_lint_flags: "--config=./server/.golangci.yml" # .golangci.ymlの内容でリントを実行させる設定
 
   test-unit:
     name: Unit Test

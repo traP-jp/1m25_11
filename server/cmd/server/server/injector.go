@@ -11,13 +11,13 @@ import (
 
 type Server struct {
 	handler    *handler.Handler
-	apiHandler *handler.ApiHandler
+	apiHandler *handler.APIHandler
 }
 
 func Inject(db *sqlx.DB) *Server {
 	repo := repository.New(db)
 	h := handler.New(repo)
-	apiHandler := handler.NewApiHandler(h)
+	apiHandler := handler.NewAPIHandler(h)
 
 	return &Server{
 		handler:    h,
