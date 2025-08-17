@@ -3,5 +3,6 @@
 !integration_tests/
 !internal/
 !pkg/
+!api/
 !go.mod
 !go.sum
