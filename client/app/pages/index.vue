@@ -4,7 +4,7 @@ const items = [
   'https://placehold.jp/07a0a5/ffffff/800x600.png?text=%E2%86%90Carousel',
 ];
 
-const { data, error, status } = useFetch('/api/ping');
+const { data, error, status } = useFetch('/api/v1/ping');
 if (error.value) {
   console.error('GETリクエストエラー:', error.value);
 }
