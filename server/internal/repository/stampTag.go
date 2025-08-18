@@ -7,6 +7,13 @@ import (
 )
 
 type (
+	StampSummary struct {
+		id      uuid.UUID
+		name    string
+		file_id string
+	}
+	// StampSummaryの定義は他のファイルで行われたほうがいい気がする
+
 	StampTag struct {
 		id        uuid.UUID      `db:"id"`
 		name      string         `db:"name"`
@@ -14,7 +21,7 @@ type (
 		createdAt string         `db:"created_at"`
 		updatedAt string         `db:"updated_at"`
 		count     int            `db:"count"`
-		stamps    []stampSummary `db:"stamps"`
+		stamps    []StampSummary `db:"stamps"`
 	}
 
 	CreateStampTagsParams struct {
