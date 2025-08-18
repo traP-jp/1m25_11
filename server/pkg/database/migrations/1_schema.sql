@@ -1,7 +1,20 @@
 -- +goose Up
+
 CREATE TABLE IF NOT EXISTS users (
 	id VARCHAR(36) NOT NULL,
 	name VARCHAR(255) NOT NULL,
 	email VARCHAR(255) NOT NULL,
 	PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS `stamps` (
+	`id` VARCHAR(16) NOT NULL,
+	`name` VARCHAR(32) NOT NULL,
+	`file_id` BINARY(16) NOT NULL,
+	`creatorId` BINARY(16) NOT NULL,
+	`is_unicode` BOOLEAN NOT NULL,
+	`created_at` DATETIME NOT NULL,
+	`updated_at` DATETIME NOT NULL,
+	`count_monthly`  INT UNSIGNED  NOT NULL DEFAULT 0,
+	`count_total`  BIGINT UNSIGNED NOT NULL DEFAULT 0,
+	PRIMARY KEY (`id`)
 );
