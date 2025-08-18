@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `stamps` (
 CREATE TABLE IF NOT EXISTS `tags` (
 	`id` BINARY(16) NOT NULL,
 	`name` VARCHAR(32) NOT NULL,
-	`creatorId` BINARY(16) NOT NULL,
+	`creator_id` BINARY(16) NOT NULL,
 	`created_at` DATETIME NOT NULL,
 	`updated_at` DATETIME NOT NULL,
 	PRIMARY KEY (`id`)
