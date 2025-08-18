@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS `tags` (
 	`creator_id` BINARY(16) NOT NULL,
 	`created_at` DATETIME NOT NULL,
 	`updated_at` DATETIME NOT NULL,
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	UNIQUE KEY (`name`)
 );
 CREATE TABLE IF NOT EXISTS `stamp_daily_usages` (
 	`stamp_id` BINARY(16) NOT NULL,
