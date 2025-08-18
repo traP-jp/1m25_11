@@ -17,6 +17,9 @@ type (
 		CreatorID uuid.UUID `db:"creator_id"`
 		IsUnicode Boolean `db:"is_unicode"`
 		createdAt  string `db:"created_at"`
+		UpdatedAt string `db:"updated_at"`
+		CountMonthly string `db:count_monthly`
+		CountTotal string `db:cou`
 	}
 
 	CreateUserParams struct {
