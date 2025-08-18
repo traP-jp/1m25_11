@@ -23,7 +23,7 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 		pingAPI.GET("", h.Ping)
 	}
 	
-	stampAPI := api.Group("stamps")
+	stampAPI := api.Group("/stamps")
 	{
 		stampAPI.GET("/search",h.getSearch)
 		stampAPI.GET("/ranking",h.getRanking)
@@ -37,7 +37,7 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 		stampAPI.DELETE("/:stampId/descriptions",h.deleteDescriptions)
 	}
 
-	tagAPI := api.Group("tags")
+	tagAPI := api.Group("/tags")
 	{
 		tagAPI.GET("", h.getTags)
 		tagAPI.POST("", h.createTags)
@@ -46,7 +46,7 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 		tagAPI.DELETE("/:tagId", h.deleteTags)
 		tagAPI.GET("/:tagId/stamps", h.getCertainStamps)
 	}
-	creatorAPI := api.Group("me")
+	creatorAPI := api.Group("/me")
 	{
 		creatorAPI.GET("", h.getCreatorDetails)
 	}
