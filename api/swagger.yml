@@ -4,11 +4,13 @@ info:
   title: スタンプ検索サービス
   description: |-
     traQのスタンプ検索を便利にするためのWebサービスAPI。
-    ユーザーによるタグ付けや説明文の追加によって、検索性を向上させることを目的としています。
+    ユーザによるタグ付けや説明文の追加によって、検索性を向上させることを目的としています。
   version: 1.0.0
 servers:
-  - url: https://1m25-11.trap.show/api
+  - url: https://1m25-11.trap.show/api/v1
     description: Production Server
+  - url: https://1m25-11-dev.trap.show/api/v1
+    description: Development Server
 
 tags:
   - name: Search & Ranking
@@ -18,7 +20,7 @@ tags:
   - name: Tags
     description: タグ情報の取得・操作
   - name: User
-    description: ログインユーザー関連
+    description: ログインユーザ関連
 
 components:
   schemas:
@@ -39,7 +41,7 @@ components:
         creator_id:
           type: string
           format: uuid
-          description: 作成者のtraQ ID
+          description: 保有者のユーザUUID
         is_unicode:
           type: boolean
           description: Unicode絵文字か否か
@@ -56,17 +58,12 @@ components:
           description: スタンプ更新日時 (ISO 8601)
         count_monthly:
           type: integer
-          format: int32
+          format: int64
           description: 直近30日間の使用回数
         count_total:
           type: integer
           format: int64
           description: 全期間での使用回数
-        current_description_id:
-          type: string
-          format: uuid
-          description: 現在の説明文のUUID
-          nullable: true
         descriptions:
           type: array
           items:
@@ -97,21 +94,13 @@ components:
           format: uuid
         name:
           type: string
-      required:
-        - id
-        - name
-
-    TagSummary:
-      type: object
-      properties:
-        id:
+        file_id:
           type: string
           format: uuid
-        name:
-          type: string
       required:
         - id
         - name
+        - file_id
 
     Tag:
       type: object
@@ -126,7 +115,7 @@ components:
         creator_id:
           type: string
           format: uuid
-          description: タグ作成者のtraQ ID
+          description: タグ作成者のユーザUUID
         created_at:
           type: string
           format: date-time
@@ -152,6 +141,18 @@ components:
         - count
         - stamps
 
+    TagSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+      required:
+        - id
+        - name
+
     StampDescription:
       type: object
       properties:
@@ -165,11 +166,22 @@ components:
         creator_id:
           type: string
           format: uuid
-          description: 説明文の作成者のtraQ ID
+          description: 説明文の作成者のユーザUUID
+        created_at:
+          type: string
+          format: date-time
+          description: 説明文の作成日時 (ISO 8601)
+        updated_at:
+          type: string
+          format: date-time
+          description: 説明文の更新日時 (ISO 8601)
+
       required:
         - id
         - description
         - creator_id
+        - created_at
+        - updated_at
 
     UserProfile:
       type: object
@@ -177,17 +189,17 @@ components:
         id:
           type: string
           format: uuid
-          description: ユーザーのtraP ID
+          description: ユーザUUID
         name:
           type: string
-          description: ユーザー名
+          description: ユーザ名
         is_admin:
           type: boolean
           description: 管理者権限の有無
         owned_stamps:
           type: array
           items:
-            $ref: "#/components/schemas/Stamp"
+            $ref: "#/components/schemas/StampSummary"
         created_tags:
           type: array
           items:
@@ -198,19 +210,19 @@ components:
             type: object
             properties:
               stamp:
-                $ref: "#/components/schemas/Stamp"
+                $ref: "#/components/schemas/StampSummary"
               tag:
                 $ref: "#/components/schemas/TagSummary"
-        edited_descriptions:
+        created_descriptions:
           type: array
           items:
             type: object
             properties:
               stamp:
-                $ref: "#/components/schemas/Stamp"
-              description:
-                type: string
-                description: ユーザーが投稿した説明文
+                $ref: "#/components/schemas/StampSummary"
+              description_id:
+                type: uuid
+                description: ユーザーが投稿した説明文のUUID
       required:
         - id
         - name
@@ -218,7 +230,7 @@ components:
         - owned_stamps
         - created_tags
         - tagged_stamps
-        - edited_descriptions
+        - created_descriptions
 
     SearchResult:
       type: object
@@ -226,7 +238,7 @@ components:
         stamps:
           type: array
           items:
-            $ref: "#/components/schemas/Stamp"
+            $ref: "#/components/schemas/StampSummary"
           description: 検索結果のスタンプ一覧
       required:
         - stamps
@@ -235,7 +247,7 @@ components:
       type: object
       properties:
         stamp:
-          $ref: "#/components/schemas/Stamp"
+          $ref: "#/components/schemas/StampSummary"
         count:
           type: integer
           description: 指定期間での使用回数
@@ -286,7 +298,7 @@ paths:
       parameters:
         - name: q
           in: query
-          description: name, tag, descriptionのいずれかに含まれるキーワード（空白区切りで複数指定可能、いずれかを含んでいれば表示）
+          description: name, tag, description, creatorのいずれかに含まれるキーワード（空白区切りで複数指定可能、いずれかを含んでいれば表示）
           schema:
             type: string
         - name: name
@@ -296,7 +308,7 @@ paths:
             type: string
         - name: tag
           in: query
-          description: タグ名のいずれかを含むかで検索
+          description: タグ名に含まれるキーワード（空白区切りで複数指定可能、いずれかを含んでいれば表示）
           schema:
             type: array
             items:
@@ -342,14 +354,14 @@ paths:
           description: Unicode絵文字の種類フィルタ
           schema:
             type: string
-            enum: [all, only_unicode, only_not_unicode]
+            enum: [all, unicode_only, not_unicode_only]
             default: all
         - name: stamp_type_animation
           in: query
           description: アニメーションスタンプの種類フィルタ
           schema:
             type: string
-            enum: [all, only_animated, only_not_animated]
+            enum: [all, animated_only, not_animated_only]
             default: all
         - name: count_monthly_min
           in: query
@@ -421,7 +433,7 @@ paths:
         - name: until
           in: query
           required: false
-          description: 終了日 (YYYY-MM-DD)、未指定時は今日
+          description: 終了日 (YYYY-MM-DD)、未指定時は昨日、許可される日付はsince以降、昨日までのみ
           schema:
             type: string
             format: date
@@ -511,7 +523,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /stamps/{stampId}/tags:
+  /stamps/{stampId}/tags/{tagId}:
     post:
       tags:
         - Stamps
@@ -523,18 +535,12 @@ paths:
           schema:
             type: string
             format: uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                tag_id:
-                  type: string
-                  format: uuid
-              required:
-                - tag_id
+        - name: tagId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
         "204":
           description: 成功
@@ -544,12 +550,12 @@ paths:
           description: 認証エラー
         "404":
           description: スタンプまたはタグが見つからない
+        "409":
+          description: すでに追加されているタグである
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-
-  /stamps/{stampId}/tags/{tagId}:
     delete:
       tags:
         - Stamps
@@ -576,6 +582,8 @@ paths:
           description: 権限がない
         "404":
           description: スタンプまたはタグが見つからない
+        "409":
+          description: 現在紐づいていないタグである
           content:
             application/json:
               schema:
@@ -679,6 +687,8 @@ paths:
           description: リクエストが不正
         "401":
           description: 認証エラー
+        "403":
+          description: 編集する権限がない
         "404":
           description: 自分が投稿した説明文が見つからない
           content:
@@ -702,6 +712,8 @@ paths:
           description: 削除成功
         "401":
           description: 認証エラー
+        "403":
+          description: 削除する権限がない
         "404":
           description: 自分が投稿した説明文が見つからない
           content:
@@ -878,7 +890,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Stamp"
+                  $ref: "#/components/schemas/StampSummary"
         "401":
           description: 認証エラー
         "404":
