@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `stamp_daily_usages` (
 	PRIMARY KEY (`stamp_id`, `date`),
 	FOREIGN KEY (`stamp_id`) REFERENCES `stamps`(`id`)
 );
-CREATE TABLE IF NOT EXISTS`stamp_description_revisions` (
+CREATE TABLE IF NOT EXISTS `stamp_description_revisions` (
 	`id` BINARY(16) NOT NULL,
 	`stamp_id` BINARY(16) NOT NULL,
 	`description` TEXT NOT NULL,
