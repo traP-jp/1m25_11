@@ -3,9 +3,9 @@ package repository
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/google/uuid"
-
-
 )
 
 type (
@@ -15,42 +15,38 @@ type (
 		Name  string    `db:"name"`
 		FileID string    `db:"file_id"`
 		CreatorID uuid.UUID `db:"creator_id"`
-		IsUnicode Boolean `db:"is_unicode"`
-		createdAt  string `db:"created_at"`
-		UpdatedAt string `db:"updated_at"`
-		CountMonthly string `db:count_monthly`
-		CountTotal string `db:cou`
+		IsUnicode bool `db:"is_unicode"`
+		CreatedAt  time.Time `db:"created_at"`
+		UpdatedAt time.Time `db:"updated_at"`
+		CountMonthly int `db:"count_monthly"`
+		CountTotal int64 `db:"count_total"`
 	}
 
-	CreateUserParams struct {
-		Name  string
-		Email string
-	}
 )
 
-func (r *Repository) getStamps(ctx context.Context) ([]*User, error) {
-	users := []*User{}
-	if err := r.db.SelectContext(ctx, &users, "SELECT * FROM users"); err != nil {
-		return nil, fmt.Errorf("select users: %w", err)
+func (r *Repository) GetStamps(ctx context.Context) ([]*Stamp, error) {
+	stamps := []*Stamp{}
+	if err := r.db.SelectContext(ctx, &stamps, "SELECT * FROM stamps"); err != nil {
+		return nil, fmt.Errorf("select stamps: %w", err)
 	}
 
-	return users, nil
+	return stamps, nil
 }
 
-func (r *Repository) getCertainStamps(ctx context.Context) ([]*User, error) {
-	users := []*User{}
-	if err := r.db.SelectContext(ctx, &users, "SELECT * FROM users"); err != nil {
-		return nil, fmt.Errorf("select users: %w", err)
+func (r *Repository) GetStampsByTagID(ctx context.Context, tagID uuid.UUID) ([]*Stamp, error) {
+	stampsByTagID := []*Stamp{}
+	if err := r.db.SelectContext(ctx, &stampsByTagID, "SELECT * FROM stamps JOIN stamp_tags ON stamps.id = stamp_tags.stamp_id WHERE stamp_tags.tag_id = ?", tagID); err != nil {
+		return nil, fmt.Errorf("select stamps by tagID: %w", err)
 	}
 
-	return users, nil
+	return stampsByTagID, nil
 }
 
-func (r *Repository) getCertainStampDetails(ctx context.Context) ([]*User, error) {
-	users := []*User{}
-	if err := r.db.SelectContext(ctx, &users, "SELECT * FROM users"); err != nil {
-		return nil, fmt.Errorf("select users: %w", err)
+func (r *Repository) GetStampsByStampID(ctx context.Context, stampID uuid.UUID) (*Stamp, error) {
+	stampsByStampID := &Stamp{}
+	if err := r.db.GetContext(ctx, stampsByStampID, "SELECT * FROM stamps WHERE id= ?",stampID); err != nil {
+		return nil, fmt.Errorf("select stamps by stampID: %w", err)
 	}
 
-	return users, nil
+	return stampsByStampID, nil
 } 
