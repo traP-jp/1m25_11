@@ -221,8 +221,8 @@ components:
               stamp:
                 $ref: "#/components/schemas/StampSummary"
               description:
-                type: string
-                description: ユーザーが投稿した説明文
+                type: uuid
+                description: ユーザーが投稿した説明文のUUID
       required:
         - id
         - name
@@ -890,7 +890,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Stamp"
+                  $ref: "#/components/schemas/StampSummary"
         "401":
           description: 認証エラー
         "404":
