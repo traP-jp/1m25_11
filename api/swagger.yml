@@ -220,7 +220,7 @@ components:
             properties:
               stamp:
                 $ref: "#/components/schemas/StampSummary"
-              description:
+              description_id:
                 type: uuid
                 description: ユーザーが投稿した説明文のUUID
       required:
