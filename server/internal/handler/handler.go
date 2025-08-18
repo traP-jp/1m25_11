@@ -44,11 +44,11 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 		tagAPI.GET("/:tagId", h.getCertainStamps)
 		tagAPI.PUT("/:tagId", h.updateTags)
 		tagAPI.DELETE("/:tagId", h.deleteTags)
-		tagAPI.GET("/:tagId/stamps", h.certainStamps)
+		tagAPI.GET("/:tagId/stamps", h.getCertainStamps)
 	}
-	userAPI := api.Group("me")
+	creatorAPI := api.Group("me")
 	{
-		userAPI.GET("", h.getUsers)
+		creatorAPI.GET("", h.getCreatorDetails)
 	}
 
 	
