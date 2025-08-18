@@ -17,4 +17,9 @@ export default defineNuxtConfig({
       },
     },
   },
+  fonts: {
+    families: [
+      { name: 'Zen Kaku Gothic New', provider: 'google' },
+    ],
+  },
 });

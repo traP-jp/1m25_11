@@ -1,0 +1,27 @@
+<template>
+  <div class="w-full h-20 flex items-center-safe justify-around font-bold text-3xl">
+    <UModal
+      title="メニュー"
+      :close="{
+        color: 'primary',
+        class: 'rounded-full',
+      }"
+    >
+      <UIcon
+        name="material-symbols:dehaze"
+        class="cursor-pointer text-4xl text-primary"
+      />
+      <template #body>
+        <ul>
+          <li><ULink to="/">Top Page</ULink></li>
+          <li><ULink to="/">Top Page</ULink></li>
+        </ul>
+      </template>
+    </UModal>
+    <div>Service Name</div>
+    <UAvatar
+      src="https://q.trap.jp/api/v3/public/icon/yasako"
+      class="text-4xl"
+    />
+  </div>
+</template>
