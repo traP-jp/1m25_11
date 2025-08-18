@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS`stamp_description_revisions` (
 	`description` TEXT NOT NULL,
 	`creator_id` BINARY(16) NOT NULL,
 	`created_at` DATETIME NOT NULL,
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`stamp_id`) REFERENCES `stamps`(`id`)
 );
 CREATE TABLE IF NOT EXISTS `stamp_tags` (
 	`stamp_id` BINARY(16) NOT NULL,
