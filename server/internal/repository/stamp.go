@@ -13,7 +13,7 @@ type (
 	Stamp struct {
 		ID    uuid.UUID `db:"id"`
 		Name  string    `db:"name"`
-		FileID string    `db:"file_id"`
+		FileID uuid.UUID    `db:"file_id"`
 		CreatorID uuid.UUID `db:"creator_id"`
 		IsUnicode bool `db:"is_unicode"`
 		CreatedAt  time.Time `db:"created_at"`
@@ -29,7 +29,7 @@ func (r *Repository) GetStamps(ctx context.Context) ([]*Stamp, error) {
 	if err := r.db.SelectContext(ctx, &stamps, "SELECT * FROM stamps"); err != nil {
 		return nil, fmt.Errorf("select stamps: %w", err)
 	}
-
+	
 	return stamps, nil
 }
 
