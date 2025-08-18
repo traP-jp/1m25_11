@@ -9,7 +9,7 @@ import (
 )
 
 type (
-	// users table
+	// stamps table
 	Stamp struct {
 		ID    uuid.UUID `db:"id"`
 		Name  string    `db:"name"`
@@ -44,9 +44,9 @@ func (r *Repository) GetStampsByTagID(ctx context.Context, tagID uuid.UUID) ([]*
 
 func (r *Repository) GetStampsByStampID(ctx context.Context, stampID uuid.UUID) (*Stamp, error) {
 	stampsByStampID := &Stamp{}
-	if err := r.db.GetContext(ctx, stampsByStampID, "SELECT * FROM stamps WHERE id= ?",stampID); err != nil {
+	if err := r.db.GetContext(ctx, stampsByStampID, "SELECT * FROM stamps WHERE id = ?", stampID); err != nil {
 		return nil, fmt.Errorf("select stamps by stampID: %w", err)
 	}
 
 	return stampsByStampID, nil
-} 
+}
