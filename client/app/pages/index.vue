@@ -15,7 +15,7 @@ console.error('GETリクエストエラー:');
 </script>
 
 <template>
-  <UContainer>
+  <div>
     <SearchInput />
-  </UContainer>
+  </div>
 </template>

@@ -1,5 +1,6 @@
 <template>
-  <div class="w-full h-20 flex items-center-safe justify-around font-bold text-3xl">
+  <UContainer class="h-20 flex items-center justify-between font-bold">
+    <!-- <div class="w-full h-20 flex items-center-safe justify-around font-bold text-3xl"> -->
     <UModal
       title="メニュー"
       :close="{
@@ -18,10 +19,13 @@
         </ul>
       </template>
     </UModal>
-    <div>Service Name</div>
+    <h1 class="text-3xl">
+      Service Name
+    </h1>
     <UAvatar
       src="https://q.trap.jp/api/v3/public/icon/yasako"
-      class="text-4xl"
+      class="text-5xl"
     />
-  </div>
+    <!-- </div> -->
+  </UContainer>
 </template>
