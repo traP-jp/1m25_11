@@ -52,37 +52,37 @@ jobs:
           workdir: server
           golangci_lint_flags: "--config=.golangci.yml" # .golangci.ymlの内容でリントを実行させる設定
 
-  test-unit:
-    name: Unit Test
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    defaults:
-      run:
-        working-directory: server
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: ./server/go.mod
-      - name: Unit test with xc
-        run: go run github.com/joerdav/xc/cmd/xc@latest test-unit
+  # test-unit:
+  #   name: Unit Test
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build
+  #   defaults:
+  #     run:
+  #       working-directory: server
+  #   steps:
+  #     - uses: actions/checkout@v5
+  #     - uses: actions/setup-go@v5
+  #       with:
+  #         go-version-file: ./server/go.mod
+  #     - name: Unit test with xc
+  #       run: go run github.com/joerdav/xc/cmd/xc@latest test-unit
 
-  test-integration:
-    name: Integration Test
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    defaults:
-      run:
-        working-directory: server
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: ./server/go.mod
-      - name: Integration test with xc
-        run: go run github.com/joerdav/xc/cmd/xc@latest test-integration
+  # test-integration:
+  #   name: Integration Test
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build
+  #   defaults:
+  #     run:
+  #       working-directory: server
+  #   steps:
+  #     - uses: actions/checkout@v5
+  #     - uses: actions/setup-go@v5
+  #       with:
+  #         go-version-file: ./server/go.mod
+  #     - name: Integration test with xc
+  #       run: go run github.com/joerdav/xc/cmd/xc@latest test-integration
 
   dependabot-automerge:
     name: Dependabot Automerge

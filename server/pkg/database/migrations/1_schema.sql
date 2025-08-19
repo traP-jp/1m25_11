@@ -29,13 +29,12 @@ CREATE TABLE IF NOT EXISTS `stamp_daily_usages` (
 	PRIMARY KEY (`stamp_id`, `date`),
 	FOREIGN KEY (`stamp_id`) REFERENCES `stamps`(`id`)
 );
-CREATE TABLE IF NOT EXISTS `stamp_description_revisions` (
-	`id` BINARY(16) NOT NULL,
+CREATE TABLE IF NOT EXISTS `stamp_descriptions` (
 	`stamp_id` BINARY(16) NOT NULL,
 	`description` TEXT NOT NULL,
 	`creator_id` BINARY(16) NOT NULL,
 	`created_at` DATETIME NOT NULL,
-	PRIMARY KEY (`id`),
+	PRIMARY KEY (`stamp_id`,`creator_id`),
 	FOREIGN KEY (`stamp_id`) REFERENCES `stamps`(`id`)
 );
 CREATE TABLE IF NOT EXISTS `stamp_tags` (
@@ -44,5 +43,5 @@ CREATE TABLE IF NOT EXISTS `stamp_tags` (
 	`creator_id` BINARY(16) NOT NULL,
 	PRIMARY KEY (`stamp_id`, `tag_id`),
 	FOREIGN KEY (`stamp_id`) REFERENCES `stamps`(`id`),
-	FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`)
+	FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`) ON DELETE CASCADE
 );
