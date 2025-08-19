@@ -30,12 +30,11 @@ CREATE TABLE IF NOT EXISTS `stamp_daily_usages` (
 	FOREIGN KEY (`stamp_id`) REFERENCES `stamps`(`id`)
 );
 CREATE TABLE IF NOT EXISTS `stamp_description_revisions` (
-	`id` BINARY(16) NOT NULL,
 	`stamp_id` BINARY(16) NOT NULL,
 	`description` TEXT NOT NULL,
 	`creator_id` BINARY(16) NOT NULL,
 	`created_at` DATETIME NOT NULL,
-	PRIMARY KEY (`id`),
+	PRIMARY KEY (`stamp_id`,`creator_id`),
 	FOREIGN KEY (`stamp_id`) REFERENCES `stamps`(`id`)
 );
 CREATE TABLE IF NOT EXISTS `stamp_tags` (
