@@ -23,7 +23,7 @@
       Service Name
     </h1>
     <UAvatar
-      :src="`https://q.trap.jp/api/v3/public/icon/${username}`"
+      :src="`https://q.trap.jp/api/v3/public/icon/${userName}`"
       class="text-5xl"
     />
     <!-- </div> -->
@@ -31,5 +31,9 @@
 </template>
 
 <script setup lang="ts">
-const username = useForwardedUser();
+// const runtimeConfig = useRuntimeConfig();
+// const username = useForwardedUser();
+const userName = useUser();
+// const userAvaterImage = runtimeConfig
+console.log(userName);
 </script>
