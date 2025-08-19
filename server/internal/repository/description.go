@@ -16,7 +16,6 @@ type (
 		CreatedAt   time.Time `db:"created_at"`
 	}
 	Description struct {
-		ID          uuid.UUID `db:"id"`
 		StampID     uuid.UUID `db:"stamp_id"`
 		Description string    `db:"description"`
 		CreatorID   uuid.UUID `db:"creator_id"`
@@ -24,13 +23,12 @@ type (
 	}
 )
 
-func (r *Repository) CreateDescriptions(ctx context.Context, params CreateDescriptionParams) (uuid.UUID, error) {
-	descriptionID := uuid.New()
-	if _, err := r.db.ExecContext(ctx, "INSERT INTO stamp_description_revisions(id,stamp_id,description,creator_id,created_at) VALUES(?,?,?,?,?)", descriptionID, params.StampID, params.Description, params.CreatorID, params.CreatedAt); err != nil {
-		return uuid.Nil, fmt.Errorf("failed to insert description: %w", err)
+func (r *Repository) CreateDescriptions(ctx context.Context, params CreateDescriptionParams) error{
+	if _, err := r.db.ExecContext(ctx, "INSERT INTO stamp_description_revisions(stamp_id,description,creator_id,created_at) VALUES(?,?,?,?)", params.StampID, params.Description, params.CreatorID, params.CreatedAt); err != nil {
+		return fmt.Errorf("failed to insert description: %w", err)
 	}
 
-	return descriptionID, nil
+	return  nil
 }
 
 func (r *Repository) GetDescriptionsByStampID(ctx context.Context, stampID uuid.UUID) ([]*Description, error) {
@@ -54,6 +52,6 @@ func (r *Repository) UpdateDescriptions(ctx context.Context, stampID uuid.UUID, 
 	if _, err := r.db.ExecContext(ctx, "UPDATE stamp_description_revisions SET description = ? WHERE stamp_id = ? AND creator_id =?", description, stampID, creatorID); err != nil {
 		return fmt.Errorf("failed to update description: %w", err)
 	}
-	
+
 	return nil
 }
