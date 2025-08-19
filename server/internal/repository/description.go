@@ -24,7 +24,7 @@ type (
 )
 
 func (r *Repository) CreateDescriptions(ctx context.Context, params CreateDescriptionParams) error{
-	if _, err := r.db.ExecContext(ctx, "INSERT INTO stamp_description(stamp_id,description,creator_id,created_at) VALUES(?,?,?,?)", params.StampID, params.Description, params.CreatorID, params.CreatedAt); err != nil {
+	if _, err := r.db.ExecContext(ctx, "INSERT INTO stamp_descriptions(stamp_id,description,creator_id,created_at) VALUES(?,?,?,?)", params.StampID, params.Description, params.CreatorID, params.CreatedAt); err != nil {
 		return fmt.Errorf("failed to insert description: %w", err)
 	}
 
@@ -33,7 +33,7 @@ func (r *Repository) CreateDescriptions(ctx context.Context, params CreateDescri
 
 func (r *Repository) GetDescriptionsByStampID(ctx context.Context, stampID uuid.UUID) ([]*Description, error) {
 	descriptions := []*Description{}
-	if err := r.db.SelectContext(ctx, &descriptions, "SELECT * FROM stamp_description WHERE stamp_id = ?", stampID); err != nil {
+	if err := r.db.SelectContext(ctx, &descriptions, "SELECT * FROM stamp_descriptions WHERE stamp_id = ?", stampID); err != nil {
 		return nil, fmt.Errorf("failed to get descriptions by stampID: %w", err)
 	}
 
@@ -41,7 +41,7 @@ func (r *Repository) GetDescriptionsByStampID(ctx context.Context, stampID uuid.
 }
 
 func (r *Repository) DeleteDescriptions(ctx context.Context, stampID uuid.UUID, creatorID uuid.UUID) error {
-	if _, err := r.db.ExecContext(ctx, "DELETE FROM stamp_description WHERE stamp_id = ? AND creator_id = ?", stampID, creatorID); err != nil {
+	if _, err := r.db.ExecContext(ctx, "DELETE FROM stamp_descriptions WHERE stamp_id = ? AND creator_id = ?", stampID, creatorID); err != nil {
 		return fmt.Errorf("failed to delete description: %w", err)
 	}
 
@@ -49,7 +49,7 @@ func (r *Repository) DeleteDescriptions(ctx context.Context, stampID uuid.UUID, 
 }
 
 func (r *Repository) UpdateDescriptions(ctx context.Context, stampID uuid.UUID, creatorID uuid.UUID, description string) error {
-	if _, err := r.db.ExecContext(ctx, "UPDATE stamp_description SET description = ? WHERE stamp_id = ? AND creator_id =?", description, stampID, creatorID); err != nil {
+	if _, err := r.db.ExecContext(ctx, "UPDATE stamp_descriptions SET description = ? WHERE stamp_id = ? AND creator_id =?", description, stampID, creatorID); err != nil {
 		return fmt.Errorf("failed to update description: %w", err)
 	}
 
