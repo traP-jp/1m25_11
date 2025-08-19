@@ -23,7 +23,6 @@
       Service Name
     </h1>
     <UAvatar
-      v-if="username"
       :src="`https://q.trap.jp/api/v3/public/icon/${username}`"
       class="text-5xl"
     />
