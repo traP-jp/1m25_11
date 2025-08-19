@@ -34,7 +34,7 @@ func (r *Repository) DeleteStampTags(ctx context.Context, stampID uuid.UUID, tag
 
 func (r *Repository) GetSearchStampTags(ctx context.Context, keyword string)([]uuid.UUID, error){
 	stampIDs := []uuid.UUID{}
-	if err := r.db.SelectContext(ctx, &stampIDs,"SELECT stamp_id FROM stamp_tags JOIN tags ON stamp_tags.tag_id = tags.id WHERE tags.name LIKE ?","%"+keyword+"%"); err !=nil {
+	if err := r.db.SelectContext(ctx, &stampIDs,"SELECT DISTINCT stamp_id FROM stamp_tags JOIN tags ON stamp_tags.tag_id = tags.id WHERE tags.name LIKE ?","%"+keyword+"%"); err !=nil {
 		return nil,fmt.Errorf("failed to get stampID by tagKeyword : %w",err)
 	}
 
