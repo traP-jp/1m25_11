@@ -6,6 +6,7 @@
       icon="i-lucide-search"
       placeholder="スタンプの名前、タグ、説明文で検索..."
       class="mb-5 w-full"
+      size="xl"
     />
     <!-- 検索条件を設定するボタンと検索ボタンのコンテナ -->
     <div
@@ -26,22 +27,7 @@
         />
         <!-- UDrawer コンポーネントの body slot に入れる内容 -->
         <template #body>
-          <Placeholder class="h-48" />
-        </template>
-        <!-- UDrawer コンポーネントの footer slot に入れる内容 -->
-        <template #footer>
-          <UButton
-            label="Submit"
-            color="neutral"
-            class="justify-center"
-          />
-          <UButton
-            label="Cancel"
-            color="neutral"
-            variant="outline"
-            class="justify-center"
-            @click="isSearchModalOpen = false"
-          />
+          <SearchInputModal />
         </template>
       </UDrawer>
       <!-- input 要素のすぐ下にある検索ボタン -->
@@ -49,6 +35,7 @@
         label="検索"
         :block="true"
         class="hover:cursor-pointer"
+        icon="i-lucide-arrow-right"
       />
     </div>
   </UContainer>

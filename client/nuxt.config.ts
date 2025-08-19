@@ -7,6 +7,13 @@ export default defineNuxtConfig({
     colorMode: false,
   },
   compatibilityDate: '2025-07-15',
+  vite: {
+    server: {
+      allowedHosts: [
+        '.ngrok-free.app',
+      ],
+    },
+  },
   eslint: {
     config: {
       stylistic: {
