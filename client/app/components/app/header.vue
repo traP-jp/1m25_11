@@ -23,9 +23,14 @@
       Service Name
     </h1>
     <UAvatar
-      src="https://q.trap.jp/api/v3/public/icon/yasako"
+      v-if="username"
+      :src="`https://q.trap.jp/api/v3/public/icon/${username}`"
       class="text-5xl"
     />
     <!-- </div> -->
   </UContainer>
 </template>
+
+<script setup lang="ts">
+const username = useForwardedUser();
+</script>
