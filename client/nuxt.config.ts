@@ -6,7 +6,19 @@ export default defineNuxtConfig({
   ui: {
     colorMode: false,
   },
+  runtimeConfig: {
+    public: {
+      userName: 'traP',
+    },
+  },
   compatibilityDate: '2025-07-15',
+  vite: {
+    server: {
+      allowedHosts: [
+        '.ngrok-free.app',
+      ],
+    },
+  },
   eslint: {
     config: {
       stylistic: {
@@ -16,5 +28,10 @@ export default defineNuxtConfig({
         commaDangle: 'always-multiline',
       },
     },
+  },
+  fonts: {
+    families: [
+      { name: 'Zen Kaku Gothic New', provider: 'google' },
+    ],
   },
 });
