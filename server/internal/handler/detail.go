@@ -35,8 +35,8 @@ type (
 		Name         string        `json:"name"`
 		FileID       uuid.UUID     `json:"file_id"`
 		IsUnicode    bool          `json:"is_unicode"`
-		CreatedAt    string        `json:"created_at"`
-		UpdatedAt    string        `json:"updated_at"`
+		CreatedAt    time.Time        `json:"created_at"`
+		UpdatedAt    time.Time        `json:"updated_at"`
 		CountMonthly int           `json:"count_monthly"`
 		CountTotal   int64         `json:"count_total"`
 		Descriptions []Description `json:"descriptions"`
@@ -45,14 +45,14 @@ type (
 )
 
 func (h *Handler) getDetails(c echo.Context) error {
-	stampIDStr := c.Param("stampID") // パラメータからroomIDを取得
+	stampIDStr := c.Param("stampID") 
 	stampID, err := uuid.Parse(stampIDStr)
     if err != nil {
         if err == sql.ErrNoRows {
 
             return echo.NewHTTPError(http.StatusNotFound, "Stamp not found")
         }
-		
+
         return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
     }
 
@@ -91,8 +91,8 @@ func (h *Handler) getDetails(c echo.Context) error {
 		Name:         stamps.Name,
 		FileID:       stamps.FileID,
 		IsUnicode:    stamps.IsUnicode,
-		CreatedAt:    stamps.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:    stamps.UpdatedAt.Format(time.RFC3339),
+		CreatedAt:    stamps.CreatedAt,
+		UpdatedAt:    stamps.UpdatedAt,
 		CountMonthly: stamps.CountMonthly,
 		CountTotal:   stamps.CountTotal,
 		Descriptions: resDescriptions,
