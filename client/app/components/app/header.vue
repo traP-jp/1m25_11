@@ -35,5 +35,5 @@
 // const username = useForwardedUser();
 const userName = useUser();
 // const userAvaterImage = runtimeConfig
-console.log(userName);
+console.log(`useName: ${userName.value}`);
 </script>
