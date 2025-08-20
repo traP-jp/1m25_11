@@ -42,7 +42,7 @@ func (r *Repository) GetStampsByTagID(ctx context.Context, tagID uuid.UUID) ([]*
 	return stampsByTagID, nil
 }
 
-func (r *Repository) GetStampsByStampID(ctx context.Context, stampID uuid.UUID) (*Stamp, error) {
+func (r *Repository) GetStampByStampID(ctx context.Context, stampID uuid.UUID) (*Stamp, error) {
 	stampsByStampID := &Stamp{}
 	if err := r.db.GetContext(ctx, stampsByStampID, "SELECT * FROM stamps WHERE id = ?", stampID); err != nil {
 		return nil, fmt.Errorf("select stamps by stampID: %w", err)
