@@ -11,7 +11,7 @@ import (
 type StampCountResult struct {
 	StampID       uuid.UUID `db:"stamp_id"`
 	ReactionCount int       `db:"reaction_count"`
-	MessageCount  int       `db"message_count"`
+	MessageCount  int       `db:"message_count"`
 }
 
 func (r *Repository) GetStampCount(ctx context.Context, since time.Time, until time.Time) ([]StampCountResult, error) {
@@ -21,8 +21,8 @@ func (r *Repository) GetStampCount(ctx context.Context, since time.Time, until t
 	query := `
 		SELECT
 			stamp_id,
-			reaction_count,
-			message_count
+			SUM(reaction_count) AS reaction_count,
+			SUM(message_count) AS message_count
 		FROM
 			stamp_daily_usages
 		WHERE
