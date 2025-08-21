@@ -50,7 +50,14 @@ func (r *Repository) GetStampSummaries(ctx context.Context) ([]*StampSummary, er
 
 func (r *Repository) GetStampsByTagID(ctx context.Context, tagID uuid.UUID) ([]*Stamp, error) {
 	stampsByTagID := []*Stamp{}
-	if err := r.db.SelectContext(ctx, &stampsByTagID, "SELECT * FROM stamps JOIN stamp_tags ON stamps.id = stamp_tags.stamp_id WHERE stamp_tags.tag_id = ?", tagID); err != nil {
+	query := `SELECT
+            stamps.id, stamps.name, stamps.file_id, stamps.creator_id,
+            stamps.is_unicode, stamps.created_at, stamps.updated_at,
+            stamps.count_monthly, stamps.count_total
+        FROM stamps
+        INNER JOIN stamp_tags ON stamps.id = stamp_tags.stamp_id
+        WHERE stamp_tags.tag_id = ?`
+	if err := r.db.SelectContext(ctx, &stampsByTagID, query, tagID); err != nil {
 		return nil, fmt.Errorf("select stamps by tagID: %w", err)
 	}
 
