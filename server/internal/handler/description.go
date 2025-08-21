@@ -20,7 +20,7 @@ func (p *DescriptionParams) Validate(requireCreatorID, requireDescription bool) 
 		vd.Field(p.StampID, vd.Required),
 	}
 	if requireCreatorID {
-		fields = append(fields, vd.Field(p.CreatorID, vd.Required))
+		fields = append(fields, vd.Field(&p.CreatorID, vd.Required))
 	}
 	if requireDescription {
 		fields = append(fields, vd.Field(p.Description, vd.Required))
