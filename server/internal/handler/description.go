@@ -67,5 +67,17 @@ func (h *Handler) updateDescriptions(c echo.Context) error {
 }
 
 func (h *Handler) deleteDescriptions(c echo.Context) error {
-	return c.String(http.StatusOK, "pong")
+	stampID, err := uuid.Parse(c.Param("stamp_id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
+	}
+	creatorID, err := uuid.Parse(c.Param("creator_id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
+	}
+	if err = h.repo.DeleteDescriptions(c.Request().Context(), stampID, creatorID); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
+	}
+
+	return c.NoContent(http.StatusNoContent)
 }
