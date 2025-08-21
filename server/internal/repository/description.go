@@ -13,8 +13,6 @@ type (
 		StampID     uuid.UUID `db:"stamp_id"`
 		Description string    `db:"description"`
 		CreatorID   uuid.UUID `db:"creator_id"`
-		CreatedAt   time.Time `db:"created_at"`
-		UpdatedAt   time.Time `db:"updated_at"`
 	}
 	Description struct {
 		StampID     uuid.UUID `db:"stamp_id"`
@@ -27,7 +25,7 @@ type (
 
 func (r *Repository) CreateDescriptions(ctx context.Context, params CreateDescriptionParams) error {
 	now := time.Now()
-	if _, err := r.db.ExecContext(ctx, "INSERT INTO stamp_descriptions(stamp_id,description,creator_id,created_at,updated_at) VALUES(?,?,?,?)", params.StampID, params.Description, params.CreatorID, now, now); err != nil {
+	if _, err := r.db.ExecContext(ctx, "INSERT INTO stamp_descriptions(stamp_id,description,creator_id,created_at,updated_at) VALUES(?,?,?,?,?)", params.StampID, params.Description, params.CreatorID, now, now); err != nil {
 		return fmt.Errorf("failed to insert description: %w", err)
 	}
 
