@@ -64,11 +64,11 @@ func (r *Repository) GetStampsByTagID(ctx context.Context, tagID uuid.UUID) ([]*
 	return stampsByTagID, nil
 }
 
-func (r *Repository) GetStampsByStampID(ctx context.Context, stampID uuid.UUID) (*StampSummary, error) {
-	stampsByStampID := &StampSummary{}
-	if err := r.db.GetContext(ctx, stampsByStampID, "SELECT id,name,file_id FROM stamps WHERE id = ?", stampID); err != nil {
+func (r *Repository) GetStampByStampID(ctx context.Context, stampID uuid.UUID) (*Stamp, error) {
+	stampByStampID := &Stamp{}
+	if err := r.db.GetContext(ctx, stampByStampID, "SELECT * FROM stamps WHERE id = ?", stampID); err != nil {
 		return nil, fmt.Errorf("select stamps by stampID: %w", err)
 	}
 
-	return stampsByStampID, nil
+	return stampByStampID, nil
 }
