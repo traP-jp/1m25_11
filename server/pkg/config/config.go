@@ -34,6 +34,7 @@ func MySQL() *mysql.Config {
 	c.DBName = getEnv("NS_MARIADB_DATABASE", "app")
 	c.Collation = "utf8mb4_general_ci"
 	c.AllowNativePasswords = true
-
+    c.ParseTime = true
+	
 	return c
 }
