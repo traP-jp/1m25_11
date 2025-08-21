@@ -12,7 +12,9 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@iconify-json/material-symbols": "^1.2.32",
     "@nuxt/eslint": "^1.8.0",
+    "@nuxt/image": "^1.11.0",
     "@nuxt/ui": "^3.3.2",
     "eslint": "^9.33.0",
     "nuxt": "^4.0.3",

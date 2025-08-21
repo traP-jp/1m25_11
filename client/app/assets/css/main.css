@@ -1,2 +1,14 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+@theme {
+  --font-sans: 'Zen Kaku Gothic New', sans-serif;
+  --ui-radius: 0.0rem;
+  --color-primary: #005bac;
+  --color-secondary: #ac005b;
+}
+
+/* :root { */
+  /* --ui-primary: #005bac; */
+  /* --ui-secondary: #ac005b; */
+/* } */
