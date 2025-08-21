@@ -51,9 +51,9 @@ console.log(`useName: ${userName.value}`);
 const items = ref<DropdownMenuItem[][]>([
   [
     {
-      label: `${userName}`,
+      label: `${userName.value}`,
       avatar: {
-        src: `https://q.trap.jp/api/v3/public/icon/${userName}`,
+        src: `https://q.trap.jp/api/v3/public/icon/${userName.value}`,
       },
       type: 'label',
     },
