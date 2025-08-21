@@ -6,7 +6,7 @@ import (
 )
 
 func (h *Handler) getStamps(c echo.Context) error {
-	stamps, err := h.repo.GetStamps(c.Request().Context())
+	stamps, err := h.repo.GetStampDetails(c.Request().Context())
 	if err != nil{
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
