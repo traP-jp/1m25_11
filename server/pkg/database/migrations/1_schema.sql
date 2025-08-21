@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS `stamp_descriptions` (
 	`description` TEXT NOT NULL,
 	`creator_id` BINARY(16) NOT NULL,
 	`created_at` DATETIME NOT NULL,
+	`updated_at` DATETIME NOT NULL,
 	PRIMARY KEY (`stamp_id`,`creator_id`),
 	FOREIGN KEY (`stamp_id`) REFERENCES `stamps`(`id`)
 );
