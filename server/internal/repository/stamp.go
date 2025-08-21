@@ -22,15 +22,30 @@ type (
 		CountTotal int64 `db:"count_total"`
 	}
 
+	StampSummary struct {
+		ID    uuid.UUID `db:"id"`
+		Name  string    `db:"name"`
+		FileID uuid.UUID `db:"file_id"`
+	}
+
 )
 
-func (r *Repository) GetStamps(ctx context.Context) ([]*Stamp, error) {
+func (r *Repository) GetStampDetails(ctx context.Context) ([]*Stamp, error) {
 	stamps := []*Stamp{}
 	if err := r.db.SelectContext(ctx, &stamps, "SELECT * FROM stamps"); err != nil {
 		return nil, fmt.Errorf("select stamps: %w", err)
 	}
 	
 	return stamps, nil
+}
+
+func (r *Repository) GetStampSummaries(ctx context.Context) ([]*StampSummary, error) {
+	stampSummaries := []*StampSummary{}
+	if err := r.db.SelectContext(ctx, &stampSummaries, "SELECT id,name,file_id FROM stamps"); err != nil {
+		return nil, fmt.Errorf("select stamps: %w", err)
+	}
+	
+	return stampSummaries, nil
 }
 
 func (r *Repository) GetStampsByTagID(ctx context.Context, tagID uuid.UUID) ([]*Stamp, error) {
@@ -42,9 +57,9 @@ func (r *Repository) GetStampsByTagID(ctx context.Context, tagID uuid.UUID) ([]*
 	return stampsByTagID, nil
 }
 
-func (r *Repository) GetStampByStampID(ctx context.Context, stampID uuid.UUID) (*Stamp, error) {
-	stampsByStampID := &Stamp{}
-	if err := r.db.GetContext(ctx, stampsByStampID, "SELECT * FROM stamps WHERE id = ?", stampID); err != nil {
+func (r *Repository) GetStampsByStampID(ctx context.Context, stampID uuid.UUID) (*StampSummary, error) {
+	stampsByStampID := &StampSummary{}
+	if err := r.db.GetContext(ctx, stampsByStampID, "SELECT id,name,file_id FROM stamps WHERE id = ?", stampID); err != nil {
 		return nil, fmt.Errorf("select stamps by stampID: %w", err)
 	}
 
