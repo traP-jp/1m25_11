@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -19,7 +20,7 @@ func (h *Handler) createDescriptions(c echo.Context) error {
 	}
 	description := c.Param("description")
 	if description == "" {
-		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
+		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(errors.New("description cannot be empty"))
 	}
 	err = h.repo.CreateDescriptions(c.Request().Context(), repository.CreateDescriptionParams{
 		StampID:     stampID,
@@ -57,7 +58,7 @@ func (h *Handler) updateDescriptions(c echo.Context) error {
 	}
 	description := c.Param("description")
 	if description == "" {
-		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
+		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(errors.New("description cannot be empty"))
 	}
 	if err = h.repo.UpdateDescriptions(c.Request().Context(), stampID, creatorID, description); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
