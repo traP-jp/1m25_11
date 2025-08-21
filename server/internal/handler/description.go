@@ -11,7 +11,7 @@ import (
 
 type DescriptionParams struct {
 	StampID     uuid.UUID `param:"stamp_id"`
-	CreatorID   uuid.UUID `param:"creator_id"`
+	CreatorID   uuid.UUID `json:"creator_id"`
 	Description string    `json:"description"`
 }
 
