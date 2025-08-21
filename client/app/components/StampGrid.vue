@@ -1,6 +1,6 @@
 <template>
   <UContainer>
-    <div class="grid gap-x-4 gap-y-6 grid-cols-[repeat(auto-fill,_96px)] justify-between content-start items-start">
+    <div class="grid gap-x-4 gap-y-6 grid-cols-[repeat(auto-fill,_96px)] justify-between content-start items-start my-5">
       <StampItem
         v-for="stampItem in stampTestData"
         :key="stampItem.id"
