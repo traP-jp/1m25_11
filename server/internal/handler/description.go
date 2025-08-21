@@ -12,7 +12,7 @@ import (
 type DescriptionParams struct {
 	StampID     uuid.UUID `param:"stamp_id"`
 	CreatorID   uuid.UUID `param:"creator_id"`
-	Description string    `param:"description"`
+	Description string    `json:"description"`
 }
 
 func (p *DescriptionParams) Validate(requireCreatorID, requireDescription bool) error {
