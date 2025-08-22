@@ -62,10 +62,12 @@ const items = ref<DropdownMenuItem[][]>([
     {
       label: 'Profile',
       icon: 'material-symbols:account-circle-outline-sharp',
+      to: '/profile',
     },
     {
       label: 'Settings',
       icon: 'material-symbols:settings-outline-sharp',
+      to: '/settings',
     },
   ],
 ]);
