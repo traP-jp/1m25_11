@@ -1,17 +1,17 @@
 <template>
   <UContainer>
-    <p>説明文で検索</p>
+    <p>説明文から検索</p>
     <UInput
       v-model="searchDescriptionValue"
       icon="i-lucide-search"
-      placeholder="説明文で検索"
+      placeholder="説明文から検索"
       class="mb-5 w-full"
     />
-    <p>スタンプ名で検索</p>
+    <p>スタンプ名から検索</p>
     <UInput
       v-model="searchStampNameValue"
       icon="i-lucide-search"
-      placeholder="スタンプ名で検索"
+      placeholder="スタンプ名から検索"
       class="mb-5 w-full"
     />
     <UFormField
@@ -55,6 +55,18 @@
         />
       </template>
     </UPopover>
+    <div class="flex justify-between mt-5">
+      <UButton
+        label="リセット"
+        color="neutral"
+        variant="outline"
+        class="hover:cursor-pointer w-1/4 grid place-items-center"
+      />
+      <UButton
+        label="検索"
+        class="hover:cursor-pointer w-1/4 grid place-items-center"
+      />
+    </div>
   </UContainer>
 </template>
 
