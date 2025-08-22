@@ -55,7 +55,7 @@ func (r *Repository) DeleteTags(ctx context.Context, tagID uuid.UUID)error{
 }
 
 func (r *Repository) CreateTags(ctx context.Context, params CreateTagParams)(uuid.UUID, error){
-	tagID := uuid.New()
+	tagID, _ := uuid.NewV7()
 	now := time.Now()
 	if _, err := r.db.ExecContext(ctx, "INSERT INTO tags(id, name, creator_id, created_at, updated_at) VALUES(?,?,?,?,?)", tagID, params.Name, params.CreatorID, now, now);err != nil{
 		return uuid.Nil, fmt.Errorf("failed to insert tag: %w", err )
