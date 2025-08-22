@@ -50,8 +50,8 @@ func main() {
 
 	
 	_, err := ss.NewJob(
-		gocron.CronJob("0 0 * * *", false),
-		gocron.NewTask(h.CronJobTask),
+    gocron.CronJob("0 0 * * *", false),
+    gocron.NewTask(s.H.CronJobTask,s.H.Repo),
 	)
 
 	if err != nil{
