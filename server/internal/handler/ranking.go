@@ -15,25 +15,14 @@ func (h *Handler) getRanking(c echo.Context) error {
 	if err := c.Bind(&params); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Errorf("invalid parameters: %w", err))
 	}
-
 	since := time.Now().AddDate(0, 0, -30)
 	if params.Since != nil {
-		since = time.Time(params.Since)
+		since = params.Since.Time
 	}
 
 	until := time.Now().AddDate(0, 0, -1)
 	if params.Until != nil {
-		until = time.Time(params.Until)
-	}
-
-	offset := 0
-	if params.Offset != nil {
-		offset = *params.Offset
-	}
-
-	limit := 50
-	if params.Limit != nil {
-		limit = *params.Limit
+		until = params.Until.Time
 	}
 
 	if since.After(until) {
@@ -41,7 +30,8 @@ func (h *Handler) getRanking(c echo.Context) error {
 			Message: "Invalid date range: `since` must be before or on `until`.",
 		})
 	}
-	rankingResults, err := h.Repo.GetStampCount(c.Request().Context(), since, until, &limit, &offset)
+
+	rankingResults, err := h.repo.GetStampCount(c.Request().Context(), since, until)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, api.Error{
 			Message: fmt.Sprintf("Failed to get stamp ranking: %s", err.Error()),
@@ -50,22 +40,15 @@ func (h *Handler) getRanking(c echo.Context) error {
 
 	var response []api.RankingResult
 	for _, result := range rankingResults {
-		stampSummary, err := h.Repo.GetStampSummaryByID(c.Request().Context(), types.UUID(result.StampID))
-		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, api.Error{
-				Message: fmt.Sprintf("Failed to get stamp summary for ID %s: %s", result.StampID, err.Error()),
-			})
-		}
-
 		response = append(response, api.RankingResult{
-			Stamp: api.StampSummary{
-				Id:     stampSummary.Id,
-				Name:   stampSummary.Name,
-				FileId: stampSummary.FileId,
+			Stamp: api.Stamp{
+				Id:     result.StampID,
+				Name:   "",
+				FileId: types.UUID{},
 			},
-			Count: result.Count,
+			Count: result.ReactionCount,
 		})
 	}
 
-	return c.String(http.StatusOK, "pong")
+	return c.JSON(http.StatusOK, response)
 }
