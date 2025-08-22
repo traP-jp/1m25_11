@@ -10,7 +10,7 @@ import (
 )
 
 type Server struct {
-	handler    *handler.Handler
+	Handler    *handler.Handler
 	apiHandler *handler.APIHandler
 }
 
@@ -20,14 +20,14 @@ func Inject(db *sqlx.DB) *Server {
 	apiHandler := handler.NewAPIHandler(h)
 
 	return &Server{
-		handler:    h,
+		Handler:    h,
 		apiHandler: apiHandler,
 	}
 }
 
 func (d *Server) SetupRoutes(g *echo.Group) {
 	// TODO: handler.SetupRoutesを呼び出す or 直接書く？
-	d.handler.SetupRoutes(g)
+	d.Handler.SetupRoutes(g)
 }
 
 func (d *Server) SetupAPIRoutes(e *echo.Echo) {

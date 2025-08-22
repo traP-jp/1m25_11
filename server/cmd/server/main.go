@@ -8,6 +8,8 @@ import (
  	"log"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/traP-jp/1m25_11/server/internal/repository"
+	
 )
 
 func main() {
@@ -47,11 +49,11 @@ func main() {
 	if er != nil{
 		log.Fatal(er)
 	}
-
 	
-	_, err := ss.NewJob(
+
+	_, err = ss.NewJob(
     gocron.CronJob("0 0 * * *", false),
-    gocron.NewTask(s.H.CronJobTask,s.H.Repo),
+    gocron.NewTask(s.Handler.CronJobTask),
 	)
 
 	if err != nil{
