@@ -10,6 +10,8 @@ import (
 	"github.com/traP-jp/1m25_11/server/internal/repository"
 )
 
+
+
 func (h *Handler) Test(ctx context.Context) {
 	log.Println("Starting test")
 }
@@ -32,7 +34,7 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 		log.Printf("Error creating request: %v", err)
 	}
 	req.Header.Add("accept", "application/json")
-	req.Header.Add("Authorization", "Bearer"+ bot_key)
+	req.Header.Add("Authorization", "Bearer "+ bot_key)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -41,27 +43,26 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 		return
 	}
 	defer resp.Body.Close()
-
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("API returned non-200 status code: %d", resp.StatusCode) 
 
 		return
 	}
 
-	var apiResp []*repository.StampResponse
+	var apiResp []*repository.ResponseStamp
 	if err := json.NewDecoder(resp.Body).Decode(&apiResp); err != nil{
 		log.Printf("Error decoding response: %v", err)
 
 		return
 	}
 
-	if err := h.repo.UpdateStamp(ctx, apiResp); err != nil {
+	if err := h.repo.SaveStamp(ctx, apiResp); err != nil {
 		log.Printf("Error saving stamps: %v", err)
 
 		return
 	}
 
 
-	log.Println("successfully fetched and update stamps")
+	log.Println("successfully cronJobTask")
 
 }

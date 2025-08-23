@@ -29,16 +29,7 @@ type (
 	}
 
 	
-	StampResponse struct {
-		ID uuid.UUID `json:"id"`
-		Name string `json:"name"`
-		CreatorID uuid.UUID `json:"creator_id"`
-		CreatedAt string `json:"created_at"`
-		UpdatedAt string `json:"updated_at"`
-		FileID uuid.UUID `json:"file_id"`
-		IsUnicode bool `json:"is_unicode"`	
-
-	}
+	
 
 )
 
@@ -87,6 +78,3 @@ func (r *Repository) GetStampByStampID(ctx context.Context, stampID uuid.UUID) (
 }
 
 
-func (r *Repository) UpdateStamp(ctx context.Context, stamps []*StampResponse) error {
-	return nil
-}
