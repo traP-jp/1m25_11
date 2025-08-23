@@ -1,8 +1,9 @@
 <template>
   <UContainer class="h-20 flex items-center justify-between font-bold">
     <!-- <div class="w-full h-20 flex items-center-safe justify-around font-bold text-3xl"> -->
-    <UModal
+    <USlideover
       title="メニュー"
+      side="left"
       :close="{
         color: 'primary',
         class: 'rounded-full',
@@ -13,18 +14,18 @@
         class="cursor-pointer text-4xl text-primary"
       />
       <template #body>
-        <ul>
-          <li><ULink to="/">Top Page</ULink></li>
-          <li><ULink to="/">Top Page</ULink></li>
-        </ul>
+        <UNavigationMenu
+          orientation="vertical"
+          :items="navigationItems"
+        />
       </template>
-    </UModal>
+    </USlideover>
     <h1 class="text-3xl">
       Service Name
     </h1>
 
     <UDropdownMenu
-      :items="items"
+      :items="dropdownItems"
       :ui="{
         content: 'w-48',
       }"
@@ -40,15 +41,37 @@
 </template>
 
 <script setup lang="ts">
-// const runtimeConfig = useRuntimeConfig();
-// const username = useForwardedUser();
-import type { DropdownMenuItem } from '@nuxt/ui';
+import type { NavigationMenuItem, DropdownMenuItem } from '@nuxt/ui';
 
 const userName = useUser();
-// const userAvaterImage = runtimeConfig
-console.log(`useName: ${userName.value}`);
+console.log(`userName: ${userName.value}`);
 
-const items = ref<DropdownMenuItem[][]>([
+const navigationItems = ref<NavigationMenuItem[][]>([
+  [
+    {
+      label: 'Home',
+      icon: 'material-symbols:home',
+      to: '/',
+    },
+    {
+      label: 'Search',
+      icon: 'material-symbols:search',
+      to: 'search',
+    },
+    {
+      label: 'Ranking',
+      icon: 'material-symbols:leaderboard',
+      to: '/ranking',
+    },
+    {
+      label: 'Tags',
+      icon: 'material-symbols:tag',
+      to: '/tags',
+    },
+  ],
+]);
+
+const dropdownItems = ref<DropdownMenuItem[][]>([
   [
     {
       label: `${userName.value}`,
