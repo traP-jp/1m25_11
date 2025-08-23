@@ -1,47 +1,33 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
-	vd "github.com/go-ozzo/ozzo-validation"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/traP-jp/1m25_11/server/internal/repository"
 )
 
-type DescriptionParams struct {
-	StampID     uuid.UUID `param:"stamp_id"`
-	CreatorID   uuid.UUID `json:"creator_id"`
-	Description string    `json:"description"`
-}
-
-func (p *DescriptionParams) Validate(requireCreatorID, requireDescription bool) error {
-	fields := []*vd.FieldRules{
-		vd.Field(p.StampID, vd.Required),
-	}
-	if requireCreatorID {
-		fields = append(fields, vd.Field(&p.CreatorID, vd.Required))
-	}
-	if requireDescription {
-		fields = append(fields, vd.Field(p.Description, vd.Required))
-	}
-
-	return vd.ValidateStruct(p, fields...)
-}
-
 func (h *Handler) createDescriptions(c echo.Context) error {
-	p := new(DescriptionParams)
-	if err := c.Bind(p); err != nil {
+	stampID, err := uuid.Parse(c.Param("stamp_id"))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	if err := p.Validate(true, true); err != nil {
+	creatorID, err := uuid.Parse(c.Param("creator_id"))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	if err := h.repo.CreateDescriptions(c.Request().Context(), repository.CreateDescriptionParams{
-		StampID:     p.StampID,
-		Description: p.Description,
-		CreatorID:   p.CreatorID,
-	}); err != nil {
+	description := c.Param("description")
+	if description == "" {
+		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(errors.New("description cannot be empty"))
+	}
+	err = h.repo.CreateDescriptions(c.Request().Context(), repository.CreateDescriptionParams{
+		StampID:     stampID,
+		Description: description,
+		CreatorID:   creatorID,
+	})
+	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
@@ -49,14 +35,11 @@ func (h *Handler) createDescriptions(c echo.Context) error {
 }
 
 func (h *Handler) getDescriptions(c echo.Context) error {
-	p := new(DescriptionParams)
-	if err := c.Bind(p); err != nil {
+	stampID, err := uuid.Parse(c.Param("stamp_id"))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	if err := p.Validate(false, false); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
-	}
-	descriptions, err := h.repo.GetDescriptionsByStampID(c.Request().Context(), p.StampID)
+	descriptions, err := h.repo.GetDescriptionsByStampID(c.Request().Context(), stampID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
@@ -65,14 +48,19 @@ func (h *Handler) getDescriptions(c echo.Context) error {
 }
 
 func (h *Handler) updateDescriptions(c echo.Context) error {
-	p := new(DescriptionParams)
-	if err := c.Bind(p); err != nil {
+	stampID, err := uuid.Parse(c.Param("stamp_id"))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	if err := p.Validate(true, true); err != nil {
+	creatorID, err := uuid.Parse(c.Param("creator_id"))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	if err := h.repo.UpdateDescriptions(c.Request().Context(), p.StampID, p.CreatorID, p.Description); err != nil {
+	description := c.Param("description")
+	if description == "" {
+		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(errors.New("description cannot be empty"))
+	}
+	if err = h.repo.UpdateDescriptions(c.Request().Context(), stampID, creatorID, description); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
@@ -80,14 +68,15 @@ func (h *Handler) updateDescriptions(c echo.Context) error {
 }
 
 func (h *Handler) deleteDescriptions(c echo.Context) error {
-	p := new(DescriptionParams)
-	if err := c.Bind(p); err != nil {
+	stampID, err := uuid.Parse(c.Param("stamp_id"))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	if err := p.Validate(true, false); err != nil {
+	creatorID, err := uuid.Parse(c.Param("creator_id"))
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	if err := h.repo.DeleteDescriptions(c.Request().Context(), p.StampID, p.CreatorID); err != nil {
+	if err = h.repo.DeleteDescriptions(c.Request().Context(), stampID, creatorID); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
