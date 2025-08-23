@@ -22,10 +22,19 @@
     <h1 class="text-3xl">
       Service Name
     </h1>
-    <UAvatar
-      :src="`https://q.trap.jp/api/v3/public/icon/${userName}`"
-      class="text-5xl"
-    />
+
+    <UDropdownMenu
+      :items="items"
+      :ui="{
+        content: 'w-48',
+      }"
+    >
+      <UAvatar
+        :src="`https://q.trap.jp/api/v3/public/icon/${userName}`"
+        class="text-5xl cursor-pointer"
+      />
+    </UDropdownMenu>
+
     <!-- </div> -->
   </UContainer>
 </template>
@@ -33,7 +42,33 @@
 <script setup lang="ts">
 // const runtimeConfig = useRuntimeConfig();
 // const username = useForwardedUser();
+import type { DropdownMenuItem } from '@nuxt/ui';
+
 const userName = useUser();
 // const userAvaterImage = runtimeConfig
 console.log(`useName: ${userName.value}`);
+
+const items = ref<DropdownMenuItem[][]>([
+  [
+    {
+      label: `${userName.value}`,
+      avatar: {
+        src: `https://q.trap.jp/api/v3/public/icon/${userName.value}`,
+      },
+      type: 'label',
+    },
+  ],
+  [
+    {
+      label: 'Profile',
+      icon: 'material-symbols:account-circle-outline-sharp',
+      to: '/profile',
+    },
+    {
+      label: 'Settings',
+      icon: 'material-symbols:settings-outline-sharp',
+      to: '/settings',
+    },
+  ],
+]);
 </script>
