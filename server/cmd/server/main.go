@@ -8,8 +8,7 @@ import (
  	"log"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/traP-jp/1m25_11/server/internal/repository"
-	
+	"context"	
 )
 
 func main() {
@@ -52,8 +51,8 @@ func main() {
 	
 
 	_, err = ss.NewJob(
-    gocron.CronJob("0 0 * * *", false),
-    gocron.NewTask(s.Handler.CronJobTask),
+		gocron.CronJob("@every 10s", false),
+    gocron.NewTask(s.Handler.CronJobTask, context.Background()),
 	)
 
 	if err != nil{

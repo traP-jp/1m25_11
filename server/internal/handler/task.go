@@ -1,18 +1,30 @@
 package handler
 
 import (
+	"context"
+	"encoding/json"
 	"log"
 	"net/http"
-	"encoding/json"
-	"github.com/labstack/echo/v4"
+	"os"
+
 	"github.com/traP-jp/1m25_11/server/internal/repository"
 )
 
+func (h *Handler) Test(ctx context.Context) {
+	log.Println("Starting test")
+}
 
 
 
-func (h *Handler) CronJobTask(c echo.Context) {
-	const token = "";
+func (h *Handler) CronJobTask(ctx context.Context) {
+
+	
+	bot_key, ok := os.LookupEnv("BOT_TOKEN_KEY")
+	if !ok {
+		 log.Println("BOT_TOKEN_KEY not found in environment variables")
+		 
+		 return 
+	}
 	const url = "https://q.trap.jp/api/v3/stamps"
 	log.Println("Starting scheduled job to fetch users...")
 	req, err := http.NewRequest("GET", url, nil)
@@ -20,7 +32,7 @@ func (h *Handler) CronJobTask(c echo.Context) {
 		log.Printf("Error creating request: %v", err)
 	}
 	req.Header.Add("accept", "application/json")
-	req.Header.Add("Authorization", "Bearer"+ token)
+	req.Header.Add("Authorization", "Bearer"+ bot_key)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -43,7 +55,7 @@ func (h *Handler) CronJobTask(c echo.Context) {
 		return
 	}
 
-	if err := h.repo.UpdateStamp(c.Request().Context(), apiResp); err != nil {
+	if err := h.repo.UpdateStamp(ctx, apiResp); err != nil {
 		log.Printf("Error saving stamps: %v", err)
 
 		return
