@@ -9,22 +9,26 @@ import (
 	"github.com/traP-jp/1m25_11/server/internal/repository"
 )
 
+type descriptionPayload struct {
+	Description string `json:"description"`
+}
+
 func (h *Handler) createDescriptions(c echo.Context) error {
 	stampID, err := uuid.Parse(c.Param("stamp_id"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	creatorID, err := uuid.Parse(c.Param("creator_id"))
-	if err != nil {
+	creatorID := uuid.Nil // 仮でNil UUIDを用いている
+	payload := new(descriptionPayload)
+	if err = c.Bind(payload); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	description := c.Param("description")
-	if description == "" {
+	if payload.Description == "" {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(errors.New("description cannot be empty"))
 	}
 	err = h.repo.CreateDescriptions(c.Request().Context(), repository.CreateDescriptionParams{
 		StampID:     stampID,
-		Description: description,
+		Description: payload.Description,
 		CreatorID:   creatorID,
 	})
 	if err != nil {
@@ -52,15 +56,15 @@ func (h *Handler) updateDescriptions(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	creatorID, err := uuid.Parse(c.Param("creator_id"))
-	if err != nil {
+	creatorID := uuid.Nil // 仮でNil UUIDを用いている
+	payload := new(descriptionPayload)
+	if err = c.Bind(payload); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	description := c.Param("description")
-	if description == "" {
+	if payload.Description == "" {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(errors.New("description cannot be empty"))
 	}
-	if err = h.repo.UpdateDescriptions(c.Request().Context(), stampID, creatorID, description); err != nil {
+	if err = h.repo.UpdateDescriptions(c.Request().Context(), stampID, creatorID, payload.Description); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
@@ -72,10 +76,7 @@ func (h *Handler) deleteDescriptions(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	creatorID, err := uuid.Parse(c.Param("creator_id"))
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
-	}
+	creatorID := uuid.Nil // 仮でNil UUIDを用いている
 	if err = h.repo.DeleteDescriptions(c.Request().Context(), stampID, creatorID); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
