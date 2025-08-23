@@ -31,7 +31,7 @@
     >
       <UAvatar
         :src="`https://q.trap.jp/api/v3/public/icon/${userName}`"
-        class="text-5xl"
+        class="text-5xl cursor-pointer"
       />
     </UDropdownMenu>
 
