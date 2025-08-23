@@ -3,28 +3,21 @@
     <p>説明文から検索</p>
     <UInput
       v-model="searchDescriptionValue"
-      icon="i-lucide-search"
       placeholder="説明文から検索"
       class="mb-5 w-full"
     />
     <p>スタンプ名から検索</p>
     <UInput
       v-model="searchStampNameValue"
-      icon="i-lucide-search"
       placeholder="スタンプ名から検索"
       class="mb-5 w-full"
     />
-    <UFormField
-      label="タグ名を指定"
-      required
-      icon="i-lucide-search"
-    >
-      <UInputTags
-        v-model="searchStampTagValue"
-        placeholder="タグ名を入力してください"
-        class="mb-5 w-full"
-      />
-    </UFormField>
+    <p>タグ名を指定</p>
+    <UInputTags
+      v-model="searchStampTagValue"
+      placeholder="タグ名を入力してください"
+      class="mb-5 w-full"
+    />
     <p>作成日を指定</p>
     <UPopover>
       <UButton
@@ -57,14 +50,15 @@
     </UPopover>
     <div class="flex justify-between mt-5">
       <UButton
-        label="リセット"
+        label="クリア"
         color="neutral"
         variant="outline"
         class="hover:cursor-pointer w-1/4 grid place-items-center"
+        @click="resetSearchState"
       />
       <UButton
         label="検索"
-        class="hover:cursor-pointer w-1/4 grid place-items-center"
+        class="hover:cursor-pointer w-7/12 grid place-items-center"
       />
     </div>
   </UContainer>
@@ -86,4 +80,16 @@ const searchDateValue = shallowRef({
   start: now.add({ months: -1 }),
   end: now.add({ days: -1 }),
 });
+
+// 検索条件をリセットする関数
+const resetSearchState = () => {
+  searchDescriptionValue.value = '';
+  searchStampNameValue.value = '';
+  searchStampTagValue.value = [];
+
+  searchDateValue.value = {
+    start: now.add({ months: -1 }),
+    end: now.add({ days: -1 }),
+  };
+};
 </script>
