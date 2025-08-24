@@ -70,7 +70,7 @@ components:
             $ref: "#/components/schemas/TagSummary"
       required:
         - stamp_id
-        - name
+        - stamp_name
         - file_id
         - creator_id
         - is_unicode
@@ -147,7 +147,7 @@ components:
           type: string
       required:
         - tag_id
-        - name
+        - tag_name
 
     StampDescription:
       type: object
@@ -209,7 +209,8 @@ components:
               stamp:
                 $ref: "#/components/schemas/StampSummary"
               description_id:
-                type: uuid
+                type: string
+                format: uuid
                 description: ユーザーが投稿した説明文のUUID
       required:
         - user_id
@@ -396,16 +397,8 @@ paths:
                 $ref: "#/components/schemas/SearchResult"
         "400":
           description: リクエストが不正
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
         "401":
           description: 認証エラー
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
 
   /stamps/ranking:
     get:
@@ -453,16 +446,8 @@ paths:
                   $ref: "#/components/schemas/RankingResult"
         "400":
           description: リクエストが不正
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
         "401":
           description: 認証エラー
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
 
   /stamps:
     get:
@@ -480,10 +465,6 @@ paths:
                   $ref: "#/components/schemas/StampSummary"
         "401":
           description: 認証エラー
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
 
   /stamps/{stampId}:
     get:
@@ -508,10 +489,6 @@ paths:
           description: 認証エラー
         "404":
           description: スタンプが見つからない
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
 
   /stamps/{stampId}/tags/{tagId}:
     post:
@@ -542,10 +519,7 @@ paths:
           description: スタンプまたはタグが見つからない
         "409":
           description: すでに追加されているタグである
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+
     delete:
       tags:
         - Stamps
@@ -574,10 +548,6 @@ paths:
           description: スタンプまたはタグが見つからない
         "409":
           description: 現在紐づいていないタグである
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
 
   /stamps/{stampId}/descriptions:
     get:
@@ -605,10 +575,7 @@ paths:
           description: 認証エラー
         "404":
           description: スタンプが見つからない
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+
     post:
       tags:
         - Stamps
@@ -681,10 +648,7 @@ paths:
           description: 編集する権限がない
         "404":
           description: 自分が投稿した説明文が見つからない
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+
     delete:
       tags:
         - Stamps
@@ -706,10 +670,6 @@ paths:
           description: 削除する権限がない
         "404":
           description: 自分が投稿した説明文が見つからない
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
 
   /tags:
     get:
@@ -780,10 +740,7 @@ paths:
           description: 認証エラー
         "404":
           description: タグが見つからない
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+
     put:
       tags:
         - Tags
@@ -815,10 +772,7 @@ paths:
           description: 権限がない
         "404":
           description: タグが見つからない
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+
     delete:
       tags:
         - Tags
@@ -839,10 +793,6 @@ paths:
           description: 管理者権限がない
         "404":
           description: タグが見つからない
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
 
   /tags/{tagId}/stamps:
     get:
@@ -885,10 +835,6 @@ paths:
           description: 認証エラー
         "404":
           description: タグが見つからない
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
 
   /login:
     get:
