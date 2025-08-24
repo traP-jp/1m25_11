@@ -68,6 +68,22 @@ const navigationItems = ref<NavigationMenuItem[][]>([
       icon: 'material-symbols:tag',
       to: '/tags',
     },
+    {
+      label: 'Developer',
+      icon: 'material-symbols:code',
+      children: [
+        {
+          label: 'Swagger viewer',
+          to: '/developer',
+          icon: 'material-symbols:info',
+        },
+        {
+          label: 'GitHub',
+          to: 'https://github.com/traP-jp/1m25_11',
+          icon: 'material-symbols:arrow-outward',
+        },
+      ],
+    },
   ],
 ]);
 
