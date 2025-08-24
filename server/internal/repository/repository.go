@@ -10,6 +10,14 @@ type Repository struct {
 	db *sqlx.DB
 }
 
+func (r *Repository) CreateTag(context context.Context, params CreateTagParams) (any, any) {
+	panic("unimplemented")
+}
+
+func (r *Repository) GetTagDetails(context context.Context, tagID uuid.UUID) (any, error) {
+	panic("unimplemented")
+}
+
 func (r *Repository) IsAdmin(context context.Context, userID uuid.UUID) (any, error) {
 	panic("unimplemented")
 }
