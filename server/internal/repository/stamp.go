@@ -28,7 +28,11 @@ type (
 		FileID uuid.UUID `db:"file_id"`
 	}
 
+	
+	
+
 )
+
 
 func (r *Repository) GetStampDetails(ctx context.Context) ([]*Stamp, error) {
 	stamps := []*Stamp{}
@@ -72,3 +76,5 @@ func (r *Repository) GetStampByStampID(ctx context.Context, stampID uuid.UUID) (
 
 	return stampByStampID, nil
 }
+
+

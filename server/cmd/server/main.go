@@ -4,9 +4,11 @@ import (
 	"github.com/traP-jp/1m25_11/server/cmd/server/server"
 	"github.com/traP-jp/1m25_11/server/pkg/config"
 	"github.com/traP-jp/1m25_11/server/pkg/database"
-
+	"github.com/go-co-op/gocron/v2" 
+ 	"log"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"context"	
 )
 
 func main() {
@@ -39,7 +41,25 @@ func main() {
 	s.SetupRoutes(v1API)
 
 	// Setup OpenAPI routes (at /api root)
-	s.SetupAPIRoutes(e)
+	s.SetupAPIRoutes(e) 
+
+	//gocron
+	ss, er := gocron.NewScheduler()
+	if er != nil{
+		log.Fatal(er)
+	}
+	
+
+	_, err = ss.NewJob(
+		gocron.CronJob("@every 10s", false),
+    gocron.NewTask(s.Handler.CronJobTask, context.Background()),
+	)
+
+	if err != nil{
+		log.Fatal(err)
+	}
+	ss.Start()
 
 	e.Logger.Fatal(e.Start(config.AppAddr()))
+
 }
