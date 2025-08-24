@@ -50,7 +50,7 @@ func main() {
 	}
 
 	_, err = ss.NewJob(
-		gocron.CronJob("*/2 * * * *", false),
+		gocron.CronJob("@daily", false),
 		gocron.NewTask(s.Handler.CronJobTask, context.Background()),
 	)
 
