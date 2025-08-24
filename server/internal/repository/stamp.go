@@ -11,23 +11,22 @@ import (
 type (
 	// stamps table
 	Stamp struct {
-		ID    uuid.UUID `db:"id"`
-		Name  string    `db:"name"`
-		FileID uuid.UUID    `db:"file_id"`
-		CreatorID uuid.UUID `db:"creator_id"`
-		IsUnicode bool `db:"is_unicode"`
-		CreatedAt  time.Time `db:"created_at"`
-		UpdatedAt time.Time `db:"updated_at"`
-		CountMonthly int `db:"count_monthly"`
-		CountTotal int64 `db:"count_total"`
+		ID           uuid.UUID `db:"id" json:"id"`
+		Name         string    `db:"name" json:"name"`
+		FileID       uuid.UUID `db:"file_id" json:"file_id"`
+		CreatorID    uuid.UUID `db:"creator_id" json:"creator_id"`
+		IsUnicode    bool      `db:"is_unicode" json:"is_unicode"`
+		CreatedAt    time.Time `db:"created_at" json:"created_at"`
+		UpdatedAt    time.Time `db:"updated_at" json:"updated_at"`
+		CountMonthly int       `db:"count_monthly" json:"count_monthly"`
+		CountTotal   int64     `db:"count_total" json:"count_total"`
 	}
 
 	StampSummary struct {
-		ID    uuid.UUID `db:"id"`
-		Name  string    `db:"name"`
-		FileID uuid.UUID `db:"file_id"`
+		ID     uuid.UUID `db:"id" json:"id"`
+		Name   string    `db:"name" json:"name"`
+		FileID uuid.UUID `db:"file_id" json:"file_id"`
 	}
-
 )
 
 func (r *Repository) GetStampDetails(ctx context.Context) ([]*Stamp, error) {
@@ -35,7 +34,7 @@ func (r *Repository) GetStampDetails(ctx context.Context) ([]*Stamp, error) {
 	if err := r.db.SelectContext(ctx, &stamps, "SELECT * FROM stamps"); err != nil {
 		return nil, fmt.Errorf("select stamps: %w", err)
 	}
-	
+
 	return stamps, nil
 }
 
@@ -44,7 +43,7 @@ func (r *Repository) GetStampSummaries(ctx context.Context) ([]*StampSummary, er
 	if err := r.db.SelectContext(ctx, &stampSummaries, "SELECT id,name,file_id FROM stamps"); err != nil {
 		return nil, fmt.Errorf("select stamps: %w", err)
 	}
-	
+
 	return stampSummaries, nil
 }
 
