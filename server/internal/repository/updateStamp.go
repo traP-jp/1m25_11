@@ -2,11 +2,10 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
-	"log"
+	"github.com/jmoiron/sqlx" 
 	"time"
-
+	"log"
 	"github.com/google/uuid"
 )
 
@@ -22,73 +21,152 @@ type(
     	HasThumbnail bool      `json:"hasThumbnail"`
 	}
 
+	StampData struct {
+		ID           uuid.UUID    `db:"id" json:"id"`
+   		Name         string    `db:"name" json:"name"`
+  		CreatorID    uuid.UUID   `db:"creator_id" json:"creator_id"`
+   		FileID       uuid.UUID   `db:"file_id" json:"file_id"`
+   		IsUnicode    bool      `db:"is_unicode" json:"is_unicode"`
+    	CreatedAt    time.Time `db:"created_at" json:"created_at"`
+    	UpdatedAt    time.Time `db:"updated_at" json:"updated_at"`	
+	}
+
 )
 
 
 func (r *Repository) SaveStamp(ctx context.Context, stamps []*ResponseStamp) error {
+	if len(stamps) == 0 {
+		return nil 
+	}
+	tx, err := r.db.BeginTxx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("begin transaction: %w", err)
+	}
+	defer tx.Rollback()
 
-	existingIDs := make(map[uuid.UUID]time.Time)
-	
-	for _, resStamp := range stamps {
-		
-		id := resStamp.ID
-		updatedAt, err := r.FindByID(ctx, id); 
-		if err == sql.ErrNoRows {
-			err := r.InsertStamp(ctx, resStamp)	
-			if err != nil{
-				log.Printf("failed to insert stamp:%v", err)
-
-				return fmt.Errorf("failed to insert stamp:%w",err)
-			}
-		}else if err != nil{
-			log.Printf("failed to find stamp:%v", err)
-
-			return fmt.Errorf("failed to find stamp:%w",err)
-		}else{
-			if updatedAt.Equal(resStamp.UpdatedAt) {
-			err := r.UpdateStamp(ctx, resStamp)
-			if err != nil {
-				log.Printf("failed to update stamp:%v", err)
-				
-				return fmt.Errorf("failed to update stamp:%w",err)
-			}
-		}
-
-		}
-
-		
-		return nil
-        
+	var ids []uuid.UUID
+	for  _, s := range stamps {
+		ids = append(ids, s.ID)
 	}
 
-	return nil
+     existingStamps, err := r.FindByID(ctx, tx,ids)
+	 if err != nil{
+		return fmt.Errorf("failed to find exisingStamps: %w", err)
+	 }
+
+	 var inserts []*StampData
+	 var updates []*StampData
+
+	 for _, s := range stamps {
+		if existingUpdatedAt, ok := existingStamps[s.ID]; ok {
+			if !existingUpdatedAt.Equal(s.UpdatedAt){
+				updates = append(updates, &StampData{
+					ID: s.ID,
+					Name: s.Name,
+					CreatorID: s.CreatorID,
+					FileID: s.FileID,
+					IsUnicode: s.IsUnicode,
+					CreatedAt: s.CreatedAt,
+					UpdatedAt: time.Now(),
+				})
+			}
+		}else{
+
+			inserts = append(inserts, &StampData{
+				ID: s.ID,
+				Name: s.Name,
+				CreatorID: s.CreatorID,
+				FileID: s.FileID,
+				IsUnicode: s.IsUnicode,
+				CreatedAt: s.CreatedAt,
+				UpdatedAt: s.UpdatedAt,
+			})
+		}		
+	 }
+	if len(inserts) > 0 {
+		if err := r.InsertStamps(ctx,tx, inserts); err != nil {
+			return fmt.Errorf("2failed to insert stamps: %w", err)
+		}
+	}
+	if len(updates) > 0 {
+		if err := r.UpdateStamps(ctx, tx, updates); err != nil {
+			return fmt.Errorf("failed to update stamps: %w", err)
+		}
+	}
+
+
+	return tx.Commit()
+	
 }
 
-func (r *Repository) FindByID(ctx context.Context, id uuid.UUID)(time.Time, error) {
-	updatedAt := time.Time{}
-	err := r.db.GetContext(ctx, &updatedAt,"SELECT updated_at FROM stamps WHERE id = ?",id); 	
+func (r *Repository) FindByID(ctx context.Context,tx *sqlx.Tx , ids[]uuid.UUID)(map[uuid.UUID]time.Time, error) {
+
+ 	query, args, err := sqlx.In("SELECT id, updated_at FROM stamps WHERE id IN (?)", ids)
+
+    if err != nil {
+        return nil, fmt.Errorf("failed to create IN query: %w", err)
+    }
+	query = tx.Rebind(query)
+
+    
+	updatedAts := make(map[uuid.UUID]time.Time)
+
+	rows, err := tx.QueryContext(ctx, query, args...)	
 
 	 if err != nil {      
-		return time.Time{}, err
+		return  nil, fmt.Errorf("failed to scan stamp row: %w", err)
     }
+	defer rows.Close()
+
+	for rows.Next() {
+		var id uuid.UUID
+		var updatedAt time.Time
+		if err := rows.Scan(&id, &updatedAt); err != nil {
+			return nil, fmt.Errorf("failed to scan stamp row: %w", err)
+		}
+		updatedAts[id] = updatedAt
+	}
     
-    return updatedAt,nil
+    return updatedAts, nil
 }
 
 
 
-func (r *Repository) InsertStamp(ctx context.Context, resStamp *ResponseStamp) error {
-	if _, err := r.db.ExecContext(ctx, "INSERT INTO stamps(id,name,creator_id,file_id,is_unicode,created_at,updated_at,count_monthly,count_total) VALUES(?,?,?,?,?,?,?,0,0)", resStamp.ID, resStamp.Name, resStamp.CreatorID, resStamp.FileID, resStamp.IsUnicode, resStamp.CreatedAt, resStamp.UpdatedAt); err != nil {
-		return err
+
+func (r *Repository) InsertStamps(ctx context.Context,tx *sqlx.Tx, stamps []*StampData) error {
+	_, err := tx.NamedExecContext(ctx, `
+        INSERT INTO stamps(id, name, creator_id, file_id, is_unicode, created_at, updated_at, count_monthly, count_total)
+        VALUES (:id, :name, :creator_id , :file_id, :is_unicode, :created_at, :updated_at, 0, 0)
+    `, stamps)
+	log.Printf("insertStamps run")
+	
+	if err != nil {
+		log.Printf("1Error inserting stamps: %v", err)
+
+		return fmt.Errorf("failed to bulk insert stamps: %w", err)
 	}
 
 	return nil
-	
 }
 
-func (r *Repository) UpdateStamp(ctx context.Context, resStamp *ResponseStamp) error {
-	if _, err := r.db.ExecContext(ctx, "UPDATE stamps SET name = ?,creator_id = ?,file_id = ?,is_unicode = ?,updated_at = ? WHERE id = ?", resStamp.Name, resStamp.CreatorID, resStamp.FileID, resStamp.IsUnicode, time.Now(), resStamp.ID); err != nil {
-		return err
+	
+
+
+
+func (r *Repository) UpdateStamps(ctx context.Context,tx *sqlx.Tx, stamps []*StampData) error {
+	for _, s := range stamps {
+		_, err := tx.NamedExecContext(ctx, `
+            UPDATE stamps SET
+                name = :name,
+                creator_id = :creator_id,
+                file_id = :file_id,
+                is_unicode = :is_unicode,
+                updated_at = :updated_at
+            WHERE id = :id
+        `, s)
+		if err != nil {
+			return fmt.Errorf("failed to update stamp %s: %w", s.ID, err)
+		}
 	}
 
 	return nil
