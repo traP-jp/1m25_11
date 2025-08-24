@@ -83,7 +83,7 @@ func (r *Repository) SaveStamp(ctx context.Context, stamps []*ResponseStamp) err
 	}
 	if len(inserts) > 0 {
 		if err := r.InsertStamps(ctx, tx, inserts); err != nil {
-			return fmt.Errorf("2failed to insert stamps: %w", err)
+			return fmt.Errorf("failed to insert stamps: %w", err)
 		}
 	}
 	if len(updates) > 0 {
@@ -131,10 +131,9 @@ func (r *Repository) InsertStamps(ctx context.Context, tx *sqlx.Tx, stamps []*St
         INSERT INTO stamps(id, name, creator_id, file_id, is_unicode, created_at, updated_at, count_monthly, count_total)
         VALUES (:id, :name, :creator_id , :file_id, :is_unicode, :created_at, :updated_at, 0, 0)
     `, stamps)
-	log.Printf("insertStamps run")
 
 	if err != nil {
-		log.Printf("1Error inserting stamps: %v", err)
+		log.Printf("Error inserting stamps: %v", err)
 
 		return fmt.Errorf("failed to bulk insert stamps: %w", err)
 	}
