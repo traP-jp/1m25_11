@@ -27,7 +27,7 @@ func (h *Handler) createStampTags(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
-	return c.NoContent(http.StatusCreated)
+	return c.NoContent(http.StatusNoContent)
 }
 func (h *Handler) deleteStampTags(c echo.Context) error {
 	stampID, err := uuid.Parse(c.Param("stampId"))
