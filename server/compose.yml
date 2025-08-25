@@ -5,12 +5,17 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    env_file: .env
+
+
     environment:
       NS_MARIADB_USER: root
       NS_MARIADB_PASSWORD: pass
       NS_MARIADB_HOSTNAME: db
       NS_MARIADB_PORT: "3306"
       NS_MARIADB_DATABASE: app
+
+  
     depends_on:
       db:
         condition: service_healthy

@@ -31,7 +31,10 @@ func (r *Repository) GetUsers(ctx context.Context) ([]*User, error) {
 }
 
 func (r *Repository) CreateUser(ctx context.Context, params CreateUserParams) (uuid.UUID, error) {
-	userID := uuid.New()
+	userID, err := uuid.NewV7()
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("generate uuid: %w", err)
+	}
 	if _, err := r.db.ExecContext(ctx, "INSERT INTO users (id, name, email) VALUES (?, ?, ?)", userID, params.Name, params.Email); err != nil {
 		return uuid.Nil, fmt.Errorf("insert user: %w", err)
 	}
