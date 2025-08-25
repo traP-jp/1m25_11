@@ -1,4 +1,4 @@
-openapi: 3.1.1
+openapi: 3.0.1
 info:
   title: スタンプ検索サービス
   description: |-
@@ -217,9 +217,8 @@ components:
         - is_admin
         - stamps_user_owned
         - tags_user_created
-        - stamps_
-        - tagged_stamps
-        - created_descriptions
+        - stamps_user_tagged
+        - descriptions_user_created
 
     UserProfile:
       type: object
@@ -253,19 +252,24 @@ components:
     RankingResult:
       type: object
       properties:
-        stamp:
-          $ref: "#/components/schemas/StampSummary"
-        count:
+        stamp_id:
+          type: string
+          format: uuid
+        body_count:
           type: integer
-          description: 指定した期間で各スタンプが使用された回数
+          description: 指定した期間で、各スタンプが本文中で使用された回数
+        reaction_count:
+          type: integer
+          description: 指定した期間で、各スタンプがリアクションで使用された回数
       required:
-        - stamp
-        - count
+        - stamp_id
+        - body_count
+        - reaction_count
 
   securitySchemes:
     traQOAuth2:
       type: oauth2
-      description: traQの認証に基づいたOAuth2.0 Authorization Code Flow
+      description: traQ client を用いて認証を行う
       flows:
         authorizationCode:
           authorizationUrl: https://q.trap.jp/api/v3/oauth2/authorize
@@ -285,7 +289,7 @@ paths:
       tags:
         - Search & Ranking
       summary: スタンプ検索
-      description: 複数の検索条件を組み合わせてスタンプを検索します。
+      description: 複数の検索条件を組み合わせ、スタンプを検索する。
       parameters:
         - name: q
           in: query
@@ -349,7 +353,7 @@ paths:
             default: all
         - name: stamp_type_animation
           in: query
-          description: アニメーションスタンプの種類フィルタ
+          description: アニメーションかどうか指定(現時点ではallのみ)
           schema:
             type: string
             enum: [all, animated_only, not_animated_only]
@@ -368,7 +372,7 @@ paths:
             minimum: 0
         - name: fuzzy
           in: query
-          description: あいまい検索を有効にするか（将来実装予定）
+          description: あいまい検索を有効にするか（現時点では未実装）
           schema:
             type: boolean
             default: false
@@ -396,7 +400,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/SearchResult"
         "400":
-          description: リクエストが不正
+          description: リクエスト不正
         "401":
           description: 認証エラー
 
@@ -405,36 +409,22 @@ paths:
       tags:
         - Search & Ranking
       summary: スタンプ使用回数ランキング
+      description: スタンプとその使用回数のデータを返却する
       parameters:
         - name: since
           in: query
           required: false
-          description: 開始日 (YYYY-MM-DD)、未指定時は過去1ヶ月
+          description: 開始日 (YYYY-MM-DD)、未指定時は1ヶ月前
           schema:
             type: string
             format: date
         - name: until
           in: query
           required: false
-          description: 終了日 (YYYY-MM-DD)、未指定時は昨日、許可される日付はsince以降、昨日までのみ
+          description: 終了日 (YYYY-MM-DD)、未指定時は昨日。since以降、昨日までの入力を許可
           schema:
             type: string
             format: date
-        - name: offset
-          in: query
-          description: ページネーションのオフセット
-          schema:
-            type: integer
-            minimum: 0
-            default: 0
-        - name: limit
-          in: query
-          description: 1ページあたりの取得件数
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 50
       responses:
         "200":
           description: 成功
@@ -445,7 +435,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/RankingResult"
         "400":
-          description: リクエストが不正
+          description: リクエスト不正
         "401":
           description: 認証エラー
 
@@ -498,7 +488,7 @@ paths:
       parameters:
         - name: stampId
           in: path
-          required: false
+          required: true
           schema:
             type: string
             format: uuid
