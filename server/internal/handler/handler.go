@@ -22,19 +22,19 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 	{
 		pingAPI.GET("", h.Ping)
 	}
-	
+
 	stampAPI := api.Group("/stamps")
 	{
-		stampAPI.GET("/search",h.getSearch)
-		stampAPI.GET("/ranking",h.getRanking)
-		stampAPI.GET("",h.getStamps)
-		stampAPI.GET("/:stampId",h.getDetails)
-		stampAPI.POST("/:stampId/tags",h.createStampTags)
-		stampAPI.DELETE("/:stampId/tags/:tagId",h.deleteStampTags)
-		stampAPI.GET("/:stampId/descriptions",h.getDescriptions)
-		stampAPI.POST("/:stampId/descriptions",h.createDescriptions)
-		stampAPI.PUT("/:stampId/description",h.updateDescriptions)
-		stampAPI.DELETE("/:stampId/descriptions",h.deleteDescriptions)
+		stampAPI.GET("/search", h.getSearch)
+		stampAPI.GET("/ranking", h.getRanking)
+		stampAPI.GET("", h.getStamps)
+		stampAPI.GET("/:stampId", h.getDetails)
+		stampAPI.POST("/:stampId/tags", h.createStampTags)
+		stampAPI.DELETE("/:stampId/tags/:tagId", h.deleteStampTags)
+		stampAPI.GET("/:stampId/descriptions", h.getDescriptions)
+		stampAPI.POST("/:stampId/descriptions", h.createDescriptions)
+		stampAPI.PUT("/:stampId/description", h.updateDescriptions)
+		stampAPI.DELETE("/:stampId/descriptions", h.deleteDescriptions)
 	}
 
 	tagAPI := api.Group("/tags")
@@ -50,6 +50,8 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 	{
 		creatorAPI.GET("", h.getCreatorDetails)
 	}
-
-	
+	userAPI := api.Group("/users-list")
+	{
+		userAPI.GET("", h.getUsersList)
+	}
 }
