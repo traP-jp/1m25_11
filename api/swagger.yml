@@ -230,7 +230,7 @@ components:
         traq_id:
           type: string
           description: traQId(ユーザー名)
-        traq_display_name:
+        user_display_name:
           type: string
           description: traQ での表示名
         user_icon_file_id:
