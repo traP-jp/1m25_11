@@ -24,10 +24,10 @@ type (
 	}
 
 	ResponseUser struct {
-		ID          uuid.UUID `json:"id"`
-		Name        string    `json:"name"`
-		DisplayName string    `json:"display_name"`
-		IconFileID  uuid.UUID `json:"icon_file_id"`
+		ID          uuid.UUID `json:"user_id"`
+		Name        string    `json:"traq_id"`
+		DisplayName string    `json:"user_display_name"`
+		IconFileID  uuid.UUID `json:"user_icon_file_id"`
 	}
 )
 
