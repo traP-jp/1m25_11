@@ -593,10 +593,6 @@ paths:
       responses:
         "201":
           description: 作成成功
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/StampDescription"
         "400":
           description: リクエストが不正
         "401":
@@ -698,7 +694,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Tag"
+                $ref: "#/components/schemas/TagSummary"
         "400":
           description: リクエストが不正
         "401":
