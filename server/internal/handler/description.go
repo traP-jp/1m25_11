@@ -61,6 +61,7 @@ func (h *Handler) getDescriptions(c echo.Context) error {
 		if errors.Is(err, repository.ErrUnauthorized) {
 			return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
 		}
+
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
