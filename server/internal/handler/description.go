@@ -114,6 +114,7 @@ func (h *Handler) deleteDescriptions(c echo.Context) error {
 		if errors.Is(err, repository.ErrForbidden) {
 			return echo.NewHTTPError(http.StatusForbidden).SetInternal(err)
 		}
+
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
