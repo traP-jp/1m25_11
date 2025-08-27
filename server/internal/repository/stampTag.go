@@ -45,6 +45,8 @@ func (r *Repository) GetSearchStampTags(ctx context.Context, keyword string) ([]
 var(
 	ErrStampNotFound = errors.New("stamp not found")
 	ErrTagNotFound = errors.New("tag not found")
-	ErrStampTagNotFound = errors.New("stamp tag not found")
-	ErrStampTagConflict = errors.New("stamp tag already exists")
+	ErrTagAlreadyAdded = errors.New("tag already added")
+	ErrTagNotLinked = errors.New("tag not linked")
+	ErrUnauthorized = errors.New("unauthorized")
+	ErrForbidden = errors.New("forbidden")
 )

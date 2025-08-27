@@ -31,7 +31,7 @@ func (h *Handler) createStampTags(c echo.Context) error {
 		CreatorID: creatorID,
 	})
 	if err != nil {
-		if errors.Is(err, repository.ErrStampTagConflict) {
+		if errors.Is(err, repository.ErrTagAlreadyAdded) {
 			return echo.NewHTTPError(http.StatusConflict).SetInternal(err)
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
@@ -42,16 +42,22 @@ func (h *Handler) createStampTags(c echo.Context) error {
 func (h *Handler) deleteStampTags(c echo.Context) error {
 	stampID, err := uuid.Parse(c.Param("stampId"))
 	if err != nil {
+		if errors.Is(err, repository.ErrStampNotFound) {
+			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
+		}
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
 	tagID, err := uuid.Parse(c.Param("tagId"))
 	if err != nil {
+		if errors.Is(err, repository.ErrTagNotFound) {
+			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
+		}
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
 
 	err = h.repo.DeleteStampTags(c.Request().Context(), stampID, tagID)
 	if err != nil {
-		if errors.Is(err, repository.ErrStampTagNotFound) {
+		if errors.Is(err, repository.ErrTagNotLinked) {
 			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
