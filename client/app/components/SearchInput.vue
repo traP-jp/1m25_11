@@ -16,7 +16,7 @@
       <UDrawer
         v-model:open="isSearchModalOpen"
         :handle="false"
-        title="Drawer with title"
+        title="条件を設定"
       >
         <!-- input要素の下にある検索条件を設定するボタン(メニューが開く) -->
         <UButton
