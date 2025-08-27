@@ -34,7 +34,7 @@ func (h *Handler) createDescriptions(c echo.Context) error {
 	if err != nil {
 		if errors.Is(err, repository.ErrStampNotFound) {
 			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
-		} // swaggerに書いてない
+		}
 		if errors.Is(err, repository.ErrDescriptionAlreadyExists) {
 			return echo.NewHTTPError(http.StatusConflict).SetInternal(err)
 		}
