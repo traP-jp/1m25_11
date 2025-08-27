@@ -29,7 +29,7 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 		stampAPI.GET("/ranking",h.getRanking)
 		stampAPI.GET("",h.getStamps)
 		stampAPI.GET("/:stampId",h.getDetails)
-		stampAPI.POST("/:stampId/tags",h.createStampTags)
+		stampAPI.POST("/:stampId/tags/:tagId",h.createStampTags)
 		stampAPI.DELETE("/:stampId/tags/:tagId",h.deleteStampTags)
 		stampAPI.GET("/:stampId/descriptions",h.getDescriptions)
 		stampAPI.POST("/:stampId/descriptions",h.createDescriptions)
