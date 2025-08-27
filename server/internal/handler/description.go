@@ -14,7 +14,7 @@ type descriptionPayload struct {
 }
 
 func (h *Handler) createDescriptions(c echo.Context) error {
-	stampID, err := uuid.Parse(c.Param("stamp_id"))
+	stampID, err := uuid.Parse(c.Param("stampID"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
@@ -41,6 +41,7 @@ func (h *Handler) createDescriptions(c echo.Context) error {
 		if errors.Is(err, repository.ErrUnauthorized) {
 			return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
 		}
+
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
@@ -48,7 +49,7 @@ func (h *Handler) createDescriptions(c echo.Context) error {
 }
 
 func (h *Handler) getDescriptions(c echo.Context) error {
-	stampID, err := uuid.Parse(c.Param("stamp_id"))
+	stampID, err := uuid.Parse(c.Param("stampID"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
@@ -67,7 +68,7 @@ func (h *Handler) getDescriptions(c echo.Context) error {
 }
 
 func (h *Handler) updateDescriptions(c echo.Context) error {
-	stampID, err := uuid.Parse(c.Param("stamp_id"))
+	stampID, err := uuid.Parse(c.Param("stampID"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
@@ -96,7 +97,7 @@ func (h *Handler) updateDescriptions(c echo.Context) error {
 }
 
 func (h *Handler) deleteDescriptions(c echo.Context) error {
-	stampID, err := uuid.Parse(c.Param("stamp_id"))
+	stampID, err := uuid.Parse(c.Param("stampID"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
