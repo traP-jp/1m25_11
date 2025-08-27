@@ -9,7 +9,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "openapi-generate": "openapi-typescript ../api/swagger.yml -o shared/types/generated.d.ts"
   },
   "dependencies": {
     "@iconify-json/material-symbols": "^1.2.32",
@@ -19,10 +20,12 @@
     "@nuxt/ui": "^3.3.2",
     "eslint": "^9.33.0",
     "nuxt": "^4.0.3",
+    "openapi-fetch": "^0.14.0",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "openapi-typescript": "^7.9.1",
     "typescript": "^5.9.2"
   }
 }
