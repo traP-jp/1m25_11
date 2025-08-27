@@ -33,7 +33,7 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 		stampAPI.DELETE("/:stampId/tags/:tagId", h.deleteStampTags)
 		stampAPI.GET("/:stampId/descriptions", h.getDescriptions)
 		stampAPI.POST("/:stampId/descriptions", h.createDescriptions)
-		stampAPI.PUT("/:stampId/description", h.updateDescriptions)
+		stampAPI.PUT("/:stampId/descriptions", h.updateDescriptions)
 		stampAPI.DELETE("/:stampId/descriptions", h.deleteDescriptions)
 	}
 
