@@ -4,26 +4,33 @@
       タグ詳細
     </h1>
 
-    <h2 class="text-xl font-semibold mb-2">
+    <h2 class="text-2xl font-semibold mb-4">
       #{{ route.params.tagName }}
     </h2>
-    <dl class="space-y-2 mb-6">
-      <div class="flex justify-between">
+    <dl class="text-xl space-y-2 mb-6">
+      <div class="flex justify-start">
         <dt class="font-medium">
           作られた日
         </dt>
-        <dd />
+        <dd class="font-medium ml-4">
+          333
+        </dd>
       </div>
-      <div class="flex justify-between">
+      <div class="flex justify-start">
         <dt class="font-medium">
           作った人
         </dt>
-        <dd />
+        <dd class="font-medium ml-4">
+          333
+        </dd>
       </div>
-      <div class="flex justify-between">
+      <div class="flex justify-start">
         <dt class="font-medium">
           スタンプの数
         </dt>
+        <dd class="font-medium ml-4">
+          333
+        </dd>
       </div>
       <StampGrid />
     </dl>
