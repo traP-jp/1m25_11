@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -39,3 +40,11 @@ func (r *Repository) GetSearchStampTags(ctx context.Context, keyword string) ([]
 
 	return stampIDs, nil
 }
+
+
+var(
+	ErrStampNotFound = errors.New("stamp not found")
+	ErrTagNotFound = errors.New("tag not found")
+	ErrStampTagNotFound = errors.New("stamp tag not found")
+	ErrStampTagConflict = errors.New("stamp tag already exists")
+)
