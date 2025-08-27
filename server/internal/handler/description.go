@@ -32,6 +32,15 @@ func (h *Handler) createDescriptions(c echo.Context) error {
 		CreatorID:   creatorID,
 	})
 	if err != nil {
+		if errors.Is(err, repository.ErrStampNotFound) {
+			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
+		} // swaggerに書いてない
+		if errors.Is(err, repository.ErrDescriptionAlreadyExists) {
+			return echo.NewHTTPError(http.StatusConflict).SetInternal(err)
+		}
+		if errors.Is(err, repository.ErrUnauthorized) {
+			return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
+		}
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
@@ -45,6 +54,12 @@ func (h *Handler) getDescriptions(c echo.Context) error {
 	}
 	descriptions, err := h.repo.GetDescriptionsByStampID(c.Request().Context(), stampID)
 	if err != nil {
+		if errors.Is(err, repository.ErrStampNotFound) {
+			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
+		}
+		if errors.Is(err, repository.ErrUnauthorized) {
+			return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
+		}
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
@@ -65,6 +80,15 @@ func (h *Handler) updateDescriptions(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(errors.New("description cannot be empty"))
 	}
 	if err = h.repo.UpdateDescriptions(c.Request().Context(), stampID, creatorID, payload.Description); err != nil {
+		if errors.Is(err, repository.ErrDescriptionNotFound) {
+			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
+		}
+		if errors.Is(err, repository.ErrUnauthorized) {
+			return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
+		}
+		if errors.Is(err, repository.ErrForbidden) {
+			return echo.NewHTTPError(http.StatusForbidden).SetInternal(err)
+		}
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
@@ -78,6 +102,15 @@ func (h *Handler) deleteDescriptions(c echo.Context) error {
 	}
 	creatorID := uuid.Nil // 仮でNil UUIDを用いている
 	if err = h.repo.DeleteDescriptions(c.Request().Context(), stampID, creatorID); err != nil {
+		if errors.Is(err, repository.ErrDescriptionNotFound) {
+			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
+		}
+		if errors.Is(err, repository.ErrUnauthorized) {
+			return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
+		}
+		if errors.Is(err, repository.ErrForbidden) {
+			return echo.NewHTTPError(http.StatusForbidden).SetInternal(err)
+		}
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
