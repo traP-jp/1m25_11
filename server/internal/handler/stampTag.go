@@ -34,6 +34,12 @@ func (h *Handler) createStampTags(c echo.Context) error {
 		if errors.Is(err, repository.ErrTagAlreadyAdded) {
 			return echo.NewHTTPError(http.StatusConflict).SetInternal(err)
 		}
+		if errors.Is(err, repository.ErrUnauthorized) {
+			return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
+		}
+		if errors.Is(err, repository.ErrForbidden) {
+			return echo.NewHTTPError(http.StatusForbidden).SetInternal(err)
+		}
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
@@ -59,6 +65,12 @@ func (h *Handler) deleteStampTags(c echo.Context) error {
 	if err != nil {
 		if errors.Is(err, repository.ErrTagNotLinked) {
 			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
+		}
+		if errors.Is(err, repository.ErrUnauthorized) {
+			return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
+		}
+		if errors.Is(err, repository.ErrForbidden) {
+			return echo.NewHTTPError(http.StatusForbidden).SetInternal(err)
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
