@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/tinyrange/tinyrange/pkg/login"
 	"github.com/traP-jp/1m25_11/server/internal/repository"
 
 	"github.com/labstack/echo/v4"
@@ -53,5 +54,13 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 	userAPI := api.Group("/users-list")
 	{
 		userAPI.GET("", h.getUsersList)
+	}
+	loginAPI := api.Group("/login")
+	{
+		loginAPI.POST("", h.login)
+	}
+	callbackAPI := api.Group("/callback")
+	{
+		callbackAPI.POST("", h.callback)
 	}
 }
