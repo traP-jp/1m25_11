@@ -2,13 +2,14 @@ package main
 
 import (
 	"context"
+	"log"
+
 	"github.com/go-co-op/gocron/v2"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/traP-jp/1m25_11/server/cmd/server/server"
 	"github.com/traP-jp/1m25_11/server/pkg/config"
 	"github.com/traP-jp/1m25_11/server/pkg/database"
-	"log"
 )
 
 func main() {
@@ -39,9 +40,6 @@ func main() {
 	// Setup existing v1 API routes
 	v1API := e.Group("/api/v1")
 	s.SetupRoutes(v1API)
-
-	// Setup OpenAPI routes (at /api root)
-	s.SetupAPIRoutes(e)
 
 	//gocron
 	ss, er := gocron.NewScheduler()
