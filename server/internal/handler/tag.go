@@ -15,7 +15,6 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-
 type TagSummary struct {
 	Id   uuid.UUID `json:"id"`
 	Name string    `json:"name"`
@@ -40,7 +39,6 @@ type TagDetails struct {
 	}
 }
 
-
 type Tag struct {
 	Id        uuid.UUID      `json:"id"`
 	Name      string         `json:"name"`
@@ -50,7 +48,6 @@ type Tag struct {
 	Count     int            `json:"count"`
 	Stamps    []StampSummary `json:"stamps"`
 }
-
 
 type PostTagsJSONRequestBody struct {
 	Name string `json:"name"`
@@ -75,22 +72,20 @@ func (h *Handler) getTags(c echo.Context) error {
 			Name: tag.Name,
 		}
 	}
+
 	return c.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) createTag(c echo.Context) error {
+func (h *Handler) createTags(c echo.Context) error {
 	var body PostTagsJSONRequestBody
 	if err := c.Bind(&body); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, Error{
 			Message: "Invalid request body.",
 		})
 	}
-	userID, ok := c.Get("userID").(uuid.UUID)
-	if !ok {
-		return echo.NewHTTPError(http.StatusUnauthorized, Error{
-			Message: "Authentication failed.",
-		})
-	}
+	userID := uuid.Nil
+	
+	
 
 	newTag, err := h.repo.CreateTags(c.Request().Context(), repository.CreateTagParams{
 		Name:      body.Name,
@@ -102,20 +97,17 @@ func (h *Handler) createTag(c echo.Context) error {
 				Message: "Tag with this name already exists.",
 			})
 		}
+
 		return echo.NewHTTPError(http.StatusInternalServerError, Error{
 			Message: fmt.Sprintf("failed to create tag: %s", err.Error()),
 		})
 	}
 
-	response := Tag{
-		Id:        newTag.ID,
-		Name:      newTag.Name,
-		CreatorId: newTag.CreatorID,
-		CreatedAt: newTag.CreatedAt,
-		UpdatedAt: newTag.UpdatedAt,
-		Count:     0,
-		Stamps:    []StampSummary{},
+	response := TagSummary{
+		Id:   newTag,
+		Name: body.Name,
 	}
+
 	return c.JSON(http.StatusCreated, response)
 }
 
@@ -135,6 +127,7 @@ func (h *Handler) getTagDetails(c echo.Context) error {
 				Message: "Tag not found.",
 			})
 		}
+
 		return echo.NewHTTPError(http.StatusInternalServerError, Error{
 			Message: fmt.Sprintf("failed to get tag details: %s", err.Error()),
 		})
@@ -169,7 +162,7 @@ func (h *Handler) getTagDetails(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) updateTag(c echo.Context) error {
+func (h *Handler) updateTags(c echo.Context) error {
 	tagIDStr := c.Param("tagId")
 	tagID, err := uuid.Parse(tagIDStr)
 	if err != nil {
@@ -197,6 +190,7 @@ func (h *Handler) updateTag(c echo.Context) error {
 				Message: "Tag with this name already exists.",
 			})
 		}
+
 		return echo.NewHTTPError(http.StatusInternalServerError, Error{
 			Message: fmt.Sprintf("failed to update tag: %s", err.Error()),
 		})
@@ -205,7 +199,7 @@ func (h *Handler) updateTag(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
-func (h *Handler) deleteTag(c echo.Context) error {
+func (h *Handler) deleteTags(c echo.Context) error {
 	tagIDStr := c.Param("tagId")
 	tagID, err := uuid.Parse(tagIDStr)
 	if err != nil {
@@ -217,7 +211,7 @@ func (h *Handler) deleteTag(c echo.Context) error {
 	_, ok := c.Get("userID").(uuid.UUID)
 	if !ok {
 		return echo.NewHTTPError(http.StatusUnauthorized, Error{
-			Message: "Authentication failed.",
+			Message: "Authentication failed2.",
 		})
 	}
 
@@ -235,10 +229,12 @@ func (h *Handler) deleteTag(c echo.Context) error {
 				Message: "Tag not found.",
 			})
 		}
+
 		return echo.NewHTTPError(http.StatusInternalServerError, Error{
 			Message: fmt.Sprintf("failed to delete tag: %s", err.Error()),
 		})
 	}
+
 	return c.NoContent(http.StatusNoContent)
 }
 
@@ -251,7 +247,6 @@ func (h *Handler) getStampsByTag(c echo.Context) error {
 		})
 	}
 
-
 	stampSummaries, err := h.repo.GetStampsByTagID(c.Request().Context(), tagID)
 	if err != nil {
 		if errors.Is(err, repository.ErrTagNotFound) {
@@ -259,6 +254,7 @@ func (h *Handler) getStampsByTag(c echo.Context) error {
 				Message: "Tag not found.",
 			})
 		}
+
 		return echo.NewHTTPError(http.StatusInternalServerError, Error{
 			Message: fmt.Sprintf("failed to get stamps by tag: %s", err.Error()),
 		})
