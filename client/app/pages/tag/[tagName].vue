@@ -20,6 +20,11 @@
         <dt class="font-medium">
           作った人
         </dt>
+        <!-- 作成者のアイコンが表示されるようにしたい -->
+        <UAvatar
+          :src="`https://q.trap.jp/api/v3/public/icon/${creator_id}`"
+          class="text-3xl ml-4"
+        />
         <dd class="font-medium ml-4">
           {{ creator_id }}
         </dd>
@@ -32,9 +37,11 @@
           {{ count }}個
         </dd>
       </div>
-      <p>タグに</p>
-      <StampGrid />
     </dl>
+    <p class="text-xl font-medium">
+      {{ route.params.tagName }} スタンプ一覧
+    </p>
+    <StampGrid />
   </UContainer>
 </template>
 
