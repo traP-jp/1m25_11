@@ -133,12 +133,12 @@ func (h *Handler) getTagDetails(c echo.Context) error {
 		})
 	}
 
-	tagDetails, ok := tagDetailsRaw.(TagDetails)
-	if !ok {
-		return echo.NewHTTPError(http.StatusInternalServerError, Error{
-			Message: "failed to cast tag details to expected type",
-		})
-	}
+	if tagDetailsRaw == nil {
+    return echo.NewHTTPError(http.StatusInternalServerError, Error{
+        Message: "internal error: required tag details were not found",
+    })
+}
+tagDetails := tagDetailsRaw
 
 	stamps := make([]StampSummary, len(tagDetails.Stamps))
 	for i, s := range tagDetails.Stamps {
