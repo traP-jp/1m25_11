@@ -1,26 +1,38 @@
 <template>
-  <UCard
+  <!-- <UCard
     variant="soft"
-    class="bg-white hover:bg-sky-200 "
+    class="bg-white hover:bg-sky-200 h-32"
     :ui="{
-      root: 'p-2 w-1/7 min-w-24',
-      body: 'p-1 sm:p-1',
-      footer: 'px-1 sm:px-1 py-1 mx-0',
+      root: 'p-0 w-1/7 min-w-24',
+      body: 'p-0 sm:p-1',
+      footer: 'px-0 sm:px-0 py-0 mx-0 my-auto',
     }"
-  >
+  > -->
+  <div class="flex flex-col h-32 w-24 justify-center gap-1 hover:bg-primary-100">
     <NuxtImg
-      :src="`https://q.trap.jp/api/1.0/public/emoji/${stampItem.id}`"
-      class="m-auto"
+      :src="getFileUrl(stamp.id)"
+      class="mx-auto w-full px-3"
       loading="lazy"
+      :alt="stamp.name"
     />
-    <template #footer>
-      <div class="text-center text-xs line-clamp-1 truncate overflow-hidden whitespace-nowrap ">
-        {{ stampItem.name }}
-      </div>
-    </template>
-  </UCard>
+    <!-- <template #footer> -->
+    <div class="text-center text-xs line-clamp-1 truncate overflow-hidden whitespace-nowrap ">
+      {{ stamp.name }}
+    </div>
+    <!-- </template> -->
+  </div>
+  <!-- </UCard> -->
 </template>
 
 <script setup lang="ts">
-defineProps<{ stampItem: stampSummary }>();
+// import type { paths } from '~~/shared/types/generated';
+
+defineProps<{
+  stamp: StampSummary;
+}>();
+
+const getFileUrl = (fileId: string) => {
+  // v1.0 を使用しているため、file_idではなくstamp_idを指定する必要がある
+  return `https://q.trap.jp/api/1.0/public/emoji/${fileId}`;
+};
 </script>
