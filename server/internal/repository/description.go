@@ -65,4 +65,7 @@ var (
 	ErrDescriptionAlreadyExists = errors.New("description already exists")
 	ErrUnauthorized             = errors.New("unauthorized")
 	ErrForbidden                = errors.New("forbidden")
+	ErrTagNotFound              = errors.New("tag not found")
+	ErrTagAlreadyAdded          = errors.New("tag already added")
+	ErrTagNotLinked             = errors.New("tag not linked")
 )
