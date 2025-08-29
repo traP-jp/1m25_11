@@ -10,7 +10,7 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "openapi-generate": "openapi-typescript ../api/swagger.yml -o shared/types/generated.d.ts"
+    "generate:openapi": "openapi-typescript ../api/swagger.yml -o shared/types/generated.d.ts"
   },
   "dependencies": {
     "@iconify-json/material-symbols": "^1.2.32",
