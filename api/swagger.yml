@@ -597,6 +597,8 @@ paths:
           description: リクエストが不正
         "401":
           description: 認証エラー
+        "404":
+          description: スタンプが見つからない
         "409":
           description: 既にこのスタンプに説明文を投稿済み
     put:
@@ -834,7 +836,7 @@ paths:
         "500":
           description: サーバーエラー
 
-  /callBack:
+  /callback:
     get:
       tags:
         - User

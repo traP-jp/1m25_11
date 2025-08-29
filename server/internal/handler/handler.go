@@ -25,16 +25,16 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 
 	stampAPI := api.Group("/stamps")
 	{
-		stampAPI.GET("/search", h.getSearch)
-		stampAPI.GET("/ranking", h.getRanking)
-		stampAPI.GET("", h.getStamps)
-		stampAPI.GET("/:stampId", h.getDetails)
-		stampAPI.POST("/:stampId/tags", h.createStampTags)
-		stampAPI.DELETE("/:stampId/tags/:tagId", h.deleteStampTags)
-		stampAPI.GET("/:stampId/descriptions", h.getDescriptions)
-		stampAPI.POST("/:stampId/descriptions", h.createDescriptions)
-		stampAPI.PUT("/:stampId/description", h.updateDescriptions)
-		stampAPI.DELETE("/:stampId/descriptions", h.deleteDescriptions)
+		stampAPI.GET("/search",h.getSearch)
+		stampAPI.GET("/ranking",h.getRanking)
+		stampAPI.GET("",h.getStamps)
+		stampAPI.GET("/:stampId",h.getDetails)
+		stampAPI.POST("/:stampId/tags/:tagId",h.createStampTags)
+		stampAPI.DELETE("/:stampId/tags/:tagId",h.deleteStampTags)
+		stampAPI.GET("/:stampId/descriptions",h.getDescriptions)
+		stampAPI.POST("/:stampId/descriptions",h.createDescriptions)
+		stampAPI.PUT("/:stampId/descriptions",h.updateDescriptions)
+		stampAPI.DELETE("/:stampId/descriptions",h.deleteDescriptions)
 	}
 
 	tagAPI := api.Group("/tags")
