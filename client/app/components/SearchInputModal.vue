@@ -3,7 +3,7 @@
     <URadioGroup
       v-model="searchIsUnicode"
       value-key="value"
-      :items="items"
+      :items="isUnicodeOption"
       orientation="horizontal"
       variant="list"
       class="mb-5"
@@ -21,8 +21,10 @@
       class="mb-5 w-full"
     />
     <p>タグ名を指定</p>
-    <UInputTags
+    <UInputMenu
       v-model="searchStampTagValue"
+      multiple
+      :items="itemsTestTag"
       placeholder="タグ名を入力してください"
       class="mb-5 w-full"
     />
@@ -78,8 +80,12 @@ import type { RadioGroupItem } from '@nuxt/ui';
 
 const searchDescriptionValue = ref('');
 const searchStampNameValue = ref('');
+
 const searchStampTagValue = ref<string[]>([]);
-const items = ref<RadioGroupItem[]>([
+const itemsTestTag = ref(['挨拶', '動物', '了解', 'ありがとう']);
+
+const searchIsUnicode = ref<'true' | 'false' | 'null'>('null');
+const isUnicodeOption = ref<RadioGroupItem[]>([
   {
     label: 'すべて',
     value: 'null',
@@ -93,7 +99,6 @@ const items = ref<RadioGroupItem[]>([
     value: 'false',
   },
 ]);
-const searchIsUnicode = ref<'true' | 'false' | 'null'>('null');
 
 const df = new DateFormatter('jp-JP', {
   dateStyle: 'medium',
