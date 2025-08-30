@@ -3,12 +3,15 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	"math/rand"
-	"time"
-
-	"github.com/elastic/go-elasticsearch/v8/typedapi/ml/deletecalendar"
+	"crypto/rand"
+	"math/big"
+	"strings"
+	"os"
+	"crypto/sha256"
+	"log"
+	"net/url"
 	"github.com/labstack/echo/v4"
-	"golang.org/x/tools/godoc/redirect"
+	"encoding/base64"
 )
 
 var requestURL = "https://q.trap.jp/api/v3/oauth2/authorize"
@@ -20,7 +23,7 @@ type TokenData struct {
 	AccessToken string `json:"access_token"`
 	ExpiresIn   int    `json:"expires_in"`
 }
-
+var clientID = os.Getenv("CLIENT_ID")
 
 
 func (h *Handler) login(c echo.Context) error {
@@ -48,7 +51,10 @@ func (h *Handler) callback(c echo.Context) error {
 	if err != nil {
 		return c.Redirect(http.StatusFound, "/")
 	}
-	tokenRes := h.sendTraqAuthToken(code, codeVerifier)
+	tokenRes, err := h.sendTraqAuthToken(code, codeVerifier)
+	if err != nil {
+		return c.Redirect(http.StatusFound, "/")
+	}
 	var tokenData TokenData
 	err = json.NewDecoder(tokenRes.Body).Decode(&tokenData)
 	if err != nil {
@@ -77,13 +83,75 @@ func (h *Handler) callback(c echo.Context) error {
 }
 
 func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string) {
-	seed := time.Now().UnixNano()
-	r := rand.New(rand.NewSource(seed))
-	return "redirectURI", "codeVerifier", "state"
+	
+	state, err := h.randomString(10)
+	if err != nil {
+		return "", "", ""
+	}
+	cookie, err := h.randomString(43)
+	if err != nil {
+		return "", "", ""
+	}
+	codeVerifier := cookie.Value
+	codeChallenge := h.getCodeChallenge(codeVerifier)
+
+	params := url.Values{}
+	params.Set("response_type", "code")
+	params.Set("client_id", clientID)
+	params.Set("state", state)
+	params.Set("code_challenge", codeChallenge)
+	params.Set("code_challenge_method", "S256")
+	u, err := url.Parse(requestURL)
+    if err != nil {
+        log.Fatalf("URLのパースに失敗しました: %v", err)
+    }
+	u.RawQuery = params.Encode()
+	redirectURI := u.String()
+
+
+	return redirectURI, codeVerifier, state
 }
+
+
 func (h *Handler) codeVerifierKey(state string) string {
 	return "traq-auth-code-verifier-" + state
 }
-func (h *Handler) sendTraqAuthToken(code string, codeVerifier string) {
+func (h *Handler) sendTraqAuthToken(code string, codeVerifier string) (*http.Response, error){
+	const baseURL = "https://q.trap.jp/api/v3/oauth2"
 
+	data := url.Values{}
+	data.Set("grant_type", "authorization_code")
+	data.Set("client_id", clientID)
+	data.Set("code", code)
+	data.Set("code_verifier", codeVerifier)
+
+	return http.PostForm(baseURL+"/token", data)
+}
+
+
+func (h *Handler) randomString(length int) (string, error) {
+	const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+	var builder strings.Builder
+	builder.Grow(length)
+
+	max := big.NewInt(int64(len(characters)))
+
+	for i := 0; i < length; i++ {
+		n, err := rand.Int(rand.Reader, max)
+		if err != nil {
+			return "", err
+		}
+		builder.WriteByte(characters[n.Int64()])
+	}
+
+	return builder.String(), nil
+}
+
+func (h *Handler) getCodeChallenge(codeVerifier string) string {
+	hasher := sha256.New()
+	hasher.Write([]byte(codeVerifier))
+	shaSum := hasher.Sum(nil)
+	encoder := base64.URLEncoding.WithPadding(base64.NoPadding)
+
+	return encoder.EncodeToString(shaSum)
 }
