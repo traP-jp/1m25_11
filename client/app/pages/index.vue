@@ -38,6 +38,13 @@ const generateRandomTen = () => {
   console.log('randomTen value:', JSON.stringify(randomTen.value.slice(0, 2), null, 2));
 };
 
+// デバッグ: スタンプデータの状態を監視
+watchEffect(() => {
+  console.log('Index.vue Debug:');
+  console.log('- stampsList length:', stampsList.value.length);
+  console.log('- randomTen length:', randomTen.value.length);
+});
+
 // onMounted(() => {
 //   nextTick(() => {
 //     generateRandomTen();
