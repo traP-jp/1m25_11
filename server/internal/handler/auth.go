@@ -8,7 +8,6 @@ import (
 	"strings"
 	"os"
 	"crypto/sha256"
-	"log"
 	"net/url"
 	"github.com/labstack/echo/v4"
 	"encoding/base64"
@@ -27,7 +26,10 @@ var clientID = os.Getenv("CLIENT_ID")
 
 
 func (h *Handler) login(c echo.Context) error {
-	redirectURI, codeVerifier, state := h.getTraqAuthCode(c)
+	redirectURI, codeVerifier, state, err := h.getTraqAuthCode(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
+	}
 	cookie := &http.Cookie{
 		Name:     h.codeVerifierKey(state),
 		Value:    codeVerifier,
@@ -47,14 +49,16 @@ func (h *Handler) callback(c echo.Context) error {
 	if code == "" || state == "" {
 		return c.Redirect(http.StatusFound, "/")
 	}
-	codeVerifier, err := c.Cookie(h.codeVerifierKey(state))
+	resCodeVerifier, err := c.Cookie(h.codeVerifierKey(state))
 	if err != nil {
 		return c.Redirect(http.StatusFound, "/")
 	}
+	codeVerifier := resCodeVerifier.Value
 	tokenRes, err := h.sendTraqAuthToken(code, codeVerifier)
 	if err != nil {
 		return c.Redirect(http.StatusFound, "/")
 	}
+	defer tokenRes.Body.Close() 
 	var tokenData TokenData
 	err = json.NewDecoder(tokenRes.Body).Decode(&tokenData)
 	if err != nil {
@@ -82,17 +86,16 @@ func (h *Handler) callback(c echo.Context) error {
 	return nil
 }
 
-func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string) {
+func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string,error) {
 	
 	state, err := h.randomString(10)
 	if err != nil {
-		return "", "", ""
+		return "", "", "",err
 	}
-	cookie, err := h.randomString(43)
+	codeVerifier, err := h.randomString(43)
 	if err != nil {
-		return "", "", ""
+		return "", "", "",err
 	}
-	codeVerifier := cookie.Value
 	codeChallenge := h.getCodeChallenge(codeVerifier)
 
 	params := url.Values{}
@@ -103,13 +106,13 @@ func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string) {
 	params.Set("code_challenge_method", "S256")
 	u, err := url.Parse(requestURL)
     if err != nil {
-        log.Fatalf("URLのパースに失敗しました: %v", err)
+		return "", "", "",err
     }
 	u.RawQuery = params.Encode()
 	redirectURI := u.String()
 
 
-	return redirectURI, codeVerifier, state
+	return redirectURI, codeVerifier, state,nil
 }
 
 
