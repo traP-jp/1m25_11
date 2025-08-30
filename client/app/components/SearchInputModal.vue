@@ -1,6 +1,14 @@
 <template>
   <UContainer>
-    <p>説明文から検索</p>
+    <URadioGroup
+      v-model="searchIsUnicode"
+      value-key="value"
+      :items="isUnicodeOption"
+      orientation="horizontal"
+      variant="list"
+      class="mb-5"
+    />
+    <p> 説明文から検索</p>
     <UInput
       v-model="searchDescriptionValue"
       placeholder="説明文から検索"
@@ -13,8 +21,10 @@
       class="mb-5 w-full"
     />
     <p>タグ名を指定</p>
-    <UInputTags
+    <UInputMenu
       v-model="searchStampTagValue"
+      multiple
+      :items="itemsTestTag"
       placeholder="タグ名を入力してください"
       class="mb-5 w-full"
     />
@@ -66,10 +76,29 @@
 
 <script setup lang="ts">
 import { DateFormatter, getLocalTimeZone, today } from '@internationalized/date';
+import type { RadioGroupItem } from '@nuxt/ui';
 
 const searchDescriptionValue = ref('');
 const searchStampNameValue = ref('');
+
 const searchStampTagValue = ref<string[]>([]);
+const itemsTestTag = ref(['挨拶', '動物', '了解', 'ありがとう']);
+
+const searchIsUnicode = ref<'true' | 'false' | 'null'>('null');
+const isUnicodeOption = ref<RadioGroupItem[]>([
+  {
+    label: 'すべて',
+    value: 'null',
+  },
+  {
+    label: 'Unicodeのみ',
+    value: 'true',
+  },
+  {
+    label: 'Unicode以外',
+    value: 'false',
+  },
+]);
 
 const df = new DateFormatter('jp-JP', {
   dateStyle: 'medium',
