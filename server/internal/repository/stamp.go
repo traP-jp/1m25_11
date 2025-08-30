@@ -29,9 +29,9 @@ type (
 	}
 )
 
-func (r *Repository) GetStampDetails(ctx context.Context) ([]*Stamp, error) {
-	stamps := []*Stamp{}
-	if err := r.db.SelectContext(ctx, &stamps, "SELECT * FROM stamps"); err != nil {
+func (r *Repository) GetStampDetails(ctx context.Context) ([]*StampSummary, error) {
+	stamps := []*StampSummary{}
+	if err := r.db.SelectContext(ctx, &stamps, "SELECT id,name,file_id FROM stamps"); err != nil {
 		return nil, fmt.Errorf("select stamps: %w", err)
 	}
 
