@@ -9,9 +9,9 @@ import (
 
 type (
 	CreateStampTagParams struct {
-		StampID   uuid.UUID `db:"stamp_id"`
-		TagID     uuid.UUID `db:"tag_id"`
-		CreatorID uuid.UUID `db:"creator_id"`
+		StampID   uuid.UUID `db:"stamp_id" json:"stamp_id"`
+		TagID     uuid.UUID `db:"tag_id" json:"tag_id"`
+		CreatorID uuid.UUID `db:"creator_id" json:"creator_id"`
 	}
 )
 
