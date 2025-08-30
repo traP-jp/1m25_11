@@ -2,4 +2,7 @@
 export const useSelectedStampId = () => useState<string | null>('selected-stamp-id', () => null);
 
 // drawerが開いているかどうか
-export const useIsStampDrawerOpen = () => useState<boolean>('is-stamp-drawer-open', () => false);
+export const useIsStampDrawerOpen = () => {
+  const selectedStampId = useSelectedStampId();
+  return computed(() => selectedStampId.value !== null);
+};
