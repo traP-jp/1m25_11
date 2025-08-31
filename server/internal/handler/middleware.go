@@ -1,15 +1,15 @@
 package handler
 
 import (
-	"fmt"
+	"github.com/coreos/go-oidc/v3/oidc"
 	"log"
 	"net/http"
 	"strings"
-
+	"context"
 	"github.com/labstack/echo/v4"
 )
 
-func (h *Handler)AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	log.Print("AuthMiddleware called")
 	return func(c echo.Context) error {
 		if strings.HasSuffix(c.Request().URL.Path, "/login") {
@@ -29,10 +29,11 @@ func (h *Handler)AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		if token == "" {
 			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized4")
 		}
-
-		if err := getMe(token); err != nil {
-			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized: Invalid token")
-		}
+		log.Printf("Token: %s", token)
+		if err := getMe(c, token); err != nil {
+            // エラーハンドリング
+            return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized: Invalid token")
+        }
 
 		c.Set("token", token)
 
@@ -41,10 +42,9 @@ func (h *Handler)AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 }
 func getToken(c echo.Context) string {
 	cookieToken, err := c.Cookie(tokenKey)
-	 if err == nil && cookieToken != nil {
-        return cookieToken.Value
-    }
-
+	if err == nil && cookieToken != nil {
+		return cookieToken.Value
+	}
 
 	authHeader := c.Request().Header.Get("Authorization")
 	parts := strings.Split(authHeader, " ")
@@ -54,12 +54,24 @@ func getToken(c echo.Context) string {
 
 	return ""
 }
-//
-func getMe(token string) error {
-	if token == "valid-token" {
-		// 認証成功
-		return nil
+
+func getMe(c echo.Context, rawToken string) error {
+	config := &oidc.Config{
+		ClientID: clientID,
 	}
-	// 認証失敗
-	return fmt.Errorf("invalid token")
+	provider, err := oidc.NewProvider(c.Request().Context(), "https://q.trap.jp")
+	if err != nil {
+		return err
+	}
+
+	ctx := context.Background()
+	verifier := provider.Verifier(config)
+
+	_, err = verifier.Verify(ctx, rawToken)
+	if err != nil {
+
+		return err
+	}
+
+	return nil
 }

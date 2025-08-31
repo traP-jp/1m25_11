@@ -52,6 +52,7 @@ func (h *Handler) callback(c echo.Context) error {
 	if code == "" || state == "" {
 		return c.Redirect(http.StatusFound, "/")
 	}
+	
 	resCodeVerifier, err := c.Cookie(h.codeVerifierKey(state))
 	if err != nil {
 		return c.Redirect(http.StatusFound, "/")
