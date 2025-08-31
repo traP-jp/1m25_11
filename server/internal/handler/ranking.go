@@ -17,18 +17,10 @@ type errorResponse struct {
 	Message string `json:"message"`
 }
 
-type countResponse struct {
-	Reaction int `json:"reaction"`
-	Message  int `json:"message"`
-}
-
-type stampResponse struct {
-	ID     uuid.UUID `json:"id"`
-}
-
-type rankingResultResponse struct {
-	Stamp stampResponse `json:"stamp"`
-	Count countResponse `json:"count"`
+type rankingResponse struct {
+	StampID       uuid.UUID `json:"stamp_id"`
+	BodyCount     int       `json:"body_count"`
+	ReactionCount int       `json:"reaction_count"`
 }
 
 func (h *Handler) getRanking(c echo.Context) error {
@@ -58,19 +50,15 @@ func (h *Handler) getRanking(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
-	response := make([]rankingResultResponse, 0, len(rankingResults))
+	response := make([]rankingResponse, 0, len(rankingResults))
 	for _, result := range rankingResults {
-		response = append(response, rankingResultResponse{
-			Stamp: stampResponse{
-				ID:     result.StampID,
-			},
-			Count: countResponse{
-				Reaction: result.ReactionCount,
-				Message:  result.MessageCount,
-			},
+		response = append(response, rankingResponse{
+			StampID:       result.StampID,
+			BodyCount:     result.MessageCount,
+			ReactionCount: result.ReactionCount,
 		})
 	}
 
 	return c.JSON(http.StatusOK, response)
-
 }
+
