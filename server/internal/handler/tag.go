@@ -208,12 +208,12 @@ func (h *Handler) deleteTags(c echo.Context) error {
 		})
 	}
 
-	_, ok := c.Get("userID").(uuid.UUID)
-	if !ok {
-		return echo.NewHTTPError(http.StatusUnauthorized, Error{
-			Message: "Authentication failed2.",
-		})
-	}
+	//_, ok := c.Get("userID").(uuid.UUID)
+	//if !ok {
+	//	return echo.NewHTTPError(http.StatusUnauthorized, Error{
+	//		Message: "Authentication failed2.",
+	//	})
+	//}
 
 	isAdmin := false
 	if !isAdmin {
