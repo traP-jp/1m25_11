@@ -2,7 +2,6 @@ package handler
 
 import (
 	"github.com/coreos/go-oidc/v3/oidc"
-	"log"
 	"net/http"
 	"strings"
 	"context"
@@ -10,28 +9,21 @@ import (
 )
 
 func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-	log.Print("AuthMiddleware called")
 	return func(c echo.Context) error {
 		if strings.HasSuffix(c.Request().URL.Path, "/login") {
-			log.Print("Login request")
 
 			return next(c)
 		}
 		if strings.Contains(c.Request().URL.Path, "/callback") {
-			log.Print("Callback request")
-			log.Print(c.Request().URL.Path)
 
 			return next(c)
 		}
-		log.Printf("AuthMiddleware: %s", c.Request().URL.Path)
 
 		token := getToken(c)
 		if token == "" {
 			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized4")
 		}
-		log.Printf("Token: %s", token)
 		if err := getMe(c, token); err != nil {
-            // エラーハンドリング
             return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized: Invalid token")
         }
 

@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
-	"log"
 	"math/big"
 	"net/http"
 	"net/url"
@@ -21,7 +20,8 @@ var tokenKey = "traq-auth-token"
 
 type TokenData struct {
 	TokenType   string `json:"token_type"`
-	AccessToken string `json:"access_token"`
+	AccessToken string `json:"access_token"`	
+	IDToken     string `json:"id_token"`
 	ExpiresIn   int    `json:"expires_in"`
 }
 
@@ -46,7 +46,6 @@ func (h *Handler) login(c echo.Context) error {
 
 }
 func (h *Handler) callback(c echo.Context) error {
-	log.Print("Callback called")
 	code := c.QueryParam("code")
 	state := c.QueryParam("state")
 	if code == "" || state == "" {
@@ -68,17 +67,20 @@ func (h *Handler) callback(c echo.Context) error {
 	if err != nil {
 		return c.Redirect(http.StatusFound, "/")
 	}
-	token := tokenData.AccessToken
+	idToken := tokenData.IDToken
 	deleteCookie := &http.Cookie{
-		Name:   h.codeVerifierKey(state),
-		Value:  "",
-		MaxAge: -1,
-	}
+    Name:     h.codeVerifierKey(state),
+    Secure:   true,
+    HttpOnly: true,
+    SameSite: http.SameSiteLaxMode,
+    Value:    "",    
+    MaxAge:   -1,    
+}
 	c.SetCookie(deleteCookie)
 
 	cookie := &http.Cookie{
 		Name:     tokenKey,
-		Value:    token,
+		Value:    idToken,
 		Secure:   true,
 		HttpOnly: true,
 		SameSite: http.SameSiteNoneMode, // 'None'に対応
@@ -91,7 +93,6 @@ func (h *Handler) callback(c echo.Context) error {
 }
 
 func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string, error) {
-	log.Print("Generating TRAQ authorization code...")
 	state, err := h.randomString(10)
 	if err != nil {
 		return "", "", "", err
@@ -101,7 +102,6 @@ func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string, error
 		return "", "", "", err
 	}
 	codeChallenge := h.getCodeChallenge(codeVerifier)
-	log.Printf("2: code challenge generated")
 	params := url.Values{}
 	params.Set("response_type", "code")
 	params.Set("client_id", clientID)
@@ -112,7 +112,6 @@ func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string, error
 	if err != nil {
 		return "", "", "", err
 	}
-	log.Printf("3: URL parsed")
 	u.RawQuery = params.Encode()
 	redirectURI := u.String()
 
