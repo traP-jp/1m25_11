@@ -15,6 +15,5 @@ export default defineNuxtPlugin(async (_) => {
     listState.value = data;
     // Map形式にも変換して保持
     mapState.value = new Map(data.map(stamp => [stamp.stamp_id, stamp]));
-    console.log(`Loaded ${data.length} stamps.`);
   }
 });
