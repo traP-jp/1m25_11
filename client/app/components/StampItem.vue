@@ -9,7 +9,7 @@
       loading="lazy"
       :alt="stamp.stamp_name"
     />
-    <div class="text-center text-xs line-clamp-1 truncate overflow-hidden whitespace-nowrap ">
+    <div class="text-center text-xs truncate overflow-hidden w-full whitespace-nowrap overflow-ellipsis">
       {{ stamp.stamp_name }}
     </div>
   </div>
