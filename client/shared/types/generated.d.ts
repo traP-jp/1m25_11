@@ -504,6 +504,13 @@ export interface paths {
           };
           content?: never;
         };
+        /** @description スタンプが見つからない */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
         /** @description 既にこのスタンプに説明文を投稿済み */
         409: {
           headers: {
@@ -901,7 +908,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/callBack': {
+  '/callback': {
     parameters: {
       query?: never;
       header?: never;
