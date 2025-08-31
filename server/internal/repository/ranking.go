@@ -9,8 +9,6 @@ import (
 
 type StampRankingResult struct {
 	StampID       uuid.UUID `db:"stamp_id"`
-	Name          string    `db:"name"`
-	FileID        uuid.UUID `db:"file_id"`
 	ReactionCount int       `db:"reaction_count"`
 	MessageCount  int       `db:"message_count"`
 }
@@ -22,8 +20,6 @@ func (r *Repository) GetRanking(ctx context.Context, since, until time.Time) ([]
 	query := `
         SELECT
             s.id AS stamp_id,
-            s.name,
-            s.file_id,
             SUM(sdu.reaction_count) AS reaction_count,
             SUM(sdu.message_count) AS message_count
         FROM

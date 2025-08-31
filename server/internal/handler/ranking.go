@@ -65,8 +65,6 @@ func (h *Handler) getRanking(c echo.Context) error {
 		response = append(response, rankingResultResponse{
 			Stamp: stampResponse{
 				ID:     result.StampID,
-				Name:   result.Name,
-				FileID: result.FileID,
 			},
 			Count: countResponse{
 				Reaction: result.ReactionCount,
