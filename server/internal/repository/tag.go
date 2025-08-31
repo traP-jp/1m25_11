@@ -11,21 +11,21 @@ import (
 
 type (
 	TagSummary struct {
-		ID   uuid.UUID `db:"id"`
-		Name string    `db:"name"`
+		ID   uuid.UUID `db:"id" json:"tag_id"`
+		Name string    `db:"name" json:"tag_name"`
 	}
 
 	CreateTagParams struct {
-		Name      string    `db:"name"`
-		CreatorID uuid.UUID `db:"creator_id"`
+		Name      string    `db:"name" json:"tag_name"`
+		CreatorID uuid.UUID `db:"creator_id" json:"creator_id"`
 	}
 
 	Tag struct {
-		ID        uuid.UUID `db:"id"`
-		Name      string    `db:"name"`
-		CreatorID uuid.UUID `db:"creator_id"`
-		CreatedAt time.Time `db:"created_at"`
-		UpdatedAt time.Time `db:"updated_at"`
+		ID        uuid.UUID `db:"id" json:"tag_id"`
+		Name      string    `db:"name" json:"tag_name"`
+		CreatorID uuid.UUID `db:"creator_id" json:"creator_id"`
+		CreatedAt time.Time `db:"created_at" json:"created_at"`
+		UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
 	}
 )
 
@@ -84,6 +84,5 @@ func (r *Repository) GetTagDetilsByStampID(ctx context.Context, stampID uuid.UUI
 
 var (
 	ErrTagConflict   = errors.New("tag with this name already exists")
-	//ErrTagNotFound   = errors.New("tag not found")
-	ErrAdminNotFound = errors.New("admin not found")
+	ErrAdminNotFound = errors.New("admin not found") 
 )

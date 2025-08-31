@@ -16,32 +16,32 @@ type Error struct {
 }
 
 type TagSummary struct {
-	Id   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
+	Id   uuid.UUID `json:"tag_id"`
+	Name string    `json:"tag_name"`
 }
 
 type StampSummary struct {
-	Id     uuid.UUID `json:"id"`
-	Name   string    `json:"name"`
+	Id     uuid.UUID `json:"stamp_id"`
+	Name   string    `json:"stamp_name"`
 	FileId uuid.UUID `json:"file_id"`
 }
 
 type TagDetails struct {
-	ID        uuid.UUID
-	Name      string
-	CreatorID uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uuid.UUID `json:"tag_id"`
+	Name      string    `json:"tag_name"`
+	CreatorID uuid.UUID `json:"creator_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 	Stamps    []struct {
-		ID     uuid.UUID
-		Name   string
-		FileID uuid.UUID
+		ID     uuid.UUID `json:"stamp_id"`
+		Name   string    `json:"stamp_name"`
+		FileID uuid.UUID `json:"file_id"`
 	}
 }
 
 type Tag struct {
-	Id        uuid.UUID      `json:"id"`
-	Name      string         `json:"name"`
+	Id        uuid.UUID      `json:"tag_id"`
+	Name      string         `json:"tag_name"`
 	CreatorId uuid.UUID      `json:"creator_id"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
@@ -65,15 +65,7 @@ func (h *Handler) getTags(c echo.Context) error {
 		})
 	}
 
-	response := make([]TagSummary, len(tagSummaries))
-	for i, tag := range tagSummaries {
-		response[i] = TagSummary{
-			Id:   tag.ID,
-			Name: tag.Name,
-		}
-	}
-
-	return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, tagSummaries)
 }
 
 func (h *Handler) createTags(c echo.Context) error {
@@ -84,8 +76,6 @@ func (h *Handler) createTags(c echo.Context) error {
 		})
 	}
 	userID := uuid.Nil
-	
-	
 
 	newTag, err := h.repo.CreateTags(c.Request().Context(), repository.CreateTagParams{
 		Name:      body.Name,
@@ -134,11 +124,11 @@ func (h *Handler) getTagDetails(c echo.Context) error {
 	}
 
 	if tagDetailsRaw == nil {
-    return echo.NewHTTPError(http.StatusInternalServerError, Error{
-        Message: "internal error: required tag details were not found",
-    })
-}
-tagDetails := tagDetailsRaw
+		return echo.NewHTTPError(http.StatusInternalServerError, Error{
+			Message: "internal error: required tag details were not found",
+		})
+	}
+	tagDetails := tagDetailsRaw
 
 	stamps := make([]StampSummary, len(tagDetails.Stamps))
 	for i, s := range tagDetails.Stamps {
@@ -208,19 +198,12 @@ func (h *Handler) deleteTags(c echo.Context) error {
 		})
 	}
 
-	//_, ok := c.Get("userID").(uuid.UUID)
-	//if !ok {
-	//	return echo.NewHTTPError(http.StatusUnauthorized, Error{
-	//		Message: "Authentication failed2.",
-	//	})
-	//}
-
-	isAdmin := false
-	if !isAdmin {
-		return echo.NewHTTPError(http.StatusForbidden, Error{
-			Message: "You do not have permission to delete this tag.",
-		})
-	}
+	// isAdmin := false
+	// if !isAdmin {
+	// 	return echo.NewHTTPError(http.StatusForbidden, Error{
+	// 		Message: "You do not have permission to delete this tag.",
+	// 	})
+	// }
 
 	err = h.repo.DeleteTags(c.Request().Context(), tagID)
 	if err != nil {
