@@ -13,7 +13,15 @@
           作られた日
         </dt>
         <dd class="font-medium ml-4">
-          {{ formattedDate }}
+          {{ formattedCreatedDate }}
+        </dd>
+      </div>
+      <div class="flex justify-start">
+        <dt class="font-medium">
+          最終更新日
+        </dt>
+        <dd class="font-medium ml-4">
+          {{ formattedUpdatedDate }}
         </dd>
       </div>
       <div class="flex justify-start">
@@ -52,13 +60,18 @@ const tagTestData = {
   id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
   creator_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
   created_at: '2025-08-27T10:39:39.815Z',
+  updated_at: '2025-08-31T10:26:38.964Z',
   count: 1,
 };
 
-const { created_at, creator_id, count } = tagTestData;
+const { creator_id, created_at, updated_at, count } = tagTestData;
 
-const formattedDate = new Intl.DateTimeFormat('ja-JP', {
-  dateStyle: 'long', // "yyyy年mm月dd日"
-  timeStyle: 'short', // "hh:mm"
-}).format(new Date(created_at));
+const formattedCreatedDate = new Date(created_at).toLocaleString('ja-JP', {
+  dateStyle: 'long',
+  timeStyle: 'short',
+});
+const formattedUpdatedDate = new Date(updated_at).toLocaleString('ja-JP', {
+  dateStyle: 'long',
+  timeStyle: 'short',
+});
 </script>
