@@ -1,24 +1,33 @@
 package handler
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 	"strings"
-	"fmt"
+
 	"github.com/labstack/echo/v4"
 )
 
 func (h *Handler)AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	log.Print("AuthMiddleware called")
 	return func(c echo.Context) error {
-		if strings.HasPrefix(c.Request().URL.Path, "/login") {
+		if strings.HasSuffix(c.Request().URL.Path, "/login") {
+			log.Print("Login request")
+
 			return next(c)
 		}
-		if strings.HasPrefix(c.Request().URL.Path, "/callback") {
+		if strings.Contains(c.Request().URL.Path, "/callback") {
+			log.Print("Callback request")
+			log.Print(c.Request().URL.Path)
+
 			return next(c)
 		}
+		log.Printf("AuthMiddleware: %s", c.Request().URL.Path)
 
 		token := getToken(c)
 		if token == "" {
-			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized")
+			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized4")
 		}
 
 		if err := getMe(token); err != nil {

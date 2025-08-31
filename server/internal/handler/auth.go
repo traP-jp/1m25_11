@@ -1,16 +1,18 @@
 package handler
 
 import (
-	"encoding/json"
-	"net/http"
 	"crypto/rand"
-	"math/big"
-	"strings"
-	"os"
 	"crypto/sha256"
-	"net/url"
-	"github.com/labstack/echo/v4"
 	"encoding/base64"
+	"encoding/json"
+	"log"
+	"math/big"
+	"net/http"
+	"net/url"
+	"os"
+	"strings"
+
+	"github.com/labstack/echo/v4"
 )
 
 var requestURL = "https://q.trap.jp/api/v3/oauth2/authorize"
@@ -22,8 +24,8 @@ type TokenData struct {
 	AccessToken string `json:"access_token"`
 	ExpiresIn   int    `json:"expires_in"`
 }
-var clientID = os.Getenv("CLIENT_ID")
 
+var clientID = os.Getenv("CLIENT_ID")
 
 func (h *Handler) login(c echo.Context) error {
 	redirectURI, codeVerifier, state, err := h.getTraqAuthCode(c)
@@ -44,6 +46,7 @@ func (h *Handler) login(c echo.Context) error {
 
 }
 func (h *Handler) callback(c echo.Context) error {
+	log.Print("Callback called")
 	code := c.QueryParam("code")
 	state := c.QueryParam("state")
 	if code == "" || state == "" {
@@ -58,7 +61,7 @@ func (h *Handler) callback(c echo.Context) error {
 	if err != nil {
 		return c.Redirect(http.StatusFound, "/")
 	}
-	defer tokenRes.Body.Close() 
+	defer tokenRes.Body.Close()
 	var tokenData TokenData
 	err = json.NewDecoder(tokenRes.Body).Decode(&tokenData)
 	if err != nil {
@@ -73,31 +76,31 @@ func (h *Handler) callback(c echo.Context) error {
 	c.SetCookie(deleteCookie)
 
 	cookie := &http.Cookie{
-        Name:     tokenKey,
-        Value:    token,
-        Secure:   true,
-        HttpOnly: true,
-        SameSite: http.SameSiteNoneMode, // 'None'に対応
-        MaxAge:   tokenData.ExpiresIn,
-    }
+		Name:     tokenKey,
+		Value:    token,
+		Secure:   true,
+		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode, // 'None'に対応
+		MaxAge:   tokenData.ExpiresIn,
+	}
 
 	c.SetCookie(cookie)
-	
-	return nil
+
+	return c.Redirect(http.StatusFound, "/")
 }
 
-func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string,error) {
-	
+func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string, error) {
+	log.Print("Generating TRAQ authorization code...")
 	state, err := h.randomString(10)
 	if err != nil {
-		return "", "", "",err
+		return "", "", "", err
 	}
 	codeVerifier, err := h.randomString(43)
 	if err != nil {
-		return "", "", "",err
+		return "", "", "", err
 	}
 	codeChallenge := h.getCodeChallenge(codeVerifier)
-
+	log.Printf("2: code challenge generated")
 	params := url.Values{}
 	params.Set("response_type", "code")
 	params.Set("client_id", clientID)
@@ -105,21 +108,20 @@ func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string,error)
 	params.Set("code_challenge", codeChallenge)
 	params.Set("code_challenge_method", "S256")
 	u, err := url.Parse(requestURL)
-    if err != nil {
-		return "", "", "",err
-    }
+	if err != nil {
+		return "", "", "", err
+	}
+	log.Printf("3: URL parsed")
 	u.RawQuery = params.Encode()
 	redirectURI := u.String()
 
-
-	return redirectURI, codeVerifier, state,nil
+	return redirectURI, codeVerifier, state, nil
 }
-
 
 func (h *Handler) codeVerifierKey(state string) string {
 	return "traq-auth-code-verifier-" + state
 }
-func (h *Handler) sendTraqAuthToken(code string, codeVerifier string) (*http.Response, error){
+func (h *Handler) sendTraqAuthToken(code string, codeVerifier string) (*http.Response, error) {
 	const baseURL = "https://q.trap.jp/api/v3/oauth2"
 
 	data := url.Values{}
@@ -130,7 +132,6 @@ func (h *Handler) sendTraqAuthToken(code string, codeVerifier string) (*http.Res
 
 	return http.PostForm(baseURL+"/token", data)
 }
-
 
 func (h *Handler) randomString(length int) (string, error) {
 	const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
