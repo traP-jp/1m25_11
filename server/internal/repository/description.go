@@ -60,12 +60,12 @@ func (r *Repository) UpdateDescriptions(ctx context.Context, stampID uuid.UUID, 
 }
 
 var (
-	ErrStampNotFound            = errors.New("stamp not found")
-	ErrDescriptionNotFound      = errors.New("description not found")
+	ErrStampNotFound          = errors.New("stamp not found")
+	ErrDescriptionNotFound    = errors.New("description not found")
 	ErrDescriptionAlreadyExists = errors.New("description already exists")
-	ErrUnauthorized             = errors.New("unauthorized")
-	ErrForbidden                = errors.New("forbidden")
-	ErrTagNotFound              = errors.New("tag not found")
-	ErrTagAlreadyAdded          = errors.New("tag already added")
-	ErrTagNotLinked             = errors.New("tag not linked")
+	ErrUnauthorized           = errors.New("unauthorized")
+	ErrForbidden              = errors.New("forbidden")
+	ErrTagNotFound            = errors.New("tag not found")
+	ErrTagAlreadyAdded        = errors.New("tag already added")
+	ErrTagNotLinked           = errors.New("tag not linked")
 )

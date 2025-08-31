@@ -84,6 +84,6 @@ func (r *Repository) GetTagDetilsByStampID(ctx context.Context, stampID uuid.UUI
 
 var (
 	ErrTagConflict   = errors.New("tag with this name already exists")
-	ErrTagNotFound   = errors.New("tag not found")
+	//ErrTagNotFound   = errors.New("tag not found")
 	ErrAdminNotFound = errors.New("admin not found")
 )
