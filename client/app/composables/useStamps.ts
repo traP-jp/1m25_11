@@ -5,7 +5,7 @@ export const useStamps = () => {
   const list = readonly(stampsList());
   const map = readonly(stampsMap());
 
-  const getStampById = (stampId: string) => map.value.get(stampId);
+  const getStampById = (stampId: string): StampSummary | undefined => map.value.get(stampId);
 
   return {
     stampsList: list,
