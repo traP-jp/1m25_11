@@ -24,8 +24,6 @@ type countResponse struct {
 
 type stampResponse struct {
 	ID     uuid.UUID `json:"id"`
-	Name   string    `json:"name"`
-	FileID uuid.UUID `json:"fileId"`
 }
 
 type rankingResultResponse struct {
