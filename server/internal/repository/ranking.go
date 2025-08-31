@@ -16,7 +16,7 @@ type StampCountResult struct {
 	MessageCount  int       `db:"message_count"`
 }
 
-func (r *Repository) GetStampCount(ctx context.Context, since time.Time, until time.Time) ([]StampCountResult, error) {
+func (r *Repository) GetRanking(ctx context.Context, since time.Time, until time.Time) ([]StampCountResult, error) {
 	results := []StampCountResult{}
 	sinceDate := since.Truncate(24 * time.Hour)
 	untilDate := until.Truncate(24 * time.Hour)

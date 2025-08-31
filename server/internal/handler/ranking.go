@@ -55,9 +55,9 @@ func (h *Handler) getRanking(c echo.Context) error {
 		})
 	}
 
-	rankingResults, err := h.repo.GetStampCount(c.Request().Context(), since, until)
+	rankingResults, err := h.repo.GetRanking(c.Request().Context(), since, until)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
+		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
 	var response []rankingResultResponse
@@ -77,3 +77,4 @@ func (h *Handler) getRanking(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, response)
 }
+
