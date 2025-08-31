@@ -75,9 +75,7 @@ func (h *Handler) getRanking(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, response)
-<<<<<<< HEAD
-}
-=======
+
 }
 
->>>>>>> 4a885af (途中)
+
