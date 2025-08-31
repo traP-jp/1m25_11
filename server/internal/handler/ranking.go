@@ -17,6 +17,11 @@ type errorResponse struct {
 	Message string `json:"message"`
 }
 
+type countResponse struct {
+	Reaction int `json:"reaction"`
+	Message  int `json:"message"`
+}
+
 type stampResponse struct {
 	ID     uuid.UUID `json:"id"`
 	Name   string    `json:"name"`
@@ -25,7 +30,7 @@ type stampResponse struct {
 
 type rankingResultResponse struct {
 	Stamp stampResponse `json:"stamp"`
-	Count int           `json:"count"`
+	Count countResponse `json:"count"`
 }
 
 func (h *Handler) getRanking(c echo.Context) error {
@@ -55,7 +60,7 @@ func (h *Handler) getRanking(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
-	var response []rankingResultResponse
+	response := make([]rankingResultResponse, 0, len(rankingResults))
 	for _, result := range rankingResults {
 		response = append(response, rankingResultResponse{
 			Stamp: stampResponse{
@@ -63,11 +68,13 @@ func (h *Handler) getRanking(c echo.Context) error {
 				Name:   result.Name,
 				FileID: result.FileID,
 			},
-			Count: result.ReactionCount,
+			Count: countResponse{
+				Reaction: result.ReactionCount,
+				Message:  result.MessageCount,
+			},
 		})
 	}
 
 	return c.JSON(http.StatusOK, response)
 }
-
 
