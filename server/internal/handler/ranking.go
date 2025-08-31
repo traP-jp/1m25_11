@@ -16,11 +16,6 @@ type errorResponse struct {
 	Message string `json:"message"`
 }
 
-type countResponse struct {
-	Reaction int `json:"reaction"`
-	Message  int `json:"message"`
-}
-
 type stampResponse struct {
 	ID     uuid.UUID `json:"id"`
 	Name   string    `json:"name"`
@@ -29,14 +24,10 @@ type stampResponse struct {
 
 type rankingResultResponse struct {
 	Stamp stampResponse `json:"stamp"`
-	Count countResponse `json:"count"`
+	Count int           `json:"count"`
 }
 
 func (h *Handler) getRanking(c echo.Context) error {
-<<<<<<< HEAD
-	return c.String(http.StatusOK, "pong")
-}
-=======
 	var params getRankingParams
 	if err := c.Bind(&params); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
@@ -71,17 +62,9 @@ func (h *Handler) getRanking(c echo.Context) error {
 				Name:   result.Name,
 				FileID: result.FileID,
 			},
-			Count: countResponse{
-				Reaction: result.ReactionCount,
-				Message:  result.MessageCount,
-			},
+			Count: result.ReactionCount,
 		})
 	}
 
 	return c.JSON(http.StatusOK, response)
 }
-<<<<<<< HEAD
->>>>>>> 9ffd1ae (ranking 変更途中)
-=======
-
->>>>>>> beb4dd8 (修正)
