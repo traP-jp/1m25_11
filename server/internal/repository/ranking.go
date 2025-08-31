@@ -10,6 +10,8 @@ import (
 
 type StampCountResult struct {
 	StampID       uuid.UUID `db:"stamp_id"`
+	Name          string    `db:"name"`
+	FileID        uuid.UUID `db:"file_id"`
 	ReactionCount int       `db:"reaction_count"`
 	MessageCount  int       `db:"message_count"`
 }
