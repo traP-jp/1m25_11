@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -77,5 +78,3 @@ func (h *Handler) getRanking(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 
 }
-
-
