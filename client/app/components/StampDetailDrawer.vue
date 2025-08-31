@@ -19,15 +19,15 @@ const selectedStamp = computed(() => {
   return getStampById(selectedStampId.value);
 });
 
-const closeStampDrawer = () => {
-  selectedStampId.value = null;
-};
+// const closeStampDrawer = () => {
+//   selectedStampId.value = null;
+// };
 
-const goToDetailPage = () => {
-  if (!selectedStampId.value) return;
-  closeStampDrawer();
-  navigateTo(`/stamps/${selectedStampId.value}`);
-};
+// const goToDetailPage = () => {
+//   if (!selectedStampId.value) return;
+//   closeStampDrawer();
+//   navigateTo(`/stamps/${selectedStampId.value}`);
+// };
 
 const getStampImageUrl = (stampId: string) => {
   return `https://q.trap.jp/api/1.0/public/emoji/${stampId}`;
