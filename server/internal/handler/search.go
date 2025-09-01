@@ -1,11 +1,186 @@
 package handler
 
 import (
+	"log"
+	"math"
 	"net/http"
+	"sort"
+	"strings"
 
 	"github.com/labstack/echo/v4"
+	"github.com/oapi-codegen/runtime/types"
+	"github.com/traP-jp/1m25_11/server/internal/repository"
 )
 
-func (h *Handler) getSearch(c echo.Context) error {
-	return c.String(http.StatusOK, "pong")
+type searchStampsParams struct {
+	Q                  *string     `query:"q"`
+	Name               *string     `query:"name"`
+	Tag                []string    `query:"tag"`
+	Description        *string     `query:"description"`
+	Creator            *string     `query:"creator"`
+	CreatedSince       *types.Date `query:"created_since"`
+	CreatedUntil       *types.Date `query:"created_until"`
+	UpdatedSince       *types.Date `query:"updated_since"`
+	UpdatedUntil       *types.Date `query:"updated_until"`
+	StampTypeUnicode   *string     `query:"stamp_type_unicode"`
+	StampTypeAnimation *string     `query:"stamp_type_animation"`
+	CountMonthlyMin    *int        `query:"count_monthly_min"`
+	CountMonthlyMax    *int        `query:"count_monthly_max"`
+	SortBy             *string     `query:"sortby"`
+}
+
+type searchResultResponse struct {
+	Stamps []stampSummaryResponse `json:"stamps"`
+}
+
+type stampSummaryResponse struct {
+	ID     string `json:"id"`
+	Name   string `json:"name"`
+	FileID string `json:"file_id"`
+}
+
+type scoredStamp struct {
+	Stamp repository.StampForSearch
+	Score float64
+}
+
+func (h *Handler) SearchStamps(c echo.Context) error {
+	var params searchStampsParams
+	if err := c.Bind(&params); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid query parameters")
+	}
+
+	repoParams := repository.SearchStampsParams{}
+	if params.Q != nil {
+		repoParams.Query = *params.Q
+	}
+	if params.Name != nil {
+		repoParams.Name = *params.Name
+	}
+	repoParams.Tags = params.Tag
+	if params.Description != nil {
+		repoParams.Description = *params.Description
+	}
+	if params.Creator != nil {
+		repoParams.Creator = *params.Creator
+	}
+	if params.CreatedSince != nil {
+		repoParams.CreatedSince = &params.CreatedSince.Time
+	}
+	if params.CreatedUntil != nil {
+		repoParams.CreatedUntil = &params.CreatedUntil.Time
+	}
+	if params.UpdatedSince != nil {
+		repoParams.UpdatedSince = &params.UpdatedSince.Time
+	}
+	if params.UpdatedUntil != nil {
+		repoParams.UpdatedUntil = &params.UpdatedUntil.Time
+	}
+	if params.StampTypeUnicode != nil {
+		repoParams.StampTypeUnicode = *params.StampTypeUnicode
+	}
+	if params.StampTypeAnimation != nil {
+		repoParams.StampTypeAnimation = *params.StampTypeAnimation
+	}
+	repoParams.CountMonthlyMin = params.CountMonthlyMin
+	repoParams.CountMonthlyMax = params.CountMonthlyMax
+	if params.SortBy != nil {
+		repoParams.SortBy = *params.SortBy
+	}
+
+	foundStamps, err := h.repo.SearchStamps(c.Request().Context(), repoParams)
+	if err != nil {
+		log.Printf("error in SearchStamps repository call: %v", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "failed to search stamps")
+	}
+
+	stampsRes := make([]stampSummaryResponse, len(foundStamps))
+
+	if repoParams.SortBy == "relativity" || repoParams.SortBy == "" {
+		scoredStamps := make([]scoredStamp, len(foundStamps))
+		for i, stamp := range foundStamps {
+			score := calculateRelativityScore(stamp, repoParams)
+			scoredStamps[i] = scoredStamp{Stamp: stamp, Score: score}
+		}
+
+		sort.Slice(scoredStamps, func(i, j int) bool {
+			if scoredStamps[i].Score != scoredStamps[j].Score {
+				return scoredStamps[i].Score > scoredStamps[j].Score
+			}
+			return scoredStamps[i].Stamp.Name < scoredStamps[j].Stamp.Name
+		})
+
+		for i, ss := range scoredStamps {
+			stampsRes[i] = stampSummaryResponse{
+				ID:     ss.Stamp.ID.String(),
+				Name:   ss.Stamp.Name,
+				FileID: ss.Stamp.FileID.String(),
+			}
+		}
+	} else {
+		for i, s := range foundStamps {
+			stampsRes[i] = stampSummaryResponse{
+				ID:     s.ID.String(),
+				Name:   s.Name,
+				FileID: s.FileID.String(),
+			}
+		}
+	}
+
+	response := searchResultResponse{
+		Stamps: stampsRes,
+	}
+
+	return c.JSON(http.StatusOK, response)
+}
+
+func calculateRelativityScore(stamp repository.StampForSearch, params repository.SearchStampsParams) float64 {
+	// 各クエリパラメータに対応するサブスコアを計算するヘルパー関数
+	// qnameを空白区切りにした各文字列をqname,i, 個数をnとする
+	// qname,i (i = 1, 2, 3, …, n)に次の処理を行う
+	//   ai,name := nameにqname,iが登場する回数
+	//   xi,name := 1-exp(-ai,name)
+	// scorename := sum(xi,name) / n
+	calculateSubScore := func(query, targetText string) float64 {
+		terms := strings.Fields(query)
+		if len(terms) == 0 {
+			return 0
+		}
+		var sumOfX float64
+		for _, term := range terms {
+			count := strings.Count(strings.ToLower(targetText), strings.ToLower(term))
+			x := 1.0 - math.Exp(float64(-count))
+			sumOfX += x
+		}
+		return sumOfX / float64(len(terms))
+	}
+
+	scoreName := calculateSubScore(params.Name, stamp.Name)
+	scoreDescription := calculateSubScore(params.Description, stamp.Descriptions)
+	scoreTag := calculateSubScore(strings.Join(params.Tags, " "), stamp.Tags)
+	scoreCreator := calculateSubScore(params.Creator, stamp.CreatorName)
+
+	// scoreqの計算
+	// qi (i = 1, 2, 3, …, n)に次の処理を行う
+	//   xi := (xi,name + xi,tag + xi,description + xi,creator) / 4
+	// scoreq := sum(xi) / n
+	var scoreQ float64
+	qTerms := strings.Fields(params.Query)
+	if len(qTerms) > 0 {
+		var sumOfXi float64
+		for _, term := range qTerms {
+			xName := 1.0 - math.Exp(float64(-strings.Count(strings.ToLower(stamp.Name), strings.ToLower(term))))
+			xTag := 1.0 - math.Exp(float64(-strings.Count(strings.ToLower(stamp.Tags), strings.ToLower(term))))
+			xDesc := 1.0 - math.Exp(float64(-strings.Count(strings.ToLower(stamp.Descriptions), strings.ToLower(term))))
+			xCreator := 1.0 - math.Exp(float64(-strings.Count(strings.ToLower(stamp.CreatorName), strings.ToLower(term))))
+			xi := (xName + xTag + xDesc + xCreator) / 4.0
+			sumOfXi += xi
+		}
+		scoreQ = sumOfXi / float64(len(qTerms))
+	}
+
+	// 最終スコアの計算
+	// score := (scoreq + scorename + scoretag + scoredescription + scorecreator) / 5
+	finalScore := (scoreQ + scoreName + scoreTag + scoreDescription + scoreCreator) / 5.0
+	return finalScore
 }
