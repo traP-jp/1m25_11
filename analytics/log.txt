@@ -1,0 +1,208 @@
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+この画像は、青系のグラデーションを用いた抽象的なロゴマークのように見えます。以下、詳しく説明します。
+
+- 全体の印象
+  - シンプルでモダンな幾何デザイン。背景は白っぽく、アイコン自体が central に据えられた構図です。
+  - 角が丸い柔らかさのあるデザインで、デジタル系・テック系のアイコンに多いスタイルです。
+
+- 色と質感
+  - 主 Colors は青系。濃い藍色から明るい水色へグラデーションがかかっており、光沢感や立体感を演出しています。
+  - グラデーションの使い方により、形状のエッジが浮き上がって見える効果があります。
+
+- 形状と配置
+  - 画面の左半分には、斜めに走る太い帯状の形があり、やや曲線を帯びています。
+  - 右半分には、縦長で角の丸い別の帯状形があり、上部にとがったピークのような先端が見えます。
+  - これら二つの帯状形が交差して、X字のような構図を作っています。全体として、左右の帯が異なる角度・太さで組み合わさり、動きのある印象を与えます。
+
+- 全体的な意味合い・雰囲気
+  - 抽象的・象徴的なロゴで、特定の文字をはっきり読ませる意図はありません。
+  - 直感的には「技術・開発・コード」といった分野を連想させるデザイン。クリーンで信頼感のある色使いは、企業のブランドアイデンティティとして使われやすいタイプです。
+
+もしこのマークが特定のブランドやソフトウェアのアイコンを指していると感じた場合、追加情報（ブランド名・出典など）があれば教えてください。識別を手伝えるかもしれません。
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+Google の Flutter（UI開発フレームワーク）のロゴです。
+ModelResponse(id='chatcmpl-CAr5c803LPjGofA4iROS1xE55FQvU', created=1756703392, model='gpt-5-nano-2025-08-07', object='chat.completion', system_fingerprint=None, choices=[Choices(finish_reason='stop', index=0, message=Message(content='Google の Flutter（UI開発フレームワーク）のロゴです。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=1883, prompt_tokens=55, total_tokens=1938, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=1856, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+Visual Studio Code（VS Code）です。
+ModelResponse(id='chatcmpl-CArBhigqQ8euOLFKrOz3a7GFMCLJ4', created=1756703769, model='gpt-5-2025-08-07', object='chat.completion', system_fingerprint=None, choices=[Choices(finish_reason='stop', index=0, message=Message(content='Visual Studio Code（VS Code）です。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=82, prompt_tokens=240, total_tokens=322, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=64, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+おそらく Visual Studio Code（VS Code）のロゴだと思います。青系のグラデーションで、角ばったブレース（< >）を組み合わせた3D風のデザインが特徴です。
+
+もし別のソフトを指している可能性があれば、もう少し context を教えてください。ロゴの形状や色味が似ている他のソフトもあるためです。
+ModelResponse(id='chatcmpl-CArBz7MaMNGT5PnJtFwE3rhVBRRqI', created=1756703787, model='gpt-5-nano-2025-08-07', object='chat.completion', system_fingerprint=None, choices=[Choices(finish_reason='stop', index=0, message=Message(content='おそらく Visual Studio Code（VS Code）のロゴだと思います。青系のグラデーションで、角ばったブレース（< >）を組み合わせた3D風のデザインが特徴です。\n\nもし別のソフトを指している可能性があれば、もう少し context を教えてください。ロゴの形状や色味が似ている他のソフトもあるためです。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=1258, prompt_tokens=55, total_tokens=1313, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=1152, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+Visual Studio Code（略称 VS Code）のロゴです。マイクロソフトのコードエディタのアイコンですね。
+ModelResponse(id='chatcmpl-CArEPOiOPcmjw9uykm0Srk1iDh0Dc', created=1756703937, model='gpt-5-nano-2025-08-07', object='chat.completion', system_fingerprint=None, choices=[Choices(finish_reason='stop', index=0, message=Message(content='Visual Studio Code（略称 VS Code）のロゴです。マイクロソフトのコードエディタのアイコンですね。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=1061, prompt_tokens=55, total_tokens=1116, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=1024, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+部内SNSで使われるリアクション用スタンプ。青を基調にした抽象デザインで、2本の曲線が交差するモダンな形です。スタンプ名は achigeta、意味は固定されていません。文脈に応じて“了解・同意・完了・感謝”などの気持ちを表す合図として使われることが多いので、初見の人は投稿内容と一緒に読み解くと良いです。
+ModelResponse(id='chatcmpl-CArQ8hIRxXTbZtyAQYtQnoVkwIltJ', created=1756704664, model='gpt-5-nano-2025-08-07', object='chat.completion', system_fingerprint=None, choices=[Choices(finish_reason='stop', index=0, message=Message(content='部内SNSで使われるリアクション用スタンプ。青を基調にした抽象デザインで、2本の曲線が交差するモダンな形です。スタンプ名は achigeta、意味は固定されていません。文脈に応じて“了解・同意・完了・感謝”などの気持ちを表す合図として使われることが多いので、初見の人は投稿内容と一緒に読み解くと良いです。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=3327, prompt_tokens=118, total_tokens=3445, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=3200, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+茶色の猫の顔をモチーフにしたスタンプです。頬がピンクで、目を細めて口角が上がった表情がとてもかわいく、相手の“いいね”“よくやった”といった承認の気持ちをやさしく伝えます。名前は good-nya。猫の鳴き声風の呼び名なので、日常のやり取りに自然に馴染み、シーンを明るく和ませてくれます。使い方の例：仕事の成果報告や感謝の返信にも使える、ほっこり系の承認スタンプです。
+ModelResponse(id='chatcmpl-CArRXRH5QP7RtlS33gwhlnQ5fyR47', created=1756704751, model='gpt-5-nano-2025-08-07', object='chat.completion', system_fingerprint=None, choices=[Choices(finish_reason='stop', index=0, message=Message(content='茶色の猫の顔をモチーフにしたスタンプです。頬がピンクで、目を細めて口角が上がった表情がとてもかわいく、相手の“いいね”“よくやった”といった承認の気持ちをやさしく伝えます。名前は good-nya。猫の鳴き声風の呼び名なので、日常のやり取りに自然に馴染み、シーンを明るく和ませてくれます。使い方の例：仕事の成果報告や感謝の返信にも使える、ほっこり系の承認スタンプです。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=2335, prompt_tokens=118, total_tokens=2453, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=2176, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+good-nyaは、猫の表情をモチーフにした肯定・同意を伝えるスタンプです。茶色い猫がほほを染めた可愛い顔で、“いいね”や“OK”の代わりに使えます。由来は猫モチーフ文化の遊び心から生まれた表現と考えられ、名前はgoodとnyanを組み合わせたものですが、機能を必ずしめすわけではありません。提案の承認、作業完了の報告、場を和ませたいときなど、さまざまな場面で活躍します。
+ModelResponse(id='chatcmpl-CAriczJHDPr6z4C7ELpiYeR3HSqza', created=1756705810, model='gpt-5-nano-2025-08-07', object='chat.completion', system_fingerprint=None, choices=[Choices(finish_reason='stop', index=0, message=Message(content='good-nyaは、猫の表情をモチーフにした肯定・同意を伝えるスタンプです。茶色い猫がほほを染めた可愛い顔で、“いいね”や“OK”の代わりに使えます。由来は猫モチーフ文化の遊び心から生まれた表現と考えられ、名前はgoodとnyanを組み合わせたものですが、機能を必ずしめすわけではありません。提案の承認、作業完了の報告、場を和ませたいときなど、さまざまな場面で活躍します。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=2079, prompt_tokens=414, total_tokens=2493, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=1920, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+ranpuro_4は、らんぷろシリーズのピンク色スタンプ。モチーフはひらがな“ぷ”と星で、告知や雑談を柔らかく強調する用途に向いています。由来は部内SNSのらんぷろ企画で生まれ、合宿の登壇案内や班向け告知など、場を和ませつつ情報を伝える場面で活躍します。使い方のコツは、文末にさりげなく添える、ほかのスタンプと組み合わせて使う、過剰にならないようにすることです。
+ModelResponse(id='chatcmpl-CArnPppydwpLVJc2BgH6loaP2ILfn', created=1756706107, model='gpt-5-nano-2025-08-07', object='chat.completion', system_fingerprint=None, choices=[Choices(finish_reason='stop', index=0, message=Message(content='ranpuro_4は、らんぷろシリーズのピンク色スタンプ。モチーフはひらがな“ぷ”と星で、告知や雑談を柔らかく強調する用途に向いています。由来は部内SNSのらんぷろ企画で生まれ、合宿の登壇案内や班向け告知など、場を和ませつつ情報を伝える場面で活躍します。使い方のコツは、文末にさりげなく添える、ほかのスタンプと組み合わせて使う、過剰にならないようにすることです。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=2013, prompt_tokens=831, total_tokens=2844, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=1856, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+ranpuro_4 は、鮮やかなピンクを基調としたカジュアルなスタンプです。由来は、部内の会話を和ませるために制作されたらんぷろシリーズの一環です。スタンプ名と画像が一致しない場合もある点にご注意ください。星や丸みのあるデザインが特徴で、場を和ませる軽いリアクションや感謝の気持ちを伝えるのに適しています。使い方は投稿内へ自由に挿入するか、リアクションとして :ranpuro_4: の形でお使いください。合宿やイベント告知、雑談の締めなど、親しみのある雰囲気を作りたい時に活躍します。
+ModelResponse(id='chatcmpl-CAsAxNI4FMnZqPXdGb7A95gE019iR', created=1756707567, model='gpt-5-nano-2025-08-07', object='chat.completion', system_fingerprint=None, choices=[Choices(finish_reason='stop', index=0, message=Message(content='ranpuro_4 は、鮮やかなピンクを基調としたカジュアルなスタンプです。由来は、部内の会話を和ませるために制作されたらんぷろシリーズの一環です。スタンプ名と画像が一致しない場合もある点にご注意ください。星や丸みのあるデザインが特徴で、場を和ませる軽いリアクションや感謝の気持ちを伝えるのに適しています。使い方は投稿内へ自由に挿入するか、リアクションとして :ranpuro_4: の形でお使いください。合宿やイベント告知、雑談の締めなど、親しみのある雰囲気を作りたい時に活躍します。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=1721, prompt_tokens=849, total_tokens=2570, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=1536, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+ranpuro_4は、部内SNS「らんぷろ」シリーズの4番目のスタンプ。ピンクの可愛いデザインで、合宿や登壇募集などの告知を盛り上げる目的で作られました。由来は部内イベントの合図として生まれたマスコット的存在。意味は「らんぷろ関連の話題を目立たせる」こと。使いどころは、登壇募集・イベント告知・参加呼びかけ・雑談のアクセントなど、場を活性化させたい投稿にぴったりです。
+ModelResponse(id='chatcmpl-CAshwQDBBPqoZHTN7AexPjdOpnnGg', created=1756709612, model='gpt-5-nano-2025-08-07', object='chat.completion', system_fingerprint=None, choices=[Choices(finish_reason='stop', index=0, message=Message(content='ranpuro_4は、部内SNS「らんぷろ」シリーズの4番目のスタンプ。ピンクの可愛いデザインで、合宿や登壇募集などの告知を盛り上げる目的で作られました。由来は部内イベントの合図として生まれたマスコット的存在。意味は「らんぷろ関連の話題を目立たせる」こと。使いどころは、登壇募集・イベント告知・参加呼びかけ・雑談のアクセントなど、場を活性化させたい投稿にぴったりです。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=1878, prompt_tokens=806, total_tokens=2684, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=1728, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+スタンプ「ranpuro_4」は、明るく元気な雰囲気を表現したイラストです。由来は、サークル内の親しみやすさや楽しさを象徴する「らんぷろ」シリーズの一つで、特定のイベントや盛り上がりの際に使われることが多いです。意味としては、「盛り上げたい」「元気づけたい」「楽しい気持ちを伝えたい」といった気持ちを伝えるためのスタンプです。さりげなく場を和ませたり、何かを伝えたいときに自然に使える便利な一枚です。合宿や会議、雑談の場面など、さまざまな場面で重宝しています。
+ModelResponse(id='chatcmpl-CAsmCnE4JjttNVNznf88HLeNmgT67', created=1756709876, model='gpt-4.1-nano-2025-04-14', object='chat.completion', system_fingerprint='fp_c4c155951e', choices=[Choices(finish_reason='stop', index=0, message=Message(content='スタンプ「ranpuro_4」は、明るく元気な雰囲気を表現したイラストです。由来は、サークル内の親しみやすさや楽しさを象徴する「らんぷろ」シリーズの一つで、特定のイベントや盛り上がりの際に使われることが多いです。意味としては、「盛り上げたい」「元気づけたい」「楽しい気持ちを伝えたい」といった気持ちを伝えるためのスタンプです。さりげなく場を和ませたり、何かを伝えたいときに自然に使える便利な一枚です。合宿や会議、雑談の場面など、さまざまな場面で重宝しています。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=179, prompt_tokens=827, total_tokens=1006, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+由来は、明るくポップなデザインとカラフルな配色から、楽しさや親しみやすさを表現しています。意味は、気軽な気持ちや明るい雰囲気を伝えたいときに使われます。例えば、雑談や盛り上がる場面、ちょっとした報告やお知らせの際に活用でき、仲間同士のコミュニケーションをもっと楽しくするスタンプです。他のスタンプと組み合わせて、自然に会話を盛り上げたいときにぴったりです。
+ModelResponse(id='chatcmpl-CAsnrHvjmkzIvlif8xhU28lcl2NTf', created=1756709979, model='gpt-4.1-nano-2025-04-14', object='chat.completion', system_fingerprint='fp_c4c155951e', choices=[Choices(finish_reason='stop', index=0, message=Message(content='由来は、明るくポップなデザインとカラフルな配色から、楽しさや親しみやすさを表現しています。意味は、気軽な気持ちや明るい雰囲気を伝えたいときに使われます。例えば、雑談や盛り上がる場面、ちょっとした報告やお知らせの際に活用でき、仲間同士のコミュニケーションをもっと楽しくするスタンプです。他のスタンプと組み合わせて、自然に会話を盛り上げたいときにぴったりです。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=140, prompt_tokens=852, total_tokens=992, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+「ranpuro_4」スタンプは、みんなの交流や盛り上げにぴったりの可愛いキャラクターの姿をしたスタンプです。明るく元気な表情や仕草が特徴で、楽しい気持ちや応援の気持ちを伝えたいときに良く使われます。合宿やイベントの案内、雑談の盛り上げなど、場の雰囲気を明るくしたい時にぴったりです。軽やかで親しみやすいデザインが、メンバー同士のコミュニケーションをより楽しくします。使うと自然と笑顔になれる、みんなの気持ちを伝えるための一枚です。
+ModelResponse(id='chatcmpl-CAsoBw5UThEmtTVFkh6MPaB605tqP', created=1756709999, model='gpt-4.1-nano-2025-04-14', object='chat.completion', system_fingerprint='fp_c4c155951e', choices=[Choices(finish_reason='stop', index=0, message=Message(content='「ranpuro_4」スタンプは、みんなの交流や盛り上げにぴったりの可愛いキャラクターの姿をしたスタンプです。明るく元気な表情や仕草が特徴で、楽しい気持ちや応援の気持ちを伝えたいときに良く使われます。合宿やイベントの案内、雑談の盛り上げなど、場の雰囲気を明るくしたい時にぴったりです。軽やかで親しみやすいデザインが、メンバー同士のコミュニケーションをより楽しくします。使うと自然と笑顔になれる、みんなの気持ちを伝えるための一枚です。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=172, prompt_tokens=849, total_tokens=1021, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+`ranpuro_4`は、鮮やかなピンク色を基調とした可愛らしいデザインの絵文字です。文字や記号で描かれたデザインが特徴で、丸みを帯びたフォルムと遊び心のある要素がアクセントになっています。由来は、サークル内の親しみやすさや賑やかさを表現するために作られ、主にチャットや投稿の盛り上げ役として使われます。友達同士の会話やイベントの案内、軽い冗談や感謝の気持ちを伝えるときに適しています。SNSや掲示板の興味や共感を示したい場面で、気軽に活用できるかわいい絵文字です。
+ModelResponse(id='chatcmpl-CAt0qvPkbhN3637O7BrGwVtBHAOeW', created=1756710784, model='gpt-4.1-nano-2025-04-14', object='chat.completion', system_fingerprint='fp_e91a518ddb', choices=[Choices(finish_reason='stop', index=0, message=Message(content='`ranpuro_4`は、鮮やかなピンク色を基調とした可愛らしいデザインの絵文字です。文字や記号で描かれたデザインが特徴で、丸みを帯びたフォルムと遊び心のある要素がアクセントになっています。由来は、サークル内の親しみやすさや賑やかさを表現するために作られ、主にチャットや投稿の盛り上げ役として使われます。友達同士の会話やイベントの案内、軽い冗談や感謝の気持ちを伝えるときに適しています。SNSや掲示板の興味や共感を示したい場面で、気軽に活用できるかわいい絵文字です。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=186, prompt_tokens=865, total_tokens=1051, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+「:ranpuro_4:」は、サークル内の絵文字の一つで、特定の場面やメッセージで使われる記号です。この絵文字は、明るい色合いや特徴的なデザインから、楽しさや盛り上がりを表現するのに適しています。例えば、イベントや配信の告知、参加者への感謝など、ポジティブな気持ちや祝いの場面でよく使われています。仲間内の交流や盛り上げ役として使われることが多く、メッセージに色と活気をもたらします。全体的に親しみやすく、明るい雰囲気を伝えるための絵文字として活用されています。
+ModelResponse(id='chatcmpl-CAtMcZi0y37YhfYN3lqnhbGHGMzPy', created=1756712134, model='gpt-4.1-nano-2025-04-14', object='chat.completion', system_fingerprint='fp_c4c155951e', choices=[Choices(finish_reason='stop', index=0, message=Message(content='「:ranpuro_4:」は、サークル内の絵文字の一つで、特定の場面やメッセージで使われる記号です。この絵文字は、明るい色合いや特徴的なデザインから、楽しさや盛り上がりを表現するのに適しています。例えば、イベントや配信の告知、参加者への感謝など、ポジティブな気持ちや祝いの場面でよく使われています。仲間内の交流や盛り上げ役として使われることが多く、メッセージに色と活気をもたらします。全体的に親しみやすく、明るい雰囲気を伝えるための絵文字として活用されています。', role='assistant', tool_calls=None, function_call=None, provider_specific_fields={'refusal': None}, annotations=[]), provider_specific_fields={})], usage=Usage(completion_tokens=180, prompt_tokens=976, total_tokens=1156, completion_tokens_details=CompletionTokensDetailsWrapper(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0, text_tokens=None), prompt_tokens_details=PromptTokensDetailsWrapper(audio_tokens=0, cached_tokens=0, text_tokens=None, image_tokens=None)), service_tier='default')
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+  File "/Users/haruto/develop/1m25_11/analytics/main.py", line 85
+    stream=False
+           ^^^^^
+SyntaxError: invalid syntax. Perhaps you forgot a comma?
+haruto@KubotaHaruto-MacBookAir analytics % python main.py
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+エラーが発生しました: litellm.BadRequestError: OpenAIException - litellm.BadRequestError: OpenAIException - Unknown parameter: 'reasoning'.. Received Model Group=gpt-5-nano
+Available Model Group Fallbacks=None
+haruto@KubotaHaruto-MacBookAir analytics % python main2.py
+エラーが発生しました: Completions.create() got an unexpected keyword argument 'reasoning'
+haruto@KubotaHaruto-MacBookAir analytics % python main2.py
+エラーが発生しました: Responses.create() got an unexpected keyword argument 'messages'
+haruto@KubotaHaruto-MacBookAir analytics % python main2.py
+エラーが発生しました: Error code: 401 - {'error': {'message': "Authentication Error, LiteLLM Virtual Key expected. Received=gemini_api_key, expected to start with 'sk-'.", 'type': 'auth_error', 'param': 'None', 'code': '401'}}
+haruto@KubotaHaruto-MacBookAir analytics % python main2.py
+エラーが発生しました: Error code: 400 - {'error': {'message': 'litellm.BadRequestError: OpenAIException - {\n  "error": {\n    "message": "Invalid value: \'text\'. Supported values are: \'input_text\', \'input_image\', \'output_text\', \'refusal\', \'input_file\', \'computer_screenshot\', and \'summary_text\'.",\n    "type": "invalid_request_error",\n    "param": "input[0].content[0].type",\n    "code": "invalid_value"\n  }\n}. Received Model Group=gpt-5-nano\nAvailable Model Group Fallbacks=None', 'type': None, 'param': None, 'code': '400'}}
+haruto@KubotaHaruto-MacBookAir analytics % python main2.py
+ranpuro_4 は、「らんぷろ」シリーズの4番目の絵文字。ピンクの丸みを帯びたデザインに、白抜きの「ぷ」と星のアクセントが特徴です。使い方としては、らんぷろの話題を強調したいときや、イベント告知・登壇募集のニュアンスを和ませたい場面で活用されます。投稿内で名前を囲んで使われることが多く、雰囲気づくりのデコレーション的存在として使われることが多いです。とくに「らんぷろ」関連の投稿で、親しみやすさを演出したい際におすすめです。
+Response(id='resp_bGl0ZWxsbTpjdXN0b21fbGxtX3Byb3ZpZGVyOm9wZW5haTttb2RlbF9pZDoyY2JhNzY4N2I5ZTVkMjk3OGVkYmQzNTVhNWVlNDUzZjc3YjZkMTY3YTliNjkwNTMzYjUwOWI1MTExMzhjZTc2O3Jlc3BvbnNlX2lkOnJlc3BfNjhiNTU1NTY5NGMwODE5NjgzNDI4MzcxY2U1NTRmMTQwYTZlOTk5MDgxYjBkMWZm', created_at=1756714327.0, error=None, incomplete_details=None, instructions=None, metadata={}, model='gpt-5-nano-2025-08-07', object='response', output=[ResponseReasoningItem(id='rs_68b55558be3c8196b37168917a9743630a6e999081b0d1ff', summary=[], type='reasoning', content=None, encrypted_content=None, status=None), ResponseOutputMessage(id='msg_68b5555a10e48196ada9ba6c327b03840a6e999081b0d1ff', content=[ResponseOutputText(annotations=[], text='ranpuro_4 は、「らんぷろ」シリーズの4番目の絵文字。ピンクの丸みを帯びたデザインに、白抜きの「ぷ」と星のアクセントが特徴です。使い方としては、らんぷろの話題を強調したいときや、イベント告知・登壇募集のニュアンスを和ませたい場面で活用されます。投稿内で名前を囲んで使われることが多く、雰囲気づくりのデコレーション的存在として使われることが多いです。とくに「らんぷろ」関連の投稿で、親しみやすさを演出したい際におすすめです。', type='output_text', logprobs=[])], role='assistant', status='completed', type='message')], parallel_tool_calls=True, temperature=1.0, tool_choice='auto', tools=[], top_p=1.0, background=False, conversation=None, max_output_tokens=None, max_tool_calls=None, previous_response_id=None, prompt=None, prompt_cache_key=None, reasoning=Reasoning(effort='low', generate_summary=None, summary=None), safety_identifier=None, service_tier='default', status='completed', text=ResponseTextConfig(format=ResponseFormatText(type='text'), verbosity='medium'), top_logprobs=0, truncation='disabled', usage=ResponseUsage(input_tokens=959, input_tokens_details=InputTokensDetails(cached_tokens=0, audio_tokens=None, text_tokens=None), output_tokens=427, output_tokens_details=OutputTokensDetails(reasoning_tokens=256, text_tokens=None), total_tokens=1386), user=None, store=True)
+haruto@KubotaHaruto-MacBookAir analytics % python main2.py
+ranpuro_4 は、ピンクのポップなデザインで描かれた「らんぷろ」シリーズの絵文字です。大きめのメタリック風の影と星のアクセントが特徴で、イベント告知や団体内の合宿・勉強会など、楽しく賑やかに告知する場面で使われます。主に文章中に組み込んで「らんぷろ」グループの一体感を演出したり、関連イベントのリアクションとして利用します。使い方の例として、イベント案内の一部として本文内に挿入したり、投稿の雰囲気を明るくしたいときのリアクションとしても適しています。
+Response(id='resp_bGl0ZWxsbTpjdXN0b21fbGxtX3Byb3ZpZGVyOm9wZW5haTttb2RlbF9pZDoyY2JhNzY4N2I5ZTVkMjk3OGVkYmQzNTVhNWVlNDUzZjc3YjZkMTY3YTliNjkwNTMzYjUwOWI1MTExMzhjZTc2O3Jlc3BvbnNlX2lkOnJlc3BfNjhiNTU2Mzc1Y2NjODE5NzgzZGI1NzZlNTY4ZWM3OGUwNGM3YTZjOWQ4MTYyMzQ2', created_at=1756714552.0, error=None, incomplete_details=None, instructions=None, metadata={}, model='gpt-5-nano-2025-08-07', object='response', output=[ResponseReasoningItem(id='rs_68b556399c3081978e98be2052a4a46b04c7a6c9d8162346', summary=[], type='reasoning', content=None, encrypted_content=None, status=None), ResponseOutputMessage(id='msg_68b5563b1104819782d2f5e943c856b704c7a6c9d8162346', content=[ResponseOutputText(annotations=[], text='ranpuro_4 は、ピンクのポップなデザインで描かれた「らんぷろ」シリーズの絵文字です。大きめのメタリック風の影と星のアクセントが特徴で、イベント告知や団体内の合宿・勉強会など、楽しく賑やかに告知する場面で使われます。主に文章中に組み込んで「らんぷろ」グループの一体感を演出したり、関連イベントのリアクションとして利用します。使い方の例として、イベント案内の一部として本文内に挿入したり、投稿の雰囲気を明るくしたいときのリアクションとしても適しています。', type='output_text', logprobs=[])], role='assistant', status='completed', type='message')], parallel_tool_calls=True, temperature=1.0, tool_choice='auto', tools=[], top_p=1.0, background=False, conversation=None, max_output_tokens=None, max_tool_calls=None, previous_response_id=None, prompt=None, prompt_cache_key=None, reasoning=Reasoning(effort='low', generate_summary=None, summary=None), safety_identifier=None, service_tier='default', status='completed', text=ResponseTextConfig(format=ResponseFormatText(type='text'), verbosity='medium'), top_logprobs=0, truncation='disabled', usage=ResponseUsage(input_tokens=905, input_tokens_details=InputTokensDetails(cached_tokens=0, audio_tokens=None, text_tokens=None), output_tokens=370, output_tokens_details=OutputTokensDetails(reasoning_tokens=192, text_tokens=None), total_tokens=1275), user=None, store=True)
+haruto@KubotaHaruto-MacBookAir analytics % python main2.py
+絵文字名: ranpuro_4
+
+説明: かわいらしいピンク系の絵文字で、星のアクセントがポイント。ranpuroシリーズの4番として用いられ、部内SNSのイベント告知や班単位の活動案内など、仲間内のカジュアルな連携を強調する使い方が多いです。登壇募集やUnity講習会など、特定の話題を目立たせたいときのタグ代わりにも適しています。リアクションとして使えば、場を明るく和ませる効果があります。
+Response(id='resp_bGl0ZWxsbTpjdXN0b21fbGxtX3Byb3ZpZGVyOm9wZW5haTttb2RlbF9pZDoyY2JhNzY4N2I5ZTVkMjk3OGVkYmQzNTVhNWVlNDUzZjc3YjZkMTY3YTliNjkwNTMzYjUwOWI1MTExMzhjZTc2O3Jlc3BvbnNlX2lkOnJlc3BfNjhiNTU2Y2RmMzA4ODE5NDkzYjRkMzg0NjNmNTE2MmQwYWM1ODg1MTU5ZjljZmRk', created_at=1756714702.0, error=None, incomplete_details=None, instructions=None, metadata={}, model='gpt-5-nano-2025-08-07', object='response', output=[ResponseReasoningItem(id='rs_68b556cfb2e08194ac9ac4902707339f0ac5885159f9cfdd', summary=[], type='reasoning', content=None, encrypted_content=None, status=None), ResponseOutputMessage(id='msg_68b556d206648194aa5c53991f8264cd0ac5885159f9cfdd', content=[ResponseOutputText(annotations=[], text='絵文字名: ranpuro_4\n\n説明: かわいらしいピンク系の絵文字で、星のアクセントがポイント。ranpuroシリーズの4番として用いられ、部内SNSのイベント告知や班単位の活動案内など、仲間内のカジュアルな連携を強調する使い方が多いです。登壇募集やUnity講習会など、特定の話題を目立たせたいときのタグ代わりにも適しています。リアクションとして使えば、場を明るく和ませる効果があります。', type='output_text', logprobs=[])], role='assistant', status='completed', type='message')], parallel_tool_calls=True, temperature=1.0, tool_choice='auto', tools=[], top_p=1.0, background=False, conversation=None, max_output_tokens=None, max_tool_calls=None, previous_response_id=None, prompt=None, prompt_cache_key=None, reasoning=Reasoning(effort='low', generate_summary=None, summary=None), safety_identifier=None, service_tier='default', status='completed', text=ResponseTextConfig(format=ResponseFormatText(type='text'), verbosity='medium'), top_logprobs=0, truncation='disabled', usage=ResponseUsage(input_tokens=905, input_tokens_details=InputTokensDetails(cached_tokens=0, audio_tokens=None, text_tokens=None), output_tokens=591, output_tokens_details=OutputTokensDetails(reasoning_tokens=448, text_tokens=None), total_tokens=1496), user=None, store=True)
+haruto@KubotaHaruto-MacBookAir analytics % python main2.py
+ranpuro_4 は、らんぷろシリーズの絵文字のひとつ。ピンクを基調としたデザインで、数字の「4」が第4グループ・第4班を示します。らんぷろ関連の投稿を班別に区別したり、班向けの案内・募集・リマインドを強調する際に使われます。例として「班向けのUnity講習会をやります」のような告知文に添えると、対象がその班であることを直感的に伝えられます。他の ranpuro 絵文字と組み合わせると、情報のカテゴリ分けが視認性高くなります。
+Response(id='resp_bGl0ZWxsbTpjdXN0b21fbGxtX3Byb3ZpZGVyOm9wZW5haTttb2RlbF9pZDoyY2JhNzY4N2I5ZTVkMjk3OGVkYmQzNTVhNWVlNDUzZjc3YjZkMTY3YTliNjkwNTMzYjUwOWI1MTExMzhjZTc2O3Jlc3BvbnNlX2lkOnJlc3BfNjhiNTVhYmFlYWM0ODE5N2JjMTFiZDU1YWUwOGM2YzEwYmEyMmQ3OWVmYjIwYzFm', created_at=1756715707.0, error=None, incomplete_details=None, instructions=None, metadata={}, model='gpt-5-nano-2025-08-07', object='response', output=[ResponseReasoningItem(id='rs_68b55abd60708197952c7aa77f647d9d0ba22d79efb20c1f', summary=[], type='reasoning', content=None, encrypted_content=None, status=None), ResponseOutputMessage(id='msg_68b55ac01bf881979e78fa12e4392a530ba22d79efb20c1f', content=[ResponseOutputText(annotations=[], text='ranpuro_4 は、らんぷろシリーズの絵文字のひとつ。ピンクを基調としたデザインで、数字の「4」が第4グループ・第4班を示します。らんぷろ関連の投稿を班別に区別したり、班向けの案内・募集・リマインドを強調する際に使われます。例として「班向けのUnity講習会をやります」のような告知文に添えると、対象がその班であることを直感的に伝えられます。他の ranpuro 絵文字と組み合わせると、情報のカテゴリ分けが視認性高くなります。', type='output_text', logprobs=[])], role='assistant', status='completed', type='message')], parallel_tool_calls=True, temperature=1.0, tool_choice='auto', tools=[], top_p=1.0, background=False, conversation=None, max_output_tokens=None, max_tool_calls=None, previous_response_id=None, prompt=None, prompt_cache_key=None, reasoning=Reasoning(effort='low', generate_summary=None, summary=None), safety_identifier=None, service_tier='default', status='completed', text=ResponseTextConfig(format=ResponseFormatText(type='text'), verbosity='medium'), top_logprobs=0, truncation='disabled', usage=ResponseUsage(input_tokens=970, input_tokens_details=InputTokensDetails(cached_tokens=0, audio_tokens=None, text_tokens=None), output_tokens=678, output_tokens_details=OutputTokensDetails(reasoning_tokens=512, text_tokens=None), total_tokens=1648), user=None, store=True)
+haruto@KubotaHaruto-MacBookAir analytics % python main3.py
+猫絵文字
+ねこリアクション
+可愛い絵文字
+コーヒー猫
+カフェ猫
+ほっこり顔
+ほほえみ猫
+困惑スタンプ
+驚きリアクション
+嬉しい絵文字
+おちゃめスタンプ
+SNS絵文字
+デジタルスタンプ
+キャラ絵文字
+ねこスタンプ
+可愛いキャラ
+リアクションアイコン
+メッセージ用スタンプ
+落ち着き猫
+ranpuro4関連絵文字
+Response(id='resp_bGl0ZWxsbTpjdXN0b21fbGxtX3Byb3ZpZGVyOm9wZW5haTttb2RlbF9pZDoyY2JhNzY4N2I5ZTVkMjk3OGVkYmQzNTVhNWVlNDUzZjc3YjZkMTY3YTliNjkwNTMzYjUwOWI1MTExMzhjZTc2O3Jlc3BvbnNlX2lkOnJlc3BfNjhiNTVlYWMwMjNjODE5MDhiOTAxYTFhNGM4ZGUwMzUwMWM0MDQxYzQ2YjRiYjM5', created_at=1756716716.0, error=None, incomplete_details=None, instructions=None, metadata={}, model='gpt-5-nano-2025-08-07', object='response', output=[ResponseReasoningItem(id='rs_68b55ead97308190a2cefd5774a0c82d01c4041c46b4bb39', summary=[], type='reasoning', content=None, encrypted_content=None, status=None), ResponseOutputMessage(id='msg_68b55eb483648190b8e3f451620e068501c4041c46b4bb39', content=[ResponseOutputText(annotations=[], text='猫絵文字\nねこリアクション\n可愛い絵文字\nコーヒー猫\nカフェ猫\nほっこり顔\nほほえみ猫\n困惑スタンプ\n驚きリアクション\n嬉しい絵文字\nおちゃめスタンプ\nSNS絵文字\nデジタルスタンプ\nキャラ絵文字\nねこスタンプ\n可愛いキャラ\nリアクションアイコン\nメッセージ用スタンプ\n落ち着き猫\nranpuro4関連絵文字', type='output_text', logprobs=[])], role='assistant', status='completed', type='message')], parallel_tool_calls=True, temperature=1.0, tool_choice='auto', tools=[], top_p=1.0, background=False, conversation=None, max_output_tokens=None, max_tool_calls=None, previous_response_id=None, prompt=None, prompt_cache_key=None, reasoning=Reasoning(effort='low', generate_summary=None, summary=None), safety_identifier=None, service_tier='default', status='completed', text=ResponseTextConfig(format=ResponseFormatText(type='text'), verbosity='medium'), top_logprobs=0, truncation='disabled', usage=ResponseUsage(input_tokens=507, input_tokens_details=InputTokensDetails(cached_tokens=0, audio_tokens=None, text_tokens=None), output_tokens=893, output_tokens_details=OutputTokensDetails(reasoning_tokens=768, text_tokens=None), total_tokens=1400), user=None, store=True)
+haruto@KubotaHaruto-MacBookAir analytics % python main3.py
+エラーが発生しました: Error code: 400 - {'error': {'message': 'litellm.BadRequestError: OpenAIException - {\n  "error": {\n    "message": "Invalid value: \',minimal\'. Supported values are: \'low\', \'medium\', and \'high\'.",\n    "type": "invalid_request_error",\n    "param": "reasoning.effort",\n    "code": "invalid_value"\n  }\n}. Received Model Group=gpt-5-nano\nAvailable Model Group Fallbacks=None', 'type': None, 'param': None, 'code': '400'}}
+haruto@KubotaHaruto-MacBookAir analytics % python main3.py
+- 魔法
+- ぬこ
+- ねこ
+- かわいい
+- びっくり
+- 驚き
+- お祝い
+- さわやか
+- アップデート
+- ハッピー
+- 楽しい
+- 導入
+- 案内
+- 変化
+- 奇跡
+- コーヒー
+- 失敗
+- 集中
+- 劇的
+Response(id='resp_bGl0ZWxsbTpjdXN0b21fbGxtX3Byb3ZpZGVyOm9wZW5haTttb2RlbF9pZDoyY2JhNzY4N2I5ZTVkMjk3OGVkYmQzNTVhNWVlNDUzZjc3YjZkMTY3YTliNjkwNTMzYjUwOWI1MTExMzhjZTc2O3Jlc3BvbnNlX2lkOnJlc3BfNjhiNTVmNDMyMjY0ODE5MDhhNzA0YjczOGRjOWZhZDgwNDk5ZTcyOGVkYzM2NDQ3', created_at=1756716869.0, error=None, incomplete_details=None, instructions=None, metadata={}, model='gpt-5-nano-2025-08-07', object='response', output=[ResponseReasoningItem(id='rs_68b55f45db9c8190bb626b6821c46f120499e728edc36447', summary=[], type='reasoning', content=None, encrypted_content=None, status=None), ResponseOutputMessage(id='msg_68b55f45ec388190a1a3d7813c3c1ba90499e728edc36447', content=[ResponseOutputText(annotations=[], text='- 魔法\n- ぬこ\n- ねこ\n- かわいい\n- びっくり\n- 驚き\n- お祝い\n- さわやか\n- アップデート\n- ハッピー\n- 楽しい\n- 導入\n- 案内\n- 変化\n- 奇跡\n- コーヒー\n- 失敗\n- 集中\n- 劇的', type='output_text', logprobs=[])], role='assistant', status='completed', type='message')], parallel_tool_calls=True, temperature=1.0, tool_choice='auto', tools=[], top_p=1.0, background=False, conversation=None, max_output_tokens=None, max_tool_calls=None, previous_response_id=None, prompt=None, prompt_cache_key=None, reasoning=Reasoning(effort='minimal', generate_summary=None, summary=None), safety_identifier=None, service_tier='default', status='completed', text=ResponseTextConfig(format=ResponseFormatText(type='text'), verbosity='medium'), top_logprobs=0, truncation='disabled', usage=ResponseUsage(input_tokens=521, input_tokens_details=InputTokensDetails(cached_tokens=0, audio_tokens=None, text_tokens=None), output_tokens=104, output_tokens_details=OutputTokensDetails(reasoning_tokens=0, text_tokens=None), total_tokens=625), user=None, store=True)
+haruto@KubotaHaruto-MacBookAir analytics % python main3.py
+魔法
+ねこ
+猫
+魔法使い
+呪文
+不思議
+ハンドシェイク
+リラックス
+かわいい
+マジック
+ファンタジー
+実験
+謎
+サプライズ
+魔術
+猫絵文字
+猫好き
+ハロウィン
+おまじない
+Response(id='resp_bGl0ZWxsbTpjdXN0b21fbGxtX3Byb3ZpZGVyOm9wZW5haTttb2RlbF9pZDoyY2JhNzY4N2I5ZTVkMjk3OGVkYmQzNTVhNWVlNDUzZjc3YjZkMTY3YTliNjkwNTMzYjUwOWI1MTExMzhjZTc2O3Jlc3BvbnNlX2lkOnJlc3BfNjhiNTVmOTMxZDljODE5N2IwMmI1ZDk2MjBmNmZlZTYwYTk3MDEyZTM3OGNjNzQw', created_at=1756716947.0, error=None, incomplete_details=None, instructions=None, metadata={}, model='gpt-5-nano-2025-08-07', object='response', output=[ResponseReasoningItem(id='rs_68b55f9525b881978274e7cb9e80cea30a97012e378cc740', summary=[], type='reasoning', content=None, encrypted_content=None, status=None), ResponseOutputMessage(id='msg_68b55f956588819783ce53a48992b3bc0a97012e378cc740', content=[ResponseOutputText(annotations=[], text='魔法\nねこ\n猫\n魔法使い\n呪文\n不思議\nハンドシェイク\nリラックス\nかわいい\nマジック\nファンタジー\n実験\n謎\nサプライズ\n魔術\n猫絵文字\n猫好き\nハロウィン\nおまじない', type='output_text', logprobs=[])], role='assistant', status='completed', type='message')], parallel_tool_calls=True, temperature=1.0, tool_choice='auto', tools=[], top_p=1.0, background=False, conversation=None, max_output_tokens=None, max_tool_calls=None, previous_response_id=None, prompt=None, prompt_cache_key=None, reasoning=Reasoning(effort='minimal', generate_summary=None, summary=None), safety_identifier=None, service_tier='default', status='completed', text=ResponseTextConfig(format=ResponseFormatText(type='text'), verbosity='medium'), top_logprobs=0, truncation='disabled', usage=ResponseUsage(input_tokens=530, input_tokens_details=InputTokensDetails(cached_tokens=0, audio_tokens=None, text_tokens=None), output_tokens=81, output_tokens_details=OutputTokensDetails(reasoning_tokens=0, text_tokens=None), total_tokens=611), user=None, store=True)
+haruto@KubotaHaruto-MacBookAir analytics % python main3.py
+魔法
+ねこ
+猫
+魔法使い
+呪文
+黒魔術
+魔法使い猫
+魔法の杖
+カップ
+コーヒー
+ビーカー
+実験
+実験室
+DIコンテナ
+コンテナ
+HDMI
+信号
+落ち
+心拍
+緊張
+不思議
+魔力
+魔術
+懐中時計
+秘密
+謎
+ファンタジー
+妖しさ
+不思議な力
+リアクション
+絵文字
+スタンプ
+表情
+驚き
+喜び
+笑顔
+-
+Response(id='resp_bGl0ZWxsbTpjdXN0b21fbGxtX3Byb3ZpZGVyOm9wZW5haTttb2RlbF9pZDoyY2JhNzY4N2I5ZTVkMjk3OGVkYmQzNTVhNWVlNDUzZjc3YjZkMTY3YTliNjkwNTMzYjUwOWI1MTExMzhjZTc2O3Jlc3BvbnNlX2lkOnJlc3BfNjhiNTYwNGUxNDljODE5NGI5OWY4ZjQxNWZlMDAwM2IwY2MxZWFhMWQ5MDI1ZDFm', created_at=1756717134.0, error=None, incomplete_details=None, instructions=None, metadata={}, model='gpt-5-nano-2025-08-07', object='response', output=[ResponseReasoningItem(id='rs_68b5604f62308194886f2db3d570b3210cc1eaa1d9025d1f', summary=[], type='reasoning', content=None, encrypted_content=None, status=None), ResponseOutputMessage(id='msg_68b5604f77288194905a2c7b825760420cc1eaa1d9025d1f', content=[ResponseOutputText(annotations=[], text='魔法\nねこ\n猫\n魔法使い\n呪文\n黒魔術\n魔法使い猫\n魔法の杖\nカップ\nコーヒー\nビーカー\n実験\n実験室\nDIコンテナ\nコンテナ\nHDMI\n信号\n落ち\n心拍\n緊張\n不思議\n魔力\n魔術\n懐中時計\n秘密\n謎\nファンタジー\n妖しさ\n不思議な力\nリアクション\n絵文字\nスタンプ\n表情\n驚き\n喜び\n笑顔\n-', type='output_text', logprobs=[])], role='assistant', status='completed', type='message')], parallel_tool_calls=True, temperature=1.0, tool_choice='auto', tools=[], top_p=1.0, background=False, conversation=None, max_output_tokens=None, max_tool_calls=None, previous_response_id=None, prompt=None, prompt_cache_key=None, reasoning=Reasoning(effort='minimal', generate_summary=None, summary=None), safety_identifier=None, service_tier='default', status='completed', text=ResponseTextConfig(format=ResponseFormatText(type='text'), verbosity='medium'), top_logprobs=0, truncation='disabled', usage=ResponseUsage(input_tokens=595, input_tokens_details=InputTokensDetails(cached_tokens=0, audio_tokens=None, text_tokens=None), output_tokens=142, output_tokens_details=OutputTokensDetails(reasoning_tokens=0, text_tokens=None), total_tokens=737), user=None, store=True)
+haruto@KubotaHaruto-MacBookAir analytics % 
