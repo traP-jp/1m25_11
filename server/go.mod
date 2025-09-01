@@ -3,7 +3,7 @@ module github.com/traP-jp/1m25_11/server
 go 1.24.2
 
 require (
-	github.com/go-co-op/gocron/v2 v2.16.3
+	github.com/go-co-op/gocron/v2 v2.16.4
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/google/uuid v1.6.0
