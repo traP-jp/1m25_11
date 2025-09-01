@@ -1,11 +1,22 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-@theme {
+@theme static{
   --font-sans: 'Zen Kaku Gothic New', sans-serif;
   --ui-radius: 0.0rem;
   --color-primary: #005bac;
   --color-secondary: #ac005b;
+  --color-trap-blue-50: #f0f7ff;
+  --color-trap-blue-100: #dfeeff;
+  --color-trap-blue-200: #b9defe;
+  --color-trap-blue-300: #7bc5fe;
+  --color-trap-blue-400: #34a7fc;
+  --color-trap-blue-500: #0a8ded;
+  --color-trap-blue-600: #006dcb;
+  --color-trap-blue-700: #005bac;
+  --color-trap-blue-800: #054b87;
+  --color-trap-blue-900: #0a3e70;
+  --color-trap-blue-950: #07274a;
 }
 
 /* :root { */

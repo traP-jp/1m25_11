@@ -5,6 +5,7 @@
     "bradlc.vscode-tailwindcss",
     "ms-azuretools.vscode-docker",
     "vitest.explorer",
-    "github.vscode-github-actions"
+    "github.vscode-github-actions",
+    "redocly.openapi-vs-code",
   ]
 }
