@@ -17,9 +17,18 @@ type (
 	GetUsersResponse []GetUserResponse
 
 	GetUserResponse struct {
-		ID    uuid.UUID `json:"id"`
-		Name  string    `json:"name"`
-		Email string    `json:"email"`
+		ID               uuid.UUID      `json:"user_id"`
+		IsAdmin          bool           `json:"is_admin"`
+		StampsUserOwned  []StampSummary `json:"stamps_user_owned"`
+		TagsUserCreated  []TagSummary   `json:"tags_user_created"`
+		StampsUserTagged []struct {
+			Stamp StampSummary `json:"stamp"`
+			Tag   TagSummary   `json:"tag"`
+		} `json:"stamps_user_tagged"`
+		DescriptionsUserCreated []struct {
+			Stamp         StampSummary `json:"stamp"`
+			DescriptionID uuid.UUID    `json:"description_id"`
+		} `json:"descriptions_user_created"`
 	}
 
 	CreateUserRequest struct {
