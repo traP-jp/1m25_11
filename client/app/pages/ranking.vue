@@ -11,17 +11,19 @@ interface StampRankingData {
   stamp_name: string;
   body_count: number;
   reaction_count: number;
+  count_total: number;
+  count_monthly: number;
   rank: number;
-  count?: number; // body_count / reaction_count を注入して利用
+  count?: number; // count_total / count_monthly を注入して利用
 }
 
 const rankingTestData = ref<StampRankingData[]>([
-  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-1', body_count: 20, reaction_count: 10, rank: 0 },
-  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-2', body_count: 10, reaction_count: 15, rank: 0 },
-  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-3', body_count: 30, reaction_count: 5, rank: 0 },
-  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-4', body_count: 20, reaction_count: 8, rank: 0 },
-  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-5', body_count: 40, reaction_count: 12, rank: 0 },
-  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-6', body_count: 60, reaction_count: 20, rank: 0 },
+  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-1', body_count: 20, reaction_count: 10, count_monthly: 30, count_total: 25, rank: 0 },
+  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-2', body_count: 10, reaction_count: 15, count_monthly: 40, count_total: 30, rank: 0 },
+  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-3', body_count: 30, reaction_count: 5, count_monthly: 25, count_total: 30, rank: 0 },
+  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-4', body_count: 20, reaction_count: 8, count_monthly: 10, count_total: 40, rank: 0 },
+  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-5', body_count: 40, reaction_count: 12, count_monthly: 15, count_total: 30, rank: 0 },
+  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-6', body_count: 60, reaction_count: 20, count_monthly: 25, count_total: 10, rank: 0 },
 ]);
 
 const medalMap: Record<number, string> = {
@@ -44,39 +46,41 @@ const columns: TableColumn<StampRankingData>[] = [
   {
     accessorKey: 'count',
     header: '使用回数',
-    cell: ({ row }) => row.original.count?.toLocaleString() ?? '-',
-  },
+    cell: ({ row }) =>
+      row.original.count !== undefined
+        ? `${row.original.count.toLocaleString()} 回`
+        : '-' },
 ];
 
-// body_count並び替え
-const sortedBodyCount = computed<StampRankingData[]>(() => {
+// count_total並び替え
+const sortedCountTotal = computed<StampRankingData[]>(() => {
   return [...rankingTestData.value]
-    .sort((a, b) => b.body_count - a.body_count)
+    .sort((a, b) => b.count_total - a.count_total)
     .map((item, index) => ({
       ...item,
       rank: index + 1,
-      count: item.body_count,
+      count: item.count_total,
     }));
 });
 
-// reaction_count並び替え
-const sortedReactionCount = computed<StampRankingData[]>(() => {
+// count_monthly並び替え
+const sortedCountMonthly = computed<StampRankingData[]>(() => {
   return [...rankingTestData.value]
-    .sort((a, b) => b.reaction_count - a.reaction_count)
+    .sort((a, b) => b.count_monthly - a.count_monthly)
     .map((item, index) => ({
       ...item,
       rank: index + 1,
-      count: item.reaction_count,
+      count: item.count_monthly,
     }));
 });
 
 const items = ref<TabsItem[]>([
-  { label: '本文内', icon: 'i-lucide-user', slot: 'body_count' },
-  { label: 'リアクション', icon: 'i-lucide-lock', slot: 'reaction_count' },
+  { label: '総合', slot: 'count_total' },
+  { label: '1か月以内', slot: 'count_monthly' },
 ]);
 
-const paginationBody = ref({ pageIndex: 0, pageSize: 20 });
-const paginationReaction = ref({ pageIndex: 0, pageSize: 20 });
+const paginationTotal = ref({ pageIndex: 0, pageSize: 20 });
+const paginationMonthly = ref({ pageIndex: 0, pageSize: 20 });
 </script>
 
 <template>
@@ -87,11 +91,11 @@ const paginationReaction = ref({ pageIndex: 0, pageSize: 20 });
       class="w-full"
     >
       <!-- 本文ランキング -->
-      <template #body_count>
+      <template #count_total>
         <UTable
           ref="tableBody"
-          v-model:pagination="paginationBody"
-          :data="sortedBodyCount"
+          v-model:pagination="paginationTotal"
+          :data="sortedCountTotal"
           :columns="columns"
           :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
           class="w-full"
@@ -108,11 +112,11 @@ const paginationReaction = ref({ pageIndex: 0, pageSize: 20 });
       </template>
 
       <!-- リアクションランキング -->
-      <template #reaction_count>
+      <template #count_monthly>
         <UTable
           ref="tableReaction"
-          v-model:pagination="paginationReaction"
-          :data="sortedReactionCount"
+          v-model:pagination="paginationMonthly"
+          :data="sortedCountMonthly"
           :columns="columns"
           :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
           class="w-full"
