@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/traP-jp/1m25_11/server/cmd/server/server"
-	"github.com/traP-jp/1m25_11/server/handler" 
+	"github.com/traP-jp/1m25_11/server/internal/handler"
 	"github.com/traP-jp/1m25_11/server/pkg/config"
 	"github.com/traP-jp/1m25_11/server/pkg/database"
 )
