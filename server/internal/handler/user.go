@@ -12,7 +12,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// スキーマ定義
 type (
 	GetUsersResponse []GetUserResponse
 
@@ -41,7 +40,6 @@ type (
 	}
 )
 
-// GET /api/v1/users
 func (h *Handler) GetUsers(c echo.Context) error {
 	users, err := h.repo.GetUsers(c.Request().Context())
 	if err != nil {
@@ -51,16 +49,15 @@ func (h *Handler) GetUsers(c echo.Context) error {
 	res := make(GetUsersResponse, len(users))
 	for i, user := range users {
 		res[i] = GetUserResponse{
-			ID:    user.ID,
-			Name:  user.Name,
-			Email: user.Email,
+			ID: user.ID,
+			// Name:  user.Name,
+			// Email: user.Email,
 		}
 	}
 
 	return c.JSON(http.StatusOK, res)
 }
 
-// POST /api/v1/users
 func (h *Handler) CreateUser(c echo.Context) error {
 	req := new(CreateUserRequest)
 	if err := c.Bind(req); err != nil {
@@ -91,7 +88,6 @@ func (h *Handler) CreateUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-// GET /api/v1/users/:userID
 func (h *Handler) GetUser(c echo.Context) error {
 	userID, err := uuid.Parse(c.Param("userID"))
 	if err != nil {
@@ -104,9 +100,12 @@ func (h *Handler) GetUser(c echo.Context) error {
 	}
 
 	res := GetUserResponse{
-		ID:    user.ID,
-		Name:  user.Name,
-		Email: user.Email,
+		ID: user.ID,
+		// IsAdmin:                 user.isAdmin,
+		// StampsUserOwned:         user.stampsUserOwned,
+		// TagsUserCreated:         user.tagsUserCreated,
+		// StampsUserTagged:        user.stampsUserTagged,
+		// DescriptionsUserCreated: user.descriptionsUserCreated,
 	}
 
 	return c.JSON(http.StatusOK, res)
