@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/traP-jp/1m25_11/server/cmd/server/server"
+	"github.com/traP-jp/1m25_11/server/handler" 
 	"github.com/traP-jp/1m25_11/server/pkg/config"
 	"github.com/traP-jp/1m25_11/server/pkg/database"
 )
@@ -15,14 +16,16 @@ import (
 func main() {
 	e := echo.New()
 
+	// カスタムHTTPエラーハンドラを設定
+	e.HTTPErrorHandler = handler.CustomHTTPErrorHandler
+
 	// middlewares
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 
-	e.Use(middleware.CORS())
-
+	// CORS設定
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"https://1m25-11.trap.show", "http://localhost"},
+		AllowOrigins:     []string{"https://1m25-11.trap.show", "http://localhost:5173"}, //
 		AllowMethods:     []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.PATCH, echo.OPTIONS},
 		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 		AllowCredentials: true,
@@ -58,5 +61,4 @@ func main() {
 	ss.Start()
 
 	e.Logger.Fatal(e.Start(config.AppAddr()))
-
 }
