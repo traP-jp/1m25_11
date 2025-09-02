@@ -13,6 +13,10 @@ type (
 		TagID     uuid.UUID `db:"tag_id" json:"tag_id"`
 		CreatorID uuid.UUID `db:"creator_id" json:"creator_id"`
 	}
+	StampTagSummary struct {
+		StampID uuid.UUID
+		TagID   uuid.UUID
+	}
 )
 
 func (r *Repository) CreateStampTags(ctx context.Context, params CreateStampTagParams) error {
@@ -40,8 +44,8 @@ func (r *Repository) GetSearchStampTags(ctx context.Context, keyword string) ([]
 	return stampIDs, nil
 }
 
-func (r *Repository) getStampTagsByCreatorID(ctx context.Context, creatorID uuid.UUID) ([]*CreateStampTagParams, error) {
-	stampTags := []*CreateStampTagParams{}
+func (r *Repository) getStampTagsByCreatorID(ctx context.Context, creatorID uuid.UUID) ([]StampTagSummary, error) {
+	stampTags := []StampTagSummary{}
 	if err := r.db.SelectContext(ctx, &stampTags, "SELECT * FROM stamp_tags WHERE creator_id = ?", creatorID); err != nil {
 		return nil, fmt.Errorf("select stamp_tags by userID: %w", err)
 	}

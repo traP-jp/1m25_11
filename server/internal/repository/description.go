@@ -58,8 +58,8 @@ func (r *Repository) UpdateDescriptions(ctx context.Context, stampID uuid.UUID, 
 	return nil
 }
 
-func (r *Repository) getDescriptionsByCreatorID(ctx context.Context, creatorID uuid.UUID) (StampDescription, error) {
-	descriptionsByCreatorID := StampDescription{}
+func (r *Repository) getDescriptionsByCreatorID(ctx context.Context, creatorID uuid.UUID) ([]StampDescription, error) {
+	descriptionsByCreatorID := []StampDescription{}
 	if err := r.db.GetContext(ctx, &descriptionsByCreatorID, "SELECT description, creator_id, created_at, updated_at FROM stamp_descriptions WHERE creator_id = ?", creatorID); err != nil {
 		return descriptionsByCreatorID, fmt.Errorf("failed to get descriptions by creatorID: %w", err)
 	}

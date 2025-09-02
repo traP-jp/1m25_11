@@ -10,14 +10,11 @@ import (
 type (
 	// users table
 	User struct {
-		ID               uuid.UUID `db:"id"`
-		IsAdmin          bool
-		StampsUserOwned  []StampSummary
-		TagsUserCreated  []TagSummary
-		StampsUserTagged []struct {
-			Stamp StampSummary
-			Tag   TagSummary
-		}
+		ID                      uuid.UUID `db:"id"`
+		IsAdmin                 bool
+		StampsUserOwned         []StampSummary
+		TagsUserCreated         []TagSummary
+		StampsUserTagged        []StampTagSummary
 		DescriptionsUserCreated []struct {
 			Stamp         StampSummary
 			DescriptionID uuid.UUID
@@ -54,22 +51,35 @@ func (r *Repository) CreateUser(ctx context.Context, params CreateUserParams) (u
 func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, error) {
 	user := &User{}
 	isAdmin := false // 仮でfalseに設定
-	stampsUserOwned, err := r.getStampsByCreatorID(ctx, userID)
+	stampsUserOwnedRaw, err := r.getStampsByCreatorID(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("get stamps user owned: %w", err)
 	}
-	tagsUserCreated, err := r.getTagsByCreatorID(ctx, userID)
+	stampsUserOwned := make([]StampSummary, len(stampsUserOwnedRaw))
+	tagsUserCreatedRaw, err := r.getTagsByCreatorID(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("get tags user created: %w", err)
 	}
+	tagsUserCreated := make([]TagSummary, len(tagsUserCreatedRaw))
 	stampsUserTagged, err := r.getStampTagsByCreatorID(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("get stamps user tagged: %w", err)
 	}
-	descriptionsUserCreated, err := r.getDescriptionsByCreatorID(ctx, userID)
+	descriptionsUserCreatedRaw, err := r.getDescriptionsByCreatorID(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("get descriptions user created: %w", err)
 	}
+	descriptionsUserCreated := make([]struct {
+		Stamp         StampSummary
+		DescriptionID uuid.UUID
+	}, len(descriptionsUserCreatedRaw))
+
+	user.ID = userID
+	user.IsAdmin = isAdmin
+	user.StampsUserOwned = stampsUserOwned
+	user.TagsUserCreated = tagsUserCreated
+	user.StampsUserTagged = stampsUserTagged
+	user.DescriptionsUserCreated = descriptionsUserCreated
 
 	return user, nil
 }
