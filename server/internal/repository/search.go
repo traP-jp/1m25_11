@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 )
 
 type SearchStampsParams struct {
@@ -47,72 +46,30 @@ func (r *Repository) SearchStamps(ctx context.Context, params SearchStampsParams
 			COALESCE(GROUP_CONCAT(DISTINCT sd.description SEPARATOR ' '), '') AS descriptions,
 			COALESCE(u.name, '') AS creator_name
 		FROM stamps s
+		LEFT JOIN stamp_descriptions sd ON s.id = sd.stamp_id
+		LEFT JOIN users u ON s.creator_id = u.id
+		LEFT JOIN stamp_tags st ON s.id = st.stamp_id
+		LEFT JOIN tags t ON st.tag_id = t.id
 	`
-	joins := make(map[string]struct{})
 	var whereClauses []string
-	args := make(map[string]interface{})
-
-	createOrClauses := func(field, query, argPrefix string) string {
-		terms := strings.Fields(query)
-		if len(terms) == 0 {
-			return ""
-		}
-		var clauses []string
-		for i, term := range terms {
-			argName := fmt.Sprintf("%s%d", argPrefix, i)
-			clauses = append(clauses, fmt.Sprintf("%s LIKE :%s", field, argName))
-			args[argName] = "%" + term + "%"
-		}
-		return "(" + strings.Join(clauses, " OR ") + ")"
-	}
-
-	if params.Description != "" || (params.Query != "" && strings.Contains(params.Query, "description")) {
-		joins["LEFT JOIN stamp_descriptions sd ON s.id = sd.stamp_id"] = struct{}{}
-	}
-	if params.Creator != "" || (params.Query != "" && strings.Contains(params.Query, "creator")) {
-		joins["LEFT JOIN users u ON s.creator_id = u.id"] = struct{}{}
-	}
-	if len(params.Tags) > 0 || (params.Query != "" && strings.Contains(params.Query, "tag")) {
-		joins["LEFT JOIN stamp_tags st ON s.id = st.stamp_id"] = struct{}{}
-		joins["LEFT JOIN tags t ON st.tag_id = t.id"] = struct{}{}
-	}
-
-	if params.Name != "" {
-		whereClauses = append(whereClauses, createOrClauses("s.name", params.Name, "name"))
-	}
-	if params.Description != "" {
-		whereClauses = append(whereClauses, createOrClauses("sd.description", params.Description, "desc"))
-	}
-	if params.Creator != "" {
-		whereClauses = append(whereClauses, createOrClauses("u.name", params.Creator, "creator"))
-	}
-	if len(params.Tags) > 0 {
-		whereClauses = append(whereClauses, "s.id IN (SELECT st.stamp_id FROM stamp_tags st JOIN tags t ON st.tag_id = t.id WHERE t.name IN (:tags))")
-		args["tags"] = params.Tags
-	}
-	if params.Query != "" {
-		qClauses := []string{
-			createOrClauses("s.name", params.Query, "qName"),
-			createOrClauses("sd.description", params.Query, "qDesc"),
-		}
-		whereClauses = append(whereClauses, "("+strings.Join(qClauses, " OR ")+")")
-	}
+	var havingClauses []string
+	var args []interface{}
 
 	if params.CreatedSince != nil {
-		whereClauses = append(whereClauses, "s.created_at >= :created_since")
-		args["created_since"] = params.CreatedSince
+		whereClauses = append(whereClauses, "s.created_at >= ?")
+		args = append(args, params.CreatedSince)
 	}
 	if params.CreatedUntil != nil {
-		whereClauses = append(whereClauses, "s.created_at <= :created_until")
-		args["created_until"] = params.CreatedUntil
+		whereClauses = append(whereClauses, "s.created_at <= ?")
+		args = append(args, params.CreatedUntil)
 	}
 	if params.UpdatedSince != nil {
-		whereClauses = append(whereClauses, "s.updated_at >= :updated_since")
-		args["updated_since"] = params.UpdatedSince
+		whereClauses = append(whereClauses, "s.updated_at >= ?")
+		args = append(args, params.UpdatedSince)
 	}
 	if params.UpdatedUntil != nil {
-		whereClauses = append(whereClauses, "s.updated_at <= :updated_until")
-		args["updated_until"] = params.UpdatedUntil
+		whereClauses = append(whereClauses, "s.updated_at <= ?")
+		args = append(args, params.UpdatedUntil)
 	}
 	switch params.StampTypeUnicode {
 	case "only_unicode":
@@ -127,49 +84,78 @@ func (r *Repository) SearchStamps(ctx context.Context, params SearchStampsParams
 		whereClauses = append(whereClauses, "s.is_animated = FALSE")
 	}
 	if params.CountMonthlyMin != nil {
-		whereClauses = append(whereClauses, "s.count_monthly >= :count_min")
-		args["count_min"] = *params.CountMonthlyMin
+		whereClauses = append(whereClauses, "s.count_monthly >= ?")
+		args = append(args, *params.CountMonthlyMin)
 	}
 	if params.CountMonthlyMax != nil {
-		whereClauses = append(whereClauses, "s.count_monthly <= :count_max")
-		args["count_max"] = *params.CountMonthlyMax
+		whereClauses = append(whereClauses, "s.count_monthly <= ?")
+		args = append(args, *params.CountMonthlyMax)
 	}
 
-	finalQuery := baseQuery
-	for join := range joins {
-		finalQuery += " " + join
+	addHavingOrClause := func(query string, field string) {
+		terms := strings.Fields(query)
+		if len(terms) > 0 {
+			var clauses []string
+			for _, term := range terms {
+				clauses = append(clauses, fmt.Sprintf("%s LIKE ?", field))
+				args = append(args, "%"+term+"%")
+			}
+			havingClauses = append(havingClauses, "("+strings.Join(clauses, " OR ")+")")
+		}
 	}
-	if len(whereClauses) > 0 {
-		finalQuery += " WHERE " + strings.Join(whereClauses, " AND ")
+
+	if params.Name != "" {
+		addHavingOrClause(params.Name, "s.name")
 	}
-	finalQuery += " GROUP BY s.id"
+	if params.Description != "" {
+		addHavingOrClause(params.Description, "descriptions")
+	}
+	if params.Creator != "" {
+		addHavingOrClause(params.Creator, "creator_name")
+	}
+	if len(params.Tags) > 0 {
+		addHavingOrClause(strings.Join(params.Tags, " "), "tags")
+	}
+	if params.Query != "" {
+		terms := strings.Fields(params.Query)
+		if len(terms) > 0 {
+			var qClauses []string
+			for _, term := range terms {
+				qClauses = append(qClauses, "s.name LIKE ? OR descriptions LIKE ? OR tags LIKE ? OR creator_name LIKE ?")
+				args = append(args, "%"+term+"%", "%"+term+"%", "%"+term+"%", "%"+term+"%")
+			}
+			havingClauses = append(havingClauses, "("+strings.Join(qClauses, " OR ")+")")
+		}
+	}
 
 	orderByClause := ""
 	switch params.SortBy {
 	case "created_at_asc":
-		orderByClause = " ORDER BY s.created_at ASC, s.name ASC"
+		orderByClause = "ORDER BY s.created_at ASC, s.name ASC"
 	case "created_at_desc":
-		orderByClause = " ORDER BY s.created_at DESC, s.name ASC"
+		orderByClause = "ORDER BY s.created_at DESC, s.name ASC"
 	case "count_monthly_asc":
-		orderByClause = " ORDER BY s.count_monthly ASC, s.name ASC"
+		orderByClause = "ORDER BY s.count_monthly ASC, s.name ASC"
 	case "count_monthly_desc":
-		orderByClause = " ORDER BY s.count_monthly DESC, s.name ASC"
+		orderByClause = "ORDER BY s.count_monthly DESC, s.name ASC"
+	default:
+		orderByClause = "ORDER BY s.name ASC" 
 	}
-	finalQuery += orderByClause
 
-	query, boundArgs, err := sqlx.Named(finalQuery, args)
-	if err != nil {
-		return nil, fmt.Errorf("failed to bind named query: %w", err)
+	finalQuery := baseQuery
+	if len(whereClauses) > 0 {
+		finalQuery += " WHERE " + strings.Join(whereClauses, " AND ")
 	}
-	query, boundArgs, err = sqlx.In(query, boundArgs...)
-	if err != nil {
-		return nil, fmt.Errorf("failed to expand IN clause: `tags`: %w", err)
+	finalQuery += " GROUP BY s.id"
+	if len(havingClauses) > 0 {
+		finalQuery += " HAVING " + strings.Join(havingClauses, " AND ")
 	}
-	query = r.db.Rebind(query)
+	finalQuery += " " + orderByClause
 
+	query := r.db.Rebind(finalQuery)
 	var result []StampForSearch
-	if err := r.db.SelectContext(ctx, &result, query, boundArgs...); err != nil {
-		return nil, fmt.Errorf("failed to execute search query: %w", err)
+	if err := r.db.SelectContext(ctx, &result, query, args...); err != nil {
+		return nil, fmt.Errorf("failed to execute search query: %w\nQuery: %s\nArgs: %v", err, query, args)
 	}
 
 	if result == nil {
@@ -178,4 +164,3 @@ func (r *Repository) SearchStamps(ctx context.Context, params SearchStampsParams
 
 	return result, nil
 }
-
