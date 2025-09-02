@@ -11,7 +11,7 @@ interface StampRankingData {
   stamp_name: string;
   count_total: number;
   count_monthly: number;
-  rank: number;
+  rank: number; // すべてのデータに初期値として0を付与
   count?: number; // count_total / count_monthly を注入して利用
 }
 
@@ -36,10 +36,21 @@ const columns: TableColumn<StampRankingData>[] = [
     header: '順位',
     cell: ({ row }: { row: Row<StampRankingData> }) =>
       medalMap[row.original.rank] || `#${row.original.rank}`,
+    meta: {
+      class: {
+        td: 'font-bold',
+      },
+    },
   },
   {
     accessorKey: 'stamp_name',
     header: 'スタンプ名',
+    meta: {
+      class: {
+        th: 'text-center',
+        td: 'flex justify-start font-bold',
+      },
+    },
   },
   {
     accessorKey: 'count',
@@ -47,30 +58,29 @@ const columns: TableColumn<StampRankingData>[] = [
     cell: ({ row }) =>
       row.original.count !== undefined
         ? `${row.original.count.toLocaleString()} 回`
-        : '-' },
+        : '-',
+    meta: {
+      class: {
+        td: 'font-bold',
+      },
+    },
+  },
 ];
 
-// count_total並び替え
-const sortedCountTotal = computed<StampRankingData[]>(() => {
-  return [...rankingTestData.value]
-    .sort((a, b) => b.count_total - a.count_total)
-    .map((item, index) => ({
-      ...item,
-      rank: index + 1,
-      count: item.count_total,
-    }));
-});
+function useSortedData(key: 'count_total' | 'count_monthly') {
+  return computed(() =>
+    [...rankingTestData.value]
+      .sort((a, b) => b[key] - a[key])
+      .map((item, index) => ({
+        ...item,
+        rank: index + 1,
+        count: item[key],
+      })),
+  );
+}
 
-// count_monthly並び替え
-const sortedCountMonthly = computed<StampRankingData[]>(() => {
-  return [...rankingTestData.value]
-    .sort((a, b) => b.count_monthly - a.count_monthly)
-    .map((item, index) => ({
-      ...item,
-      rank: index + 1,
-      count: item.count_monthly,
-    }));
-});
+const sortedCountTotal = useSortedData('count_total');
+const sortedCountMonthly = useSortedData('count_monthly');
 
 const items = ref<TabsItem[]>([
   { label: '総合', slot: 'count_total' },
