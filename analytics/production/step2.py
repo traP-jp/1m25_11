@@ -63,8 +63,8 @@ try:
         traQing_prompt = ""
 
         request = {
-            model="gpt-5-nano",
-            input=[
+            "model": "gpt-5-nano",
+            "messages": [
                 {
                     "role": "system",
                     "content": "あなたは日本語で簡潔かつ客観的に記述するコンテンツ生成エンジンです。与えられた絵文字の画像と使用例（本文・リアクション）から、その絵文字の**概要・見た目・主な用法**を抽出し、「説明文」（約200字）と「キーワード」（検索用語の集合）を生成します。事実不明な細部は断定せず、汎用的で再利用可能な表現を優先します。"
@@ -100,19 +100,43 @@ try:
                     "role": "user",
                     "content": [
                         {
-                            "type": "input_text",
-                            "text": "あなたは日本語で簡潔かつ客観的に記述するコンテンツ生成エンジンです。与えられた絵文字の画像と使用例（本文・リアクション）から、その絵文字の**概要・見た目・主な用法**を抽出し、「説明文」（約200字）と「キーワード」（検索用語の集合）を生成します。事実不明な細部は断定せず、汎用的で再利用可能な表現を優先します。"
+                            "type": "text",
+                            "text": f"""次の入力をもとに**JSONのみ**を出力してください。
+
+## 入力
+* 絵文字の名前: `{stamp['name']}`
+* 本文で使われた投稿（配列）:
+  `{traQ_prompt}`
+* リアクションとして使われた投稿（配列）:
+  `{traQing_prompt}`
+* 絵文字画像: image_urlとして添付
+
+### データ仕様
+* `message`型:
+```json
+{
+  "content": "本文",
+  "stamps": ["絵文字の名前1","絵文字の名前2"]
+}
+```
+* `messages`は本文中で`:name:`の形で使われた例、`reactions`はリアクションとして付いた例。
+
+### 注意
+
+* 投稿は**参考**です。用途はこれらに**限定しない**でください。
+* 画像に描かれた**文字・図柄は最重要手がかり**として反映してください。
+* 出力は次のキーのみ: `description`, `keywords`。**追加キー禁止**。"""
                         },
                         {
-                            "type": "input_image",
-                            "image_url": f"https://q.trap.jp/api/1.0/public/emoji/{stamp['id']}"
+                            "type": "image_url",
+                            "image_url": { "url": f"https://q.trap.jp/api/1.0/public/emoji/{stamp['id']}" },
                         }
                     ],
                 }
             ],
-            stream=False,
-            reasoning={ "effort": "low" },
-            response_format={ "type": "json_object" },
+            "stream": False,
+            "reasoning": { "effort": "low" },
+            "response_format": { "type": "json_object" },
         }
         all_requests.append(request)
 
