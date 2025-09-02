@@ -54,7 +54,7 @@ func (r *Repository) DeleteTags(ctx context.Context, tagID uuid.UUID) error {
 	return nil
 }
 
-func (r *Repository) CreateTags(ctx context.Context, params CreateTagParams)(uuid.UUID, error){
+func (r *Repository) CreateTags(ctx context.Context, params CreateTagParams) (uuid.UUID, error) {
 	tagID, _ := uuid.NewV7()
 	now := time.Now()
 	if _, err := r.db.ExecContext(ctx, "INSERT INTO tags(id, name, creator_id, created_at, updated_at) VALUES(?,?,?,?,?)", tagID, params.Name, params.CreatorID, now, now); err != nil {
@@ -82,7 +82,17 @@ func (r *Repository) GetTagDetilsByStampID(ctx context.Context, stampID uuid.UUI
 	return tag, nil
 }
 
+func (r *Repository) getTagsByCreatorID(ctx context.Context, creatorID uuid.UUID) ([]*TagSummary, error) {
+	tagsByCreatorID := []*TagSummary{}
+	query := `SELECT tags.id, tags.name tags.creator_id FROM tags WHERE tags.creator_id = ?`
+	if err := r.db.SelectContext(ctx, &tagsByCreatorID, query, creatorID); err != nil {
+		return nil, fmt.Errorf("select tags by creatorID: %w", err)
+	}
+
+	return tagsByCreatorID, nil
+}
+
 var (
 	ErrTagConflict   = errors.New("tag with this name already exists")
-	ErrAdminNotFound = errors.New("admin not found") 
+	ErrAdminNotFound = errors.New("admin not found")
 )

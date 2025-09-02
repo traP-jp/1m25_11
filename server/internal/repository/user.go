@@ -10,9 +10,18 @@ import (
 type (
 	// users table
 	User struct {
-		ID    uuid.UUID `db:"id"`
-		Name  string    `db:"name"`
-		Email string    `db:"email"`
+		ID               uuid.UUID `db:"id"`
+		IsAdmin          bool
+		StampsUserOwned  []StampSummary
+		TagsUserCreated  []TagSummary
+		StampsUserTagged []struct {
+			Stamp StampSummary
+			Tag   TagSummary
+		}
+		DescriptionsUserCreated []struct {
+			Stamp         StampSummary
+			DescriptionID uuid.UUID
+		}
 	}
 
 	CreateUserParams struct {
@@ -44,8 +53,14 @@ func (r *Repository) CreateUser(ctx context.Context, params CreateUserParams) (u
 
 func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, error) {
 	user := &User{}
-	if err := r.db.GetContext(ctx, user, "SELECT * FROM users WHERE id = ?", userID); err != nil {
-		return nil, fmt.Errorf("select user: %w", err)
+	isAdmin := false // 仮でfalseに設定
+	stampsUserOwned, err := r.getStampsByCreatorID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("get stamps user owned: %w", err)
+	}
+	tagsUserCreated, err := r.getTagsByCreatorID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("get tags user created: %w", err)
 	}
 
 	return user, nil
