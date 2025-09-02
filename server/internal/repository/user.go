@@ -58,8 +58,9 @@ func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, erro
 	stampsUserOwned := make([]StampSummary, len(stampsUserOwnedRaw))
 	for i, stamp := range stampsUserOwnedRaw {
 		stampsUserOwned[i] = StampSummary{
-			ID:   stamp.ID,
-			Name: stamp.Name,
+			ID:     stamp.ID,
+			Name:   stamp.Name,
+			FileID: stamp.FileID,
 		}
 	}
 	tagsUserCreatedRaw, err := r.getTagsByCreatorID(ctx, userID)
@@ -86,16 +87,11 @@ func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, erro
 		DescriptionID uuid.UUID
 	}, len(descriptionsUserCreatedRaw))
 	for i, description := range descriptionsUserCreatedRaw {
-		descriptionsUserCreated[i] = struct {
-			Stamp         StampSummary
-			DescriptionID uuid.UUID
-		}{
-			Stamp: StampSummary{
-				ID:     description.StampID,
-				Name:   description.StampName,
-				FileID: description.StampFileID,
-			},
-			DescriptionID: description.DescriptionID,
+		descriptionsUserCreated[i].DescriptionID = description.DescriptionID
+		descriptionsUserCreated[i].Stamp = StampSummary{
+			ID:     description.StampID,
+			Name:   description.StampName,
+			FileID: description.StampFileID,
 		}
 	}
 
