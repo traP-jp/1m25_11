@@ -6,27 +6,27 @@ import (
 	"net/http"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/oapi-codegen/runtime/types"
 	"github.com/traP-jp/1m25_11/server/internal/repository"
 )
 
 type searchStampsParams struct {
-	Q                  *string     `query:"q"`
-	Name               *string     `query:"name"`
-	Tag                []string    `query:"tag"`
-	Description        *string     `query:"description"`
-	Creator            *string     `query:"creator"`
-	CreatedSince       *types.Date `query:"created_since"`
-	CreatedUntil       *types.Date `query:"created_until"`
-	UpdatedSince       *types.Date `query:"updated_since"`
-	UpdatedUntil       *types.Date `query:"updated_until"`
-	StampTypeUnicode   *string     `query:"stamp_type_unicode"`
-	StampTypeAnimation *string     `query:"stamp_type_animation"`
-	CountMonthlyMin    *int        `query:"count_monthly_min"`
-	CountMonthlyMax    *int        `query:"count_monthly_max"`
-	SortBy             *string     `query:"sortby"`
+	Q                  *string  `query:"q"`
+	Name               *string  `query:"name"`
+	Tag                []string `query:"tag"`
+	Description        *string  `query:"description"`
+	Creator            *string  `query:"creator"`
+	CreatedSince       *string  `query:"created_since"` 
+	CreatedUntil       *string  `query:"created_until"` 
+	UpdatedSince       *string  `query:"updated_since"` 
+	UpdatedUntil       *string  `query:"updated_until"` 
+	StampTypeUnicode   *string  `query:"stamp_type_unicode"`
+	StampTypeAnimation *string  `query:"stamp_type_animation"`
+	CountMonthlyMin    *int     `query:"count_monthly_min"`
+	CountMonthlyMax    *int     `query:"count_monthly_max"`
+	SortBy             *string  `query:"sortby"`
 }
 
 type searchResultResponse struct {
@@ -64,18 +64,30 @@ func (h *Handler) SearchStamps(c echo.Context) error {
 	if params.Creator != nil {
 		repoParams.Creator = *params.Creator
 	}
+
+
+	const layout = "2006-01-02" 
 	if params.CreatedSince != nil {
-		repoParams.CreatedSince = &params.CreatedSince.Time
+		if t, err := time.Parse(layout, *params.CreatedSince); err == nil {
+			repoParams.CreatedSince = &t
+		}
 	}
 	if params.CreatedUntil != nil {
-		repoParams.CreatedUntil = &params.CreatedUntil.Time
+		if t, err := time.Parse(layout, *params.CreatedUntil); err == nil {
+			repoParams.CreatedUntil = &t
+		}
 	}
 	if params.UpdatedSince != nil {
-		repoParams.UpdatedSince = &params.UpdatedSince.Time
+		if t, err := time.Parse(layout, *params.UpdatedSince); err == nil {
+			repoParams.UpdatedSince = &t
+		}
 	}
 	if params.UpdatedUntil != nil {
-		repoParams.UpdatedUntil = &params.UpdatedUntil.Time
+		if t, err := time.Parse(layout, *params.UpdatedUntil); err == nil {
+			repoParams.UpdatedUntil = &t
+		}
 	}
+
 	if params.StampTypeUnicode != nil {
 		repoParams.StampTypeUnicode = *params.StampTypeUnicode
 	}
@@ -135,12 +147,6 @@ func (h *Handler) SearchStamps(c echo.Context) error {
 }
 
 func calculateRelativityScore(stamp repository.StampForSearch, params repository.SearchStampsParams) float64 {
-	// 各クエリパラメータに対応するサブスコアを計算するヘルパー関数
-	// qnameを空白区切りにした各文字列をqname,i, 個数をnとする
-	// qname,i (i = 1, 2, 3, …, n)に次の処理を行う
-	//   ai,name := nameにqname,iが登場する回数
-	//   xi,name := 1-exp(-ai,name)
-	// scorename := sum(xi,name) / n
 	calculateSubScore := func(query, targetText string) float64 {
 		terms := strings.Fields(query)
 		if len(terms) == 0 {
@@ -160,10 +166,6 @@ func calculateRelativityScore(stamp repository.StampForSearch, params repository
 	scoreTag := calculateSubScore(strings.Join(params.Tags, " "), stamp.Tags)
 	scoreCreator := calculateSubScore(params.Creator, stamp.CreatorName)
 
-	// scoreqの計算
-	// qi (i = 1, 2, 3, …, n)に次の処理を行う
-	//   xi := (xi,name + xi,tag + xi,description + xi,creator) / 4
-	// scoreq := sum(xi) / n
 	var scoreQ float64
 	qTerms := strings.Fields(params.Query)
 	if len(qTerms) > 0 {
@@ -179,8 +181,7 @@ func calculateRelativityScore(stamp repository.StampForSearch, params repository
 		scoreQ = sumOfXi / float64(len(qTerms))
 	}
 
-	// 最終スコアの計算
-	// score := (scoreq + scorename + scoretag + scoredescription + scorecreator) / 5
 	finalScore := (scoreQ + scoreName + scoreTag + scoreDescription + scoreCreator) / 5.0
 	return finalScore
 }
+
