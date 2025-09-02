@@ -18,12 +18,12 @@ interface StampRankingData {
 }
 
 const rankingTestData = ref<StampRankingData[]>([
-  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-1', body_count: 20, reaction_count: 10, count_monthly: 30, count_total: 25, rank: 0 },
-  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-2', body_count: 10, reaction_count: 15, count_monthly: 40, count_total: 30, rank: 0 },
-  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-3', body_count: 30, reaction_count: 5, count_monthly: 25, count_total: 30, rank: 0 },
-  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-4', body_count: 20, reaction_count: 8, count_monthly: 10, count_total: 40, rank: 0 },
-  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-5', body_count: 40, reaction_count: 12, count_monthly: 15, count_total: 30, rank: 0 },
-  { stamp_id: 'e1e4a295', stamp_name: 'yatta-nya-6', body_count: 60, reaction_count: 20, count_monthly: 25, count_total: 10, rank: 0 },
+  { stamp_id: 'e1e4a295-cf24-4de9-936c-e72469170d8f', stamp_name: 'yatta-nya-1', body_count: 20, reaction_count: 10, count_monthly: 30, count_total: 25, rank: 0 },
+  { stamp_id: 'e1e4a295-cf24-4de9-936c-e72469170d8f', stamp_name: 'yatta-nya-2', body_count: 10, reaction_count: 15, count_monthly: 40, count_total: 30, rank: 0 },
+  { stamp_id: 'e1e4a295-cf24-4de9-936c-e72469170d8f', stamp_name: 'yatta-nya-3', body_count: 30, reaction_count: 5, count_monthly: 25, count_total: 30, rank: 0 },
+  { stamp_id: 'e1e4a295-cf24-4de9-936c-e72469170d8f', stamp_name: 'yatta-nya-4', body_count: 20, reaction_count: 8, count_monthly: 10, count_total: 40, rank: 0 },
+  { stamp_id: 'e1e4a295-cf24-4de9-936c-e72469170d8f', stamp_name: 'yatta-nya-5', body_count: 40, reaction_count: 12, count_monthly: 15, count_total: 30, rank: 0 },
+  { stamp_id: 'e1e4a295-cf24-4de9-936c-e72469170d8f', stamp_name: 'yatta-nya-6', body_count: 60, reaction_count: 20, count_monthly: 25, count_total: 10, rank: 0 },
 ]);
 
 const medalMap: Record<number, string> = {
@@ -99,8 +99,17 @@ const paginationMonthly = ref({ pageIndex: 0, pageSize: 20 });
           :columns="columns"
           :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
           class="w-full"
-        />
-
+        >
+          <template #stamp_name-cell="{ row }">
+            <div class="flex items-center gap-3">
+              <NuxtImg
+                :src="`https://q.trap.jp/api/1.0/public/emoji/${row.original.stamp_id}`"
+                class="mx-auto w-12 h-12"
+              />
+              <p>{{ row.original.stamp_name }}</p>
+            </div>
+          </template>
+        </UTable>
         <div class="flex justify-center border-t border-default pt-4">
           <UPagination
             :default-page="(tableBody?.tableApi?.getState().pagination.pageIndex || 0) + 1"
@@ -120,7 +129,17 @@ const paginationMonthly = ref({ pageIndex: 0, pageSize: 20 });
           :columns="columns"
           :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
           class="w-full"
-        />
+        >
+          <template #stamp_name-cell="{ row }">
+            <div class="flex items-center gap-3">
+              <NuxtImg
+                :src="`https://q.trap.jp/api/1.0/public/emoji/${row.original.stamp_id}`"
+                class="mx-auto w-12 h-12"
+              />
+              <p>{{ row.original.stamp_name }}</p>
+            </div>
+          </template>
+        </UTable>
 
         <div class="flex justify-center border-t border-default pt-4">
           <UPagination
