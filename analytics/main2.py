@@ -70,6 +70,7 @@ try:
         ],
         stream=False,
         reasoning={ "effort": "low" },
+        response_format={ "type": "json_object" },
     )
 
     print(response.output_text)
