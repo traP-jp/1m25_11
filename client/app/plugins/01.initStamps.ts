@@ -1,12 +1,8 @@
 import { apiClient } from '#imports';
 
 export default defineNuxtPlugin(async (_) => {
-  const listState = useState<StampSummary[]>('stamps-list');
-  const mapState = useState<Map<string, StampSummary>>('stamps-map');
-
-  // if (listState.value.length > 0) {
-  //   return;
-  // }
+  const listState = useState<Schemas['StampSummary'][]>('stamps-list');
+  const mapState = useState<Map<string, Schemas['StampSummary']>>('stamps-map');
 
   // /stamps APIを叩き、スタンプのすべてのリストを取得する
   const { data } = await apiClient.GET('/stamps');
