@@ -73,7 +73,7 @@ func (r *Repository) GetTagsByStampID(ctx context.Context, stampID uuid.UUID) ([
 	return tagsummaries, nil
 }
 
-func (r *Repository) GetTagDetilsByStampID(ctx context.Context, stampID uuid.UUID) ([]*Tag, error) {
+func (r *Repository) GetTagDetailsByStampID(ctx context.Context, stampID uuid.UUID) ([]*Tag, error) {
 	tag := []*Tag{}
 	if err := r.db.SelectContext(ctx, &tag, "SELECT tags.id, tags.name, tags.creator_id, tags.created_at, tags.updated_at FROM tags JOIN stamp_tags ON stamp_tags.tag_id = tags.id WHERE stamp_tags.stamp_id = ?", stampID); err != nil {
 		return nil, fmt.Errorf("select tag details by stampID: %w", err)
