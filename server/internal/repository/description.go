@@ -58,13 +58,22 @@ func (r *Repository) UpdateDescriptions(ctx context.Context, stampID uuid.UUID, 
 	return nil
 }
 
+func (r *Repository) getDescriptionsByCreatorID(ctx context.Context, creatorID uuid.UUID) (StampDescription, error) {
+	descriptionsByCreatorID := StampDescription{}
+	if err := r.db.GetContext(ctx, &descriptionsByCreatorID, "SELECT description, creator_id, created_at, updated_at FROM stamp_descriptions WHERE creator_id = ?", creatorID); err != nil {
+		return descriptionsByCreatorID, fmt.Errorf("failed to get descriptions by creatorID: %w", err)
+	}
+
+	return descriptionsByCreatorID, nil
+}
+
 var (
-	ErrStampNotFound          = errors.New("stamp not found")
-	ErrDescriptionNotFound    = errors.New("description not found")
+	ErrStampNotFound            = errors.New("stamp not found")
+	ErrDescriptionNotFound      = errors.New("description not found")
 	ErrDescriptionAlreadyExists = errors.New("description already exists")
-	ErrUnauthorized           = errors.New("unauthorized")
-	ErrForbidden              = errors.New("forbidden")
-	ErrTagNotFound            = errors.New("tag not found")
-	ErrTagAlreadyAdded        = errors.New("tag already added")
-	ErrTagNotLinked           = errors.New("tag not linked")
+	ErrUnauthorized             = errors.New("unauthorized")
+	ErrForbidden                = errors.New("forbidden")
+	ErrTagNotFound              = errors.New("tag not found")
+	ErrTagAlreadyAdded          = errors.New("tag already added")
+	ErrTagNotLinked             = errors.New("tag not linked")
 )

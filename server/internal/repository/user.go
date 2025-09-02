@@ -66,6 +66,10 @@ func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, erro
 	if err != nil {
 		return nil, fmt.Errorf("get stamps user tagged: %w", err)
 	}
+	descriptionsUserCreated, err := r.getDescriptionsByCreatorID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("get descriptions user created: %w", err)
+	}
 
 	return user, nil
 }
