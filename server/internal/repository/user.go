@@ -48,7 +48,7 @@ func (r *Repository) CreateUser(ctx context.Context, params CreateUserParams) (u
 func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, error) {
 	user := &User{}
 	user.ID = userID
-	user.isAdmin := false // 仮でfalseに設定
+	user.IsAdmin = false // 仮でfalseに設定
 
 	if err := r.db.SelectContext(ctx, &user.StampsUserOwned, "SELECT id, name, file_id FROM stamps WHERE creator_id = ?", userID); err != nil {
 		return nil, fmt.Errorf("select stamps by creatorID: %w", err)
