@@ -11,11 +11,11 @@ type (
 	// users table
 	User struct {
 		ID                      uuid.UUID `db:"id"`
-		IsAdmin                 bool
-		StampsUserOwned         []StampSummary
-		TagsUserCreated         []TagSummary
-		StampsUserTagged        []StampTagSummary
-		DescriptionsUserCreated []DescriptionSummary
+		IsAdmin                 bool                `db:"-"`
+		StampsUserOwned         []StampSummary      `db:"-"`
+		TagsUserCreated         []TagSummary        `db:"-"`
+		StampsUserTagged        []StampTagSummary   `db:"-"`
+		DescriptionsUserCreated []DescriptionSummary `db:"-"`
 	}
 
 	CreateUserParams struct {
