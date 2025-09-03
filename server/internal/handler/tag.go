@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -10,10 +9,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/traP-jp/1m25_11/server/internal/repository"
 )
-
-type Error struct {
-	Message string `json:"message"`
-}
 
 type TagSummary struct {
 	Id   uuid.UUID `json:"tag_id"`
@@ -60,8 +55,10 @@ type PutTagsTagIdJSONRequestBody struct {
 func (h *Handler) getTags(c echo.Context) error {
 	tagSummaries, err := h.repo.GetTags(c.Request().Context())
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, Error{
-			Message: fmt.Sprintf("failed to get tags: %s", err.Error()),
+		c.Logger().Error(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, &ErrorResponse{
+			Message: "タグ一覧の取得中にエラーが発生しました。",
+			Code:    "internal_server_error",
 		})
 	}
 
@@ -71,9 +68,7 @@ func (h *Handler) getTags(c echo.Context) error {
 func (h *Handler) createTags(c echo.Context) error {
 	var body PostTagsJSONRequestBody
 	if err := c.Bind(&body); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, Error{
-			Message: "Invalid request body.",
-		})
+		return echo.NewHTTPError(http.StatusBadRequest, &ErrorResponse{Message: "リクエストボディが不正です。", Code: "invalid_request_body"})
 	}
 	userID := uuid.Nil
 
@@ -82,15 +77,11 @@ func (h *Handler) createTags(c echo.Context) error {
 		CreatorID: userID,
 	})
 	if err != nil {
-		if errors.Is(err, repository.ErrTagConflict) {
-			return echo.NewHTTPError(http.StatusConflict, Error{
-				Message: "Tag with this name already exists.",
-			})
+		if errors.Is(err, repository.ErrAlreadyExists) {
+			return echo.NewHTTPError(http.StatusConflict, &ErrorResponse{Message: "指定された名前のタグは既に存在します。", Code: "tag_already_exists"})
 		}
-
-		return echo.NewHTTPError(http.StatusInternalServerError, Error{
-			Message: fmt.Sprintf("failed to create tag: %s", err.Error()),
-		})
+		c.Logger().Error(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, &ErrorResponse{Message: "タグの作成中にエラーが発生しました。", Code: "internal_server_error"})
 	}
 
 	response := TagSummary{
@@ -105,30 +96,17 @@ func (h *Handler) getTagDetails(c echo.Context) error {
 	tagIDStr := c.Param("tagId")
 	tagID, err := uuid.Parse(tagIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, Error{
-			Message: "Invalid tag ID format.",
-		})
+		return echo.NewHTTPError(http.StatusBadRequest, &ErrorResponse{Message: "タグIDの形式が不正です。", Code: "invalid_tag_id"})
 	}
 
-	tagDetailsRaw, err := h.repo.GetTagDetails(c.Request().Context(), tagID)
+	tagDetails, err := h.repo.GetTagDetails(c.Request().Context(), tagID)
 	if err != nil {
-		if errors.Is(err, repository.ErrTagNotFound) {
-			return echo.NewHTTPError(http.StatusNotFound, Error{
-				Message: "Tag not found.",
-			})
+		if errors.Is(err, repository.ErrNotFound) {
+			return echo.NewHTTPError(http.StatusNotFound, &ErrorResponse{Message: "指定されたタグが見つかりません。", Code: "tag_not_found"})
 		}
-
-		return echo.NewHTTPError(http.StatusInternalServerError, Error{
-			Message: fmt.Sprintf("failed to get tag details: %s", err.Error()),
-		})
+		c.Logger().Error(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, &ErrorResponse{Message: "タグ詳細の取得中にエラーが発生しました。", Code: "internal_server_error"})
 	}
-
-	if tagDetailsRaw == nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, Error{
-			Message: "internal error: required tag details were not found",
-		})
-	}
-	tagDetails := tagDetailsRaw
 
 	stamps := make([]StampSummary, len(tagDetails.Stamps))
 	for i, s := range tagDetails.Stamps {
@@ -156,34 +134,24 @@ func (h *Handler) updateTags(c echo.Context) error {
 	tagIDStr := c.Param("tagId")
 	tagID, err := uuid.Parse(tagIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, Error{
-			Message: "Invalid tag ID format.",
-		})
+		return echo.NewHTTPError(http.StatusBadRequest, &ErrorResponse{Message: "タグIDの形式が不正です。", Code: "invalid_tag_id"})
 	}
 
 	var body PutTagsTagIdJSONRequestBody
 	if err := c.Bind(&body); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, Error{
-			Message: "Invalid request body.",
-		})
+		return echo.NewHTTPError(http.StatusBadRequest, &ErrorResponse{Message: "リクエストボディが不正です。", Code: "invalid_request_body"})
 	}
 
 	err = h.repo.UpdateTags(c.Request().Context(), tagID, body.Name)
 	if err != nil {
-		if errors.Is(err, repository.ErrTagNotFound) {
-			return echo.NewHTTPError(http.StatusNotFound, Error{
-				Message: "Tag not found.",
-			})
+		if errors.Is(err, repository.ErrNotFound) {
+			return echo.NewHTTPError(http.StatusNotFound, &ErrorResponse{Message: "指定されたタグが見つかりません。", Code: "tag_not_found"})
 		}
-		if errors.Is(err, repository.ErrTagConflict) {
-			return echo.NewHTTPError(http.StatusConflict, Error{
-				Message: "Tag with this name already exists.",
-			})
+		if errors.Is(err, repository.ErrAlreadyExists) {
+			return echo.NewHTTPError(http.StatusConflict, &ErrorResponse{Message: "指定された名前のタグは既に存在します。", Code: "tag_already_exists"})
 		}
-
-		return echo.NewHTTPError(http.StatusInternalServerError, Error{
-			Message: fmt.Sprintf("failed to update tag: %s", err.Error()),
-		})
+		c.Logger().Error(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, &ErrorResponse{Message: "タグの更新中にエラーが発生しました。", Code: "internal_server_error"})
 	}
 
 	return c.NoContent(http.StatusNoContent)
@@ -193,29 +161,16 @@ func (h *Handler) deleteTags(c echo.Context) error {
 	tagIDStr := c.Param("tagId")
 	tagID, err := uuid.Parse(tagIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, Error{
-			Message: "Invalid tag ID format.",
-		})
+		return echo.NewHTTPError(http.StatusBadRequest, &ErrorResponse{Message: "タグIDの形式が不正です。", Code: "invalid_tag_id"})
 	}
-
-	// isAdmin := false
-	// if !isAdmin {
-	// 	return echo.NewHTTPError(http.StatusForbidden, Error{
-	// 		Message: "You do not have permission to delete this tag.",
-	// 	})
-	// }
 
 	err = h.repo.DeleteTags(c.Request().Context(), tagID)
 	if err != nil {
-		if errors.Is(err, repository.ErrTagNotFound) {
-			return echo.NewHTTPError(http.StatusNotFound, Error{
-				Message: "Tag not found.",
-			})
+		if errors.Is(err, repository.ErrNotFound) {
+			return echo.NewHTTPError(http.StatusNotFound, &ErrorResponse{Message: "指定されたタグが見つかりません。", Code: "tag_not_found"})
 		}
-
-		return echo.NewHTTPError(http.StatusInternalServerError, Error{
-			Message: fmt.Sprintf("failed to delete tag: %s", err.Error()),
-		})
+		c.Logger().Error(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, &ErrorResponse{Message: "タグの削除中にエラーが発生しました。", Code: "internal_server_error"})
 	}
 
 	return c.NoContent(http.StatusNoContent)
@@ -225,22 +180,16 @@ func (h *Handler) getStampsByTag(c echo.Context) error {
 	tagIDStr := c.Param("tagId")
 	tagID, err := uuid.Parse(tagIDStr)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, Error{
-			Message: "Invalid tag ID format.",
-		})
+		return echo.NewHTTPError(http.StatusBadRequest, &ErrorResponse{Message: "タグIDの形式が不正です。", Code: "invalid_tag_id"})
 	}
 
 	stampSummaries, err := h.repo.GetStampsByTagID(c.Request().Context(), tagID)
 	if err != nil {
-		if errors.Is(err, repository.ErrTagNotFound) {
-			return echo.NewHTTPError(http.StatusNotFound, Error{
-				Message: "Tag not found.",
-			})
+		if errors.Is(err, repository.ErrNotFound) {
+			return echo.NewHTTPError(http.StatusNotFound, &ErrorResponse{Message: "指定されたタグが見つかりません。", Code: "tag_not_found"})
 		}
-
-		return echo.NewHTTPError(http.StatusInternalServerError, Error{
-			Message: fmt.Sprintf("failed to get stamps by tag: %s", err.Error()),
-		})
+		c.Logger().Error(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, &ErrorResponse{Message: "スタンプ一覧の取得中にエラーが発生しました。", Code: "internal_server_error"})
 	}
 
 	response := make([]StampSummary, len(stampSummaries))
@@ -254,3 +203,4 @@ func (h *Handler) getStampsByTag(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, response)
 }
+
