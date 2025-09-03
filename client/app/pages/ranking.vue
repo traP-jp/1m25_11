@@ -1,3 +1,74 @@
+<template>
+  <div class="w-full max-w-5xl mx-auto px-2 sm:px-4 md:px-6">
+    <UTabs
+      :items="items"
+      variant="pill"
+      class="w-full"
+    >
+      <!-- 総合ランキング -->
+      <template #count_total>
+        <UTable
+          ref="tableBody"
+          v-model:pagination="paginationTotal"
+          :data="sortedCountTotal"
+          :columns="columns"
+          :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
+          class="w-full"
+        >
+          <template #stamp_name-cell="{ row }">
+            <div class="flex items-center gap-3">
+              <NuxtImg
+                :src="`https://q.trap.jp/api/1.0/public/emoji/${row.original.stamp_id}`"
+                class="m-auto w-12 h-12"
+              />
+              <p>{{ row.original.stamp_name }}</p>
+            </div>
+          </template>
+        </UTable>
+        <div class="flex justify-center border-t border-default pt-4">
+          <UPagination
+            :default-page="(tableBody?.tableApi?.getState().pagination.pageIndex || 0) + 1"
+            :items-per-page="tableBody?.tableApi?.getState().pagination.pageSize"
+            :total="tableBody?.tableApi?.getFilteredRowModel().rows.length"
+            @update:page="(p) => tableBody?.tableApi?.setPageIndex(p - 1)"
+          />
+        </div>
+      </template>
+
+      <!-- 1か月ランキング -->
+      <template #count_monthly>
+        <UTable
+          ref="tableReaction"
+          v-model:pagination="paginationMonthly"
+          :data="sortedCountMonthly"
+          :columns="columns"
+          :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
+          class="w-full"
+        >
+          <template #stamp_name-cell="{ row }">
+            <div class="flex items-center gap-3">
+              <NuxtImg
+                :src="`https://q.trap.jp/api/1.0/public/emoji/${row.original.stamp_id}`"
+                class="mx-auto w-12 h-12"
+              />
+              <p>{{ row.original.stamp_name }}</p>
+            </div>
+          </template>
+        </UTable>
+
+        <div class="flex justify-center border-t border-default pt-4">
+          <UPagination
+            :default-page="(tableReaction?.tableApi?.getState().pagination.pageIndex || 0) + 1"
+            :items-per-page="tableReaction?.tableApi?.getState().pagination.pageSize"
+            :total="tableReaction?.tableApi?.getFilteredRowModel().rows.length"
+            @update:page="(p) => tableReaction?.tableApi?.setPageIndex(p - 1)"
+          />
+        </div>
+      </template>
+    </UTabs>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { getPaginationRowModel } from '@tanstack/vue-table';
 import type { TableColumn, TabsItem } from '@nuxt/ui';
@@ -90,74 +161,3 @@ const items = ref<TabsItem[]>([
 const paginationTotal = ref({ pageIndex: 0, pageSize: 20 });
 const paginationMonthly = ref({ pageIndex: 0, pageSize: 20 });
 </script>
-
-<template>
-  <div class="w-full max-w-5xl mx-auto px-2 sm:px-4 md:px-6">
-    <UTabs
-      :items="items"
-      variant="pill"
-      class="w-full"
-    >
-      <!-- 総合ランキング -->
-      <template #count_total>
-        <UTable
-          ref="tableBody"
-          v-model:pagination="paginationTotal"
-          :data="sortedCountTotal"
-          :columns="columns"
-          :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
-          class="w-full"
-        >
-          <template #stamp_name-cell="{ row }">
-            <div class="flex items-center gap-3">
-              <NuxtImg
-                :src="`https://q.trap.jp/api/1.0/public/emoji/${row.original.stamp_id}`"
-                class="m-auto w-12 h-12"
-              />
-              <p>{{ row.original.stamp_name }}</p>
-            </div>
-          </template>
-        </UTable>
-        <div class="flex justify-center border-t border-default pt-4">
-          <UPagination
-            :default-page="(tableBody?.tableApi?.getState().pagination.pageIndex || 0) + 1"
-            :items-per-page="tableBody?.tableApi?.getState().pagination.pageSize"
-            :total="tableBody?.tableApi?.getFilteredRowModel().rows.length"
-            @update:page="(p) => tableBody?.tableApi?.setPageIndex(p - 1)"
-          />
-        </div>
-      </template>
-
-      <!-- 1か月ランキング -->
-      <template #count_monthly>
-        <UTable
-          ref="tableReaction"
-          v-model:pagination="paginationMonthly"
-          :data="sortedCountMonthly"
-          :columns="columns"
-          :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
-          class="w-full"
-        >
-          <template #stamp_name-cell="{ row }">
-            <div class="flex items-center gap-3">
-              <NuxtImg
-                :src="`https://q.trap.jp/api/1.0/public/emoji/${row.original.stamp_id}`"
-                class="mx-auto w-12 h-12"
-              />
-              <p>{{ row.original.stamp_name }}</p>
-            </div>
-          </template>
-        </UTable>
-
-        <div class="flex justify-center border-t border-default pt-4">
-          <UPagination
-            :default-page="(tableReaction?.tableApi?.getState().pagination.pageIndex || 0) + 1"
-            :items-per-page="tableReaction?.tableApi?.getState().pagination.pageSize"
-            :total="tableReaction?.tableApi?.getFilteredRowModel().rows.length"
-            @update:page="(p) => tableReaction?.tableApi?.setPageIndex(p - 1)"
-          />
-        </div>
-      </template>
-    </UTabs>
-  </div>
-</template>
