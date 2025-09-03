@@ -70,8 +70,7 @@ func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, erro
 			WHERE st.creator_id = ?`, userID); err != nil {
 		return nil, fmt.Errorf("select stamp_tags by creatorID: %w", err)
 	}
-	descriptionsUserCreated := []*DescriptionSummary{}
-	if err := r.db.SelectContext(ctx, &descriptionsUserCreated, `SELECT
+	if err := r.db.SelectContext(ctx, &user.DescriptionsUserCreated, `SELECT
 			s.id AS "stamp.id", s.name AS "stamp.name", s.file_id AS "stamp.file_id",
 			d.id AS "description_id"
 			FROM stamp_descriptions AS d
