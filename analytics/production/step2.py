@@ -137,8 +137,16 @@ try:
             "stream": False,
             "reasoning": { "effort": "low" },
             "response_format": { "type": "json_object" },
+            "max_tokens": 2000
         }
-        all_requests.append(request)
+        request_formatted = {
+            "custom_id": stamp['id'],
+            "method": "POST",
+            "url": "/v1/chat/completions",
+            "body": request
+        }
+        all_requests.append(request_formatted)
+
 
     # JSONLファイルに書き出し
     with open('requests.jsonl', 'w', encoding='utf-8') as f_output:
