@@ -82,16 +82,6 @@ func (r *Repository) GetTagDetailsByStampID(ctx context.Context, stampID uuid.UU
 	return tag, nil
 }
 
-func (r *Repository) getTagsByCreatorID(ctx context.Context, creatorID uuid.UUID) ([]*TagSummary, error) {
-	tagsByCreatorID := []*TagSummary{}
-	query := `SELECT tags.id, tags.name tags.creator_id FROM tags WHERE tags.creator_id = ?`
-	if err := r.db.SelectContext(ctx, &tagsByCreatorID, query, creatorID); err != nil {
-		return nil, fmt.Errorf("select tags by creatorID: %w", err)
-	}
-
-	return tagsByCreatorID, nil
-}
-
 var (
 	ErrTagConflict   = errors.New("tag with this name already exists")
 	ErrAdminNotFound = errors.New("admin not found")

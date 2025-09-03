@@ -15,10 +15,7 @@ type (
 		StampsUserOwned         []StampSummary
 		TagsUserCreated         []TagSummary
 		StampsUserTagged        []StampTagSummary
-		DescriptionsUserCreated []struct {
-			Stamp         StampSummary
-			DescriptionID uuid.UUID
-		}
+		DescriptionsUserCreated []DescriptionSummary
 	}
 
 	CreateUserParams struct {
@@ -50,57 +47,33 @@ func (r *Repository) CreateUser(ctx context.Context, params CreateUserParams) (u
 
 func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, error) {
 	user := &User{}
-	isAdmin := false // 仮でfalseに設定
-	stampsUserOwnedRaw, err := r.getStampsByCreatorID(ctx, userID)
-	if err != nil {
-		return nil, fmt.Errorf("get stamps user owned: %w", err)
-	}
-	stampsUserOwned := make([]StampSummary, len(stampsUserOwnedRaw))
-	for i, stamp := range stampsUserOwnedRaw {
-		stampsUserOwned[i] = StampSummary{
-			ID:     stamp.ID,
-			Name:   stamp.Name,
-			FileID: stamp.FileID,
-		}
-	}
-	tagsUserCreatedRaw, err := r.getTagsByCreatorID(ctx, userID)
-	if err != nil {
-		return nil, fmt.Errorf("get tags user created: %w", err)
-	}
-	tagsUserCreated := make([]TagSummary, len(tagsUserCreatedRaw))
-	for i, tag := range tagsUserCreatedRaw {
-		tagsUserCreated[i] = TagSummary{
-			ID:   tag.ID,
-			Name: tag.Name,
-		}
-	}
-	stampsUserTagged, err := r.getStampTagsByCreatorID(ctx, userID)
-	if err != nil {
-		return nil, fmt.Errorf("get stamps user tagged: %w", err)
-	}
-	descriptionsUserCreatedRaw, err := r.getDescriptionsByCreatorID(ctx, userID)
-	if err != nil {
-		return nil, fmt.Errorf("get descriptions user created: %w", err)
-	}
-	descriptionsUserCreated := make([]struct {
-		Stamp         StampSummary
-		DescriptionID uuid.UUID
-	}, len(descriptionsUserCreatedRaw))
-	for i, description := range descriptionsUserCreatedRaw {
-		descriptionsUserCreated[i].DescriptionID = description.DescriptionID
-		descriptionsUserCreated[i].Stamp = StampSummary{
-			ID:     description.StampID,
-			Name:   description.StampName,
-			FileID: description.StampFileID,
-		}
-	}
-
 	user.ID = userID
-	user.IsAdmin = isAdmin
-	user.StampsUserOwned = stampsUserOwned
-	user.TagsUserCreated = tagsUserCreated
-	user.StampsUserTagged = stampsUserTagged
-	user.DescriptionsUserCreated = descriptionsUserCreated
+	user.isAdmin := false // 仮でfalseに設定
+
+	if err := r.db.SelectContext(ctx, &user.StampsUserOwned, "SELECT id, name, file_id FROM stamps WHERE creator_id = ?", userID); err != nil {
+		return nil, fmt.Errorf("select stamps by creatorID: %w", err)
+	}
+	if err := r.db.SelectContext(ctx, &user.TagsUserCreated, "SELECT id, name FROM tags WHERE creator_id = ?", userID); err != nil {
+		return nil, fmt.Errorf("select tags by creatorID: %w", err)
+	}
+	if err := r.db.SelectContext(ctx, &user.StampsUserTagged, `SELECT 
+			s.id AS "stamp.id", s.name AS "stamp.name", s.file_id AS "stamp.file_id",
+			t.id AS "tag.id", t.name AS "tag.name"
+			FROM stamp_tags AS st
+			JOIN stamps AS s ON st.stamp_id = s.id
+			JOIN tags AS t ON st.tag_id = t.id
+			WHERE st.creator_id = ?`, userID); err != nil {
+		return nil, fmt.Errorf("select stamp_tags by creatorID: %w", err)
+	}
+	descriptionsUserCreated := []*DescriptionSummary{}
+	if err := r.db.SelectContext(ctx, &descriptionsUserCreated, `SELECT
+			s.id AS "stamp.id", s.name AS "stamp.name", s.file_id AS "stamp.file_id",
+			d.id AS "description_id"
+			FROM stamp_descriptions AS d
+			JOIN stamps AS s ON d.stamp_id = s.id 
+			WHERE d.creator_id = ?`, userID); err != nil {
+		return nil, fmt.Errorf("select stamp_descriptions by creatorID: %w", err)
+	}
 
 	return user, nil
 }

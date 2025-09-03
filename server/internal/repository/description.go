@@ -22,10 +22,8 @@ type (
 		UpdatedAt   time.Time `db:"updated_at"`
 	}
 	DescriptionSummary struct {
+		Stamp         StampSummary
 		DescriptionID uuid.UUID `db:"description_id"`
-		StampID       uuid.UUID `db:"stamp_id"`
-		StampName     string    `db:"stamp_name"`
-		StampFileID   uuid.UUID `db:"file_id"`
 	}
 )
 
@@ -62,15 +60,6 @@ func (r *Repository) UpdateDescriptions(ctx context.Context, stampID uuid.UUID, 
 	}
 
 	return nil
-}
-
-func (r *Repository) getDescriptionsByCreatorID(ctx context.Context, creatorID uuid.UUID) ([]DescriptionSummary, error) {
-	descriptionsByCreatorID := []DescriptionSummary{}
-	if err := r.db.SelectContext(ctx, &descriptionsByCreatorID, "SELECT * FROM stamp_descriptions WHERE creator_id = ?", creatorID); err != nil {
-		return nil, fmt.Errorf("select descriptions by userID: %w", err)
-	}
-
-	return descriptionsByCreatorID, nil
 }
 
 var (
