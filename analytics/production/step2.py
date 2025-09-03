@@ -34,7 +34,7 @@ try:
 
         traQ_response = requests.get(traQ_url, params=traQ_params, headers=traQ_headers)
         traQ_response.raise_for_status()
-        traQ_data = traQ_response.json()
+        traQ_data = traQ_response.json()['hits']
 
         # traQingからデータ取得
         traQing_url = "https://traqing.cp20.dev/api/stamps"
@@ -57,10 +57,23 @@ try:
         traQing_response.raise_for_status()
         traQing_data = traQing_response.json()
 
-        # TODO
+        # traQing_dataからmessageIdを取得してtraQ APIで詳細情報を取得
+        traQing_messages = []
+        for item in traQing_data:
+            message_id = item['message']
 
-        traQ_prompt = ""
-        traQing_prompt = ""
+            # traQ APIでメッセージの詳細を取得
+            message_url = f"https://q.trap.jp/api/v3/messages/{message_id}"
+            message_response = requests.get(message_url, headers=traQ_headers)
+
+            if message_response.status_code == 200:
+                traQing_messages.append(message_response.json())
+            else:
+                print(f"メッセージ {message_id} の取得に失敗: {message_response.status_code}")
+
+        # 整形
+
+        # TODO
 
         request = {
             "model": "gpt-5-nano",
