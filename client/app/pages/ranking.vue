@@ -82,7 +82,7 @@ interface StampRankingData {
   stamp_name: string;
   count_total: number;
   count_monthly: number;
-  rank: number; // すべてのデータに初期値として0を付与
+  rank: number; // すべてのスタンプに初期値として0を付与
   count?: number; // count_total / count_monthly を注入して利用
 }
 
@@ -94,12 +94,6 @@ const rankingTestData = ref<StampRankingData[]>([
   { stamp_id: '0197a69d-c3ce-7822-9666-ace99bd35068', stamp_name: '403_forbidden', count_monthly: 15, count_total: 30, rank: 0 },
   { stamp_id: '0197a69d-c3ce-7822-9666-ace99bd35068', stamp_name: '403_forbidden', count_monthly: 25, count_total: 10, rank: 0 },
 ]);
-
-const medalMap: Record<number, string> = {
-  1: '👑 1',
-  2: '🥈 2',
-  3: '🥉 3',
-};
 
 const columns: TableColumn<StampRankingData>[] = [
   {
@@ -138,6 +132,20 @@ const columns: TableColumn<StampRankingData>[] = [
   },
 ];
 
+const items = ref<TabsItem[]>([
+  { label: '総合', slot: 'count_total' },
+  { label: '1か月以内', slot: 'count_monthly' },
+]);
+
+const paginationTotal = ref({ pageIndex: 0, pageSize: 20 });
+const paginationMonthly = ref({ pageIndex: 0, pageSize: 20 });
+
+const medalMap: Record<number, string> = {
+  1: '👑 1',
+  2: '🥈 2',
+  3: '🥉 3',
+};
+
 function useSortedData(key: 'count_total' | 'count_monthly') {
   return computed(() =>
     [...rankingTestData.value]
@@ -152,12 +160,4 @@ function useSortedData(key: 'count_total' | 'count_monthly') {
 
 const sortedCountTotal = useSortedData('count_total');
 const sortedCountMonthly = useSortedData('count_monthly');
-
-const items = ref<TabsItem[]>([
-  { label: '総合', slot: 'count_total' },
-  { label: '1か月以内', slot: 'count_monthly' },
-]);
-
-const paginationTotal = ref({ pageIndex: 0, pageSize: 20 });
-const paginationMonthly = ref({ pageIndex: 0, pageSize: 20 });
 </script>
