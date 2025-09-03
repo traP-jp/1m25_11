@@ -99,13 +99,69 @@ func (h *Handler) GetUser(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
+	stampsUserOwned := make([]StampSummary, len(user.StampsUserOwned))
+	for i, s := range user.StampsUserOwned {
+		stampsUserOwned[i] = StampSummary{
+			Id:     s.ID,
+			Name:   s.Name,
+			FileId: s.FileID,
+		}
+	}
+
+	tagsUserCreated := make([]TagSummary, len(user.TagsUserCreated))
+	for i, t := range user.TagsUserCreated {
+		tagsUserCreated[i] = TagSummary{
+			Id:   t.ID,
+			Name: t.Name,
+		}
+	}
+
+	stampsUserTagged := make([]struct {
+		Stamp StampSummary `json:"stamp"`
+		Tag   TagSummary   `json:"tag"`
+	}, len(user.StampsUserTagged))
+	for i, st := range user.StampsUserTagged {
+		stampsUserTagged[i] = struct {
+			Stamp StampSummary `json:"stamp"`
+			Tag   TagSummary   `json:"tag"`
+		}{
+			Stamp: StampSummary{
+				Id:     st.Stamp.ID,
+				Name:   st.Stamp.Name,
+				FileId: st.Stamp.FileID,
+			},
+			Tag: TagSummary{
+				Id:   st.Tag.ID,
+				Name: st.Tag.Name,
+			},
+		}
+	}
+
+	descriptionsUserCreated := make([]struct {
+		Stamp         StampSummary `json:"stamp"`
+		DescriptionID uuid.UUID    `json:"description_id"`
+	}, len(user.DescriptionsUserCreated))
+	for i, d := range user.DescriptionsUserCreated {
+		descriptionsUserCreated[i] = struct {
+			Stamp         StampSummary `json:"stamp"`
+			DescriptionID uuid.UUID    `json:"description_id"`
+		}{
+			Stamp: StampSummary{
+				Id:     d.Stamp.ID,
+				Name:   d.Stamp.Name,
+				FileId: d.Stamp.FileID,
+			},
+			DescriptionID: d.DescriptionID,
+		}
+	}
+
 	res := GetUserResponse{
-		ID: user.ID,
-		// IsAdmin:                 user.isAdmin,
-		// StampsUserOwned:         user.stampsUserOwned,
-		// TagsUserCreated:         user.tagsUserCreated,
-		// StampsUserTagged:        user.stampsUserTagged,
-		// DescriptionsUserCreated: user.descriptionsUserCreated,
+		ID:                      user.ID,
+		IsAdmin:                 user.IsAdmin,
+		StampsUserOwned:         stampsUserOwned,
+		TagsUserCreated:         tagsUserCreated,
+		StampsUserTagged:        stampsUserTagged,
+		DescriptionsUserCreated: descriptionsUserCreated,
 	}
 
 	return c.JSON(http.StatusOK, res)
