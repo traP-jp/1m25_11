@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -35,39 +34,56 @@ func (h *Handler) getUsersList(c echo.Context) error {
 
 	bot_key, ok := os.LookupEnv("BOT_TOKEN_KEY")
 	if !ok {
-		log.Println("BOT_TOKEN_KEY not found in environment variables")
-
-		return fmt.Errorf("BOT_TOKEN_KEY not found in environment variables")
+		err := fmt.Errorf("BOT_TOKEN_KEY not found in environment variables")
+		c.Logger().Error(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, &ErrorResponse{
+			Message: "サーバーの設定に問題があります。",
+			Code:    "server_configuration_error",
+		})
 	}
+
 	const url = "https://q.trap.jp/api/v3/users"
-	log.Println("Starting get user list")
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.Printf("Error creating request: %v", err)
-
-		return fmt.Errorf("error creating request: %w", err)
+		c.Logger().Error(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, &ErrorResponse{
+			Message: "外部APIへのリクエスト作成に失敗しました。",
+			Code:    "internal_server_error",
+		})
 	}
+
 	req.Header.Add("accept", "application/json")
 	req.Header.Add("Authorization", "Bearer "+bot_key)
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Printf("error sending request to API:%v", err)
-
-		return fmt.Errorf("error sending request to API:%w", err)
+		c.Logger().Error(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, &ErrorResponse{
+			Message: "外部APIへの接続に失敗しました。",
+			Code:    "external_api_connection_failed",
+		})
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		log.Printf("API returned non-200 status code: %d", resp.StatusCode)
 
-		return fmt.Errorf("API returned non-200 status code: %d", resp.StatusCode)
+	if resp.StatusCode != http.StatusOK {
+		err := fmt.Errorf("traQ API returned non-200 status code: %d", resp.StatusCode)
+		c.Logger().Error(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, &ErrorResponse{
+			Message: "外部APIから予期せぬ応答がありました。",
+			Code:    "external_api_error",
+		})
 	}
+
 	var users []*User
 	if err := json.NewDecoder(resp.Body).Decode(&users); err != nil {
-		log.Printf("error decoding response body: %v", err)
-
-		return fmt.Errorf("error decoding response body: %w", err)
+		c.Logger().Error(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, &ErrorResponse{
+			Message: "外部APIの応答の解析に失敗しました。",
+			Code:    "response_decode_error",
+		})
 	}
+
 	var resUsers []*ResponseUser
 	for _, s := range users {
 		if !s.Bot {
