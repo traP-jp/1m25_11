@@ -132,8 +132,8 @@ const items = ref<TabsItem[]>([
   { label: '1か月以内', slot: 'count_monthly' },
 ]);
 
-const paginationTotal = ref({ pageIndex: 0, pageSize: 2 });
-const paginationMonthly = ref({ pageIndex: 0, pageSize: 2 });
+const paginationTotal = ref({ pageIndex: 0, pageSize: 20 });
+const paginationMonthly = ref({ pageIndex: 0, pageSize: 20 });
 
 const tableTotal = useTemplateRef('tableTotal');
 const tableMonthly = useTemplateRef('tableMonthly');
