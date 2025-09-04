@@ -21,10 +21,7 @@ type (
 		CreatedAt   time.Time `db:"created_at"`
 		UpdatedAt   time.Time `db:"updated_at"`
 	}
-	DescriptionSummary struct {
-		Stamp         StampSummary
-		DescriptionID uuid.UUID `db:"description_id"`
-	}
+	
 )
 
 func (r *Repository) CreateDescriptions(ctx context.Context, params CreateDescriptionParams) error {

@@ -14,8 +14,8 @@ type (
 		CreatorID uuid.UUID `db:"creator_id" json:"creator_id"`
 	}
 	StampTagSummary struct {
-		Stamp StampSummary
-		Tag   TagSummary
+		Stamp StampSummary `db:"stamp"`
+		Tag   TagSummary	`db:"tag"`
 	}
 )
 

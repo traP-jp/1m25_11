@@ -16,7 +16,7 @@ type (
 		StampsUserOwned         []StampSummary      `db:"-"`
 		TagsUserCreated         []TagSummary        `db:"-"`
 		StampsUserTagged        []StampTagSummary   `db:"-"`
-		DescriptionsUserCreated []DescriptionSummary `db:"-"`
+		DescriptionsUserCreated []StampSummary      `db:"-"`
 	}
 
 	CreateUserParams struct {
@@ -28,7 +28,6 @@ type (
 func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, error) {
 	user := &User{}
 	user.ID = userID
-	log.Print(0)
 	user.IsAdmin = false // 仮でfalseに設定
 	// isAdmin, err := r.IsAdmin(ctx, userID)
 	// if err != nil {
@@ -36,17 +35,17 @@ func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, erro
 	// }
 	// user.IsAdmin = isAdmin.(bool)
 
-	if err := r.db.SelectContext(ctx, &user.StampsUserOwned, "SELECT id AS stamp_id, name AS stamp_name, file_id FROM stamps WHERE creator_id = ?", userID); err != nil {
+	if err := r.db.SelectContext(ctx, &user.StampsUserOwned, "SELECT id , name ,file_id FROM stamps WHERE creator_id = ?", userID); err != nil {
 		return nil, fmt.Errorf("select stamps by creatorID: %w", err)
 	}
 	log.Print(1)
-	if err := r.db.SelectContext(ctx, &user.TagsUserCreated, "SELECT id AS tag_id, name AS tag_name, FROM tags WHERE creator_id = ?", userID); err != nil {
+	if err := r.db.SelectContext(ctx, &user.TagsUserCreated, "SELECT id, name FROM tags WHERE creator_id = ?", userID); err != nil {
 		return nil, fmt.Errorf("select tags by creatorID: %w", err)
 	}
 	log.Print(2)
 	if err := r.db.SelectContext(ctx, &user.StampsUserTagged, `SELECT 
-			s.id AS "stamp_id", s.name AS "stamp_name", s.file_id AS "file_id",
-			t.id AS "tag_id", t.name AS "tag_name"
+			s.id AS "stamp.id", s.name AS "stamp.name", s.file_id AS "stamp.file_id",
+			t.id AS "tag.id", t.name AS "tag.name"
 			FROM stamp_tags AS st
 			JOIN stamps AS s ON st.stamp_id = s.id
 			JOIN tags AS t ON st.tag_id = t.id
@@ -55,8 +54,7 @@ func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, erro
 	}
 	log.Print(3)
 	if err := r.db.SelectContext(ctx, &user.DescriptionsUserCreated, `SELECT
-			s.id AS "stamp_id", s.name AS "stamp_name", s.file_id AS "file_id",
-			d.id AS "description_id"
+			s.id , s.name , s.file_id 
 			FROM stamp_descriptions AS d
 			JOIN stamps AS s ON d.stamp_id = s.id 
 			WHERE d.creator_id = ?`, userID); err != nil {
