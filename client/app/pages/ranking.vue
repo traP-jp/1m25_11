@@ -1,70 +1,72 @@
 <template>
-  <div class="w-full max-w-5xl mx-auto px-2 sm:px-4 md:px-6">
-    <UTabs
-      :items="items"
-      variant="pill"
-      class="w-full"
-    >
-      <!-- 総合ランキング -->
-      <template #count_total>
-        <UTable
-          ref="tableTotal"
-          v-model:pagination="paginationTotal"
-          :data="sortedCountTotal"
-          :columns="columns"
-          :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
-          class="w-full"
-        >
-          <template #stamp_name-cell="{ row }">
-            <div class="flex items-center gap-3">
-              <NuxtImg
-                :src="`https://q.trap.jp/api/1.0/public/emoji/${row.original.stamp_id}`"
-                class="m-auto w-12 h-12"
-              />
-              <p>{{ row.original.stamp_name }}</p>
-            </div>
-          </template>
-        </UTable>
-        <div class="flex justify-center border-t border-default pt-4">
-          <UPagination
-            v-model:page="pageTotal"
-            :items-per-page="tableTotal?.tableApi?.getState().pagination.pageSize"
-            :total="tableTotal?.tableApi?.getFilteredRowModel().rows.length"
-          />
-        </div>
-      </template>
+  <UContainer>
+    <div class="max-w-5xl mx-auto px-2 sm:px-4 md:px-6">
+      <UTabs
+        :items="items"
+        variant="pill"
+        class="w-full"
+      >
+        <!-- 総合ランキング -->
+        <template #count_total>
+          <UTable
+            ref="tableTotal"
+            v-model:pagination="paginationTotal"
+            :data="sortedCountTotal"
+            :columns="columns"
+            :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
+            class="w-full"
+          >
+            <template #stamp_name-cell="{ row }">
+              <div class="flex items-center gap-3">
+                <NuxtImg
+                  :src="`https://q.trap.jp/api/1.0/public/emoji/${row.original.stamp_id}`"
+                  class="m-auto w-12 h-12"
+                />
+                <p>{{ row.original.stamp_name }}</p>
+              </div>
+            </template>
+          </UTable>
+          <div class="flex justify-center border-t border-default pt-4">
+            <UPagination
+              v-model:page="pageTotal"
+              :items-per-page="tableTotal?.tableApi?.getState().pagination.pageSize"
+              :total="tableTotal?.tableApi?.getFilteredRowModel().rows.length"
+            />
+          </div>
+        </template>
 
-      <!-- 1か月ランキング -->
-      <template #count_monthly>
-        <UTable
-          ref="tableMonthly"
-          v-model:pagination="paginationMonthly"
-          :data="sortedCountMonthly"
-          :columns="columns"
-          :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
-          class="w-full"
-        >
-          <template #stamp_name-cell="{ row }">
-            <div class="flex items-center gap-3">
-              <NuxtImg
-                :src="`https://q.trap.jp/api/1.0/public/emoji/${row.original.stamp_id}`"
-                class="mx-auto w-12 h-12"
-              />
-              <p>{{ row.original.stamp_name }}</p>
-            </div>
-          </template>
-        </UTable>
+        <!-- 1か月ランキング -->
+        <template #count_monthly>
+          <UTable
+            ref="tableMonthly"
+            v-model:pagination="paginationMonthly"
+            :data="sortedCountMonthly"
+            :columns="columns"
+            :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
+            class="w-full"
+          >
+            <template #stamp_name-cell="{ row }">
+              <div class="flex items-center gap-3">
+                <NuxtImg
+                  :src="`https://q.trap.jp/api/1.0/public/emoji/${row.original.stamp_id}`"
+                  class="mx-auto w-12 h-12"
+                />
+                <p>{{ row.original.stamp_name }}</p>
+              </div>
+            </template>
+          </UTable>
 
-        <div class="flex justify-center border-t border-default pt-4">
-          <UPagination
-            v-model:page="pageMonthly"
-            :items-per-page="tableMonthly?.tableApi?.getState().pagination.pageSize"
-            :total="tableMonthly?.tableApi?.getFilteredRowModel().rows.length"
-          />
-        </div>
-      </template>
-    </UTabs>
-  </div>
+          <div class="flex justify-center border-t border-default pt-4">
+            <UPagination
+              v-model:page="pageMonthly"
+              :items-per-page="tableMonthly?.tableApi?.getState().pagination.pageSize"
+              :total="tableMonthly?.tableApi?.getFilteredRowModel().rows.length"
+            />
+          </div>
+        </template>
+      </UTabs>
+    </div>
+  </UContainer>
 </template>
 
 <script setup lang="ts">
