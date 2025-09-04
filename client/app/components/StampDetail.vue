@@ -26,9 +26,31 @@
     </div>
 
     <div v-else-if="stampDetail">
-      <h2 class="text-2xl py-1 mt-1 font-bold text-center overflow-scroll">
+      <h2 class="text-2xl py-1 mt-1 font-bold text-center overflow-hidden">
         {{ stampDetail.stamp_name }}
       </h2>
+      <div class="flex justify-center mt-4 gap-5">
+        <UButton
+          variant="subtle"
+          @click="copySelectedStampName()"
+        >
+          <UIcon name="material-symbols:content-copy-outline-sharp" />
+          <span class="ml-1">copy</span>
+        </UButton>
+        <UButton
+          variant="subtle"
+          @click="copySelectedStampWithColon()"
+        >
+          <UIcon name="material-symbols:content-copy-outline-sharp" />
+          <span class="ml-1">copy with colon</span>
+        </UButton>
+        <UButton
+          variant="subtle"
+          @click="share()"
+        >
+          <UIcon name="material-symbols:ios-share-sharp" />
+        </UButton>
+      </div>
       <div class="flex w-full flex-wrap justify-start overflow-scroll gap-2 text-xs mt-2">
         <UBadge
           v-for="tag in sampleTag"
@@ -81,8 +103,51 @@
 
 <script setup lang="ts">
 const props = defineProps<{ stampId: string | undefined }>();
+const { getStampById } = useStamps();
 
 const { stampDetail, loading, error } = useStampDetail(props.stampId);
+
+const isCopyingName = ref(false);
+const isCopyingWithColon = ref(false);
+const toast = useToast();
+
+const copySelectedStampName = () => {
+  if (!props.stampId) return;
+  isCopyingName.value = true;
+  navigator.clipboard.writeText(`${getStampById(props.stampId)?.stamp_name}`);
+  toast.add({
+    title: 'copied',
+  });
+  setTimeout(() => {
+    isCopyingName.value = false;
+  }, 500);
+};
+
+const copySelectedStampWithColon = () => {
+  if (!props.stampId) return;
+  isCopyingWithColon.value = true;
+  navigator.clipboard.writeText(`${getStampById(props.stampId)?.stamp_name}`);
+  toast.add({
+    title: 'copied with colon',
+  });
+  setTimeout(() => {
+    isCopyingWithColon.value = false;
+  }, 500);
+};
+
+const share = () => {
+  if (!props.stampId) return;
+  const stamp = getStampById(props.stampId);
+  if (!stamp) return;
+  const shareData = {
+    title: stamp.stamp_name,
+    text: `Check out this stamp: ${stamp.stamp_name}`,
+    url: `https://stampedia.trap.show/stamps/` + getStampById(props.stampId)?.stamp_name,
+  };
+  navigator.share(shareData).catch((err) => {
+    console.error('Error sharing:', err);
+  });
+};
 
 const sampleTag: Schemas['TagSummary'][] = [
   {
