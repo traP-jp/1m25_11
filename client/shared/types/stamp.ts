@@ -1,7 +1,12 @@
-import type { paths } from '~~/shared/types/generated';
+import type { components } from '~~/shared/types/generated';
 
-export type StampSummary = paths['/stamps']['get']['responses'][200]['content']['application/json'][0];
+// export type StampSummary = paths['/stamps']['get']['responses'][200]['content']['application/json'][0];
 
+// export type StampDetail = paths['/stamps/{stampId}']['get']['responses']['200']['content']['application/json'];
+
+export type Schemas = {
+  [K in keyof components['schemas']]: components['schemas'][K]
+};
 // export interface stampSummary {
 //   id: string;
 //   name: string;
