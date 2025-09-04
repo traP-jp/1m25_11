@@ -17,11 +17,10 @@ type searchStampsParams struct {
 	Name               *string  `query:"name"`
 	Tag                []string `query:"tag"`
 	Description        *string  `query:"description"`
-	Creator            *string  `query:"creator"`
-	CreatedSince       *string  `query:"created_since"` 
-	CreatedUntil       *string  `query:"created_until"` 
-	UpdatedSince       *string  `query:"updated_since"` 
-	UpdatedUntil       *string  `query:"updated_until"` 
+	CreatedSince       *string  `query:"created_since"`
+	CreatedUntil       *string  `query:"created_until"`
+	UpdatedSince       *string  `query:"updated_since"`
+	UpdatedUntil       *string  `query:"updated_until"`
 	StampTypeUnicode   *string  `query:"stamp_type_unicode"`
 	StampTypeAnimation *string  `query:"stamp_type_animation"`
 	CountMonthlyMin    *int     `query:"count_monthly_min"`
@@ -46,7 +45,9 @@ type scoredStamp struct {
 
 func (h *Handler) SearchStamps(c echo.Context) error {
 	var params searchStampsParams
-
+	if err := c.Bind(&params); err != nil {
+		return c.String(http.StatusBadRequest, "Invalid request parameters: "+err.Error())
+	}
 	repoParams := repository.SearchStampsParams{}
 	if params.Q != nil {
 		repoParams.Query = *params.Q
@@ -58,12 +59,8 @@ func (h *Handler) SearchStamps(c echo.Context) error {
 	if params.Description != nil {
 		repoParams.Description = *params.Description
 	}
-	if params.Creator != nil {
-		repoParams.Creator = *params.Creator
-	}
 
-
-	const layout = "2006-01-02" 
+	const layout = "2006-01-02"
 	if params.CreatedSince != nil {
 		if t, err := time.Parse(layout, *params.CreatedSince); err == nil {
 			repoParams.CreatedSince = &t
@@ -91,8 +88,12 @@ func (h *Handler) SearchStamps(c echo.Context) error {
 	if params.StampTypeAnimation != nil {
 		repoParams.StampTypeAnimation = *params.StampTypeAnimation
 	}
-	repoParams.CountMonthlyMin = params.CountMonthlyMin
-	repoParams.CountMonthlyMax = params.CountMonthlyMax
+	if params.CountMonthlyMin != nil {
+		repoParams.CountMonthlyMin = params.CountMonthlyMin
+	}
+	if params.CountMonthlyMax != nil {
+		repoParams.CountMonthlyMax = params.CountMonthlyMax
+	}
 	if params.SortBy != nil {
 		repoParams.SortBy = *params.SortBy
 	}
@@ -100,6 +101,7 @@ func (h *Handler) SearchStamps(c echo.Context) error {
 	foundStamps, err := h.repo.SearchStamps(c.Request().Context(), repoParams)
 	if err != nil {
 		log.Printf("error in SearchStamps repository call: %v", err)
+
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to search stamps")
 	}
 
@@ -144,6 +146,8 @@ func (h *Handler) SearchStamps(c echo.Context) error {
 }
 
 func calculateRelativityScore(stamp repository.StampForSearch, params repository.SearchStampsParams) float64 {
+	divisor := 0.0    
+	totalScore := 0.0 
 	calculateSubScore := func(query, targetText string) float64 {
 		terms := strings.Fields(query)
 		if len(terms) == 0 {
@@ -157,12 +161,21 @@ func calculateRelativityScore(stamp repository.StampForSearch, params repository
 		}
 		return sumOfX / float64(len(terms))
 	}
-
-	scoreName := calculateSubScore(params.Name, stamp.Name)
-	scoreDescription := calculateSubScore(params.Description, stamp.Descriptions)
-	scoreTag := calculateSubScore(strings.Join(params.Tags, " "), stamp.Tags)
-	scoreCreator := calculateSubScore(params.Creator, stamp.CreatorName)
-
+	if params.Name != "" {
+		scoreName := calculateSubScore(params.Name, stamp.Name)
+		totalScore += scoreName
+		divisor++
+	}
+	if params.Description != "" {
+		scoreDescription := calculateSubScore(params.Description, stamp.Descriptions)
+		totalScore += scoreDescription
+		divisor++
+	}
+	if len(params.Tags) > 0 {
+		scoreTag := calculateSubScore(strings.Join(params.Tags, " "), stamp.Tags)
+		totalScore += scoreTag
+		divisor++
+	}
 	var scoreQ float64
 	qTerms := strings.Fields(params.Query)
 	if len(qTerms) > 0 {
@@ -171,14 +184,14 @@ func calculateRelativityScore(stamp repository.StampForSearch, params repository
 			xName := 1.0 - math.Exp(float64(-strings.Count(strings.ToLower(stamp.Name), strings.ToLower(term))))
 			xTag := 1.0 - math.Exp(float64(-strings.Count(strings.ToLower(stamp.Tags), strings.ToLower(term))))
 			xDesc := 1.0 - math.Exp(float64(-strings.Count(strings.ToLower(stamp.Descriptions), strings.ToLower(term))))
-			xCreator := 1.0 - math.Exp(float64(-strings.Count(strings.ToLower(stamp.CreatorName), strings.ToLower(term))))
-			xi := (xName + xTag + xDesc + xCreator) / 4.0
+			xi := (xName + xTag + xDesc) / 3.0
 			sumOfXi += xi
 		}
 		scoreQ = sumOfXi / float64(len(qTerms))
+		totalScore += scoreQ
+		divisor++
 	}
 
-	finalScore := (scoreQ + scoreName + scoreTag + scoreDescription + scoreCreator) / 5.0
+	finalScore := totalScore / divisor
 	return finalScore
 }
-
