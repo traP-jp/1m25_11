@@ -26,7 +26,7 @@ type TokenData struct {
 }
 
 var clientID = os.Getenv("CLIENT_ID")
-
+var topPageURL = os.Getenv("TOP_PAGE_URL")
 func (h *Handler) login(c echo.Context) error {
 	redirectURI, codeVerifier, state, err := h.getTraqAuthCode(c)
 	if err != nil {
@@ -49,23 +49,23 @@ func (h *Handler) callback(c echo.Context) error {
 	code := c.QueryParam("code")
 	state := c.QueryParam("state")
 	if code == "" || state == "" {
-		return c.Redirect(http.StatusFound, "/")
+		return c.Redirect(http.StatusFound, topPageURL)
 	}
 	
 	resCodeVerifier, err := c.Cookie(h.codeVerifierKey(state))
 	if err != nil {
-		return c.Redirect(http.StatusFound, "/")
+		return c.Redirect(http.StatusFound, topPageURL)
 	}
 	codeVerifier := resCodeVerifier.Value
 	tokenRes, err := h.sendTraqAuthToken(code, codeVerifier)
 	if err != nil {
-		return c.Redirect(http.StatusFound, "/")
+		return c.Redirect(http.StatusFound, topPageURL)
 	}
 	defer tokenRes.Body.Close()
 	var tokenData TokenData
 	err = json.NewDecoder(tokenRes.Body).Decode(&tokenData)
 	if err != nil {
-		return c.Redirect(http.StatusFound, "/")
+		return c.Redirect(http.StatusFound, topPageURL)
 	}
 	idToken := tokenData.IDToken
 	deleteCookie := &http.Cookie{
@@ -89,7 +89,7 @@ func (h *Handler) callback(c echo.Context) error {
 
 	c.SetCookie(cookie)
 
-	return c.Redirect(http.StatusFound, "/")
+	return c.Redirect(http.StatusFound, topPageURL)
 }
 
 func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string, error) {
