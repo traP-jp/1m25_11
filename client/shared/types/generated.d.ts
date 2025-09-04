@@ -1021,6 +1021,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
+    /** 全ユーザーの一覧 */
     get: {
       parameters: {
         query?: never;

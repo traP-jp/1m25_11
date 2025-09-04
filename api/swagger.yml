@@ -884,6 +884,7 @@ paths:
     get:
       tags:
         - User
+      summary: 全ユーザーの一覧
       responses:
         "200":
           description: 成功
