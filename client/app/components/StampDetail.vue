@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <UContainer>
     <div
       v-if="props.stampId"
       class="flex flex-col items-center space-y-4 p-4 pb-0"
@@ -51,16 +51,78 @@
           <UIcon name="material-symbols:ios-share-sharp" />
         </UButton>
       </div>
-      <div class="flex w-full flex-wrap justify-start gap-2 text-xs mt-2">
-        <UBadge
-          v-for="tag in sampleTag"
-          :key="tag.tag_id"
-          icon="material-symbols:tag"
-          class="bg-gray-100 text-primary cursor-pointer hover:bg-gray-200 transition-colors"
-        >
-          {{ tag.tag_name }}
-        </ubadge>
-      </div>
+      <UCard class="my-4">
+        <template #header>
+          <h3 class="text-xl">
+            タグ
+          </h3>
+        </template>
+        <div class="flex w-full flex-wrap justify-start gap-2 text-xs mt-2">
+          <UBadge
+            v-for="tag in sampleTag"
+            :key="tag.tag_id"
+            icon="material-symbols:tag"
+            class="bg-gray-100 text-primary cursor-pointer hover:bg-gray-200 transition-colors"
+          >
+            {{ tag.tag_name }}
+          </ubadge>
+        </div>
+      </UCard>
+      <UCard
+        class="my-4"
+      >
+        <template #header>
+          <h3 class="text-xl">
+            概要
+          </h3>
+        </template>
+        <dl class="divide-y divide-primary-100">
+          <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-sm/6 font-medium text-primary">
+              保持者
+            </dt>
+            <dd class="mt-1 text-sm/6 text-gray-600 sm:col-span-2 sm:mt-0">
+              {{ stampDetail.creator_id }}
+            </dd>
+          </div>
+          <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-sm/6 font-medium text-primary">
+              スタンプID
+            </dt>
+            <dd class="mt-1 text-sm/6 text-gray-600 sm:col-span-2 sm:mt-0">
+              {{ stampDetail.stamp_id }}
+            </dd>
+          </div>
+          <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-sm/6 font-medium text-primary">
+              作成日
+            </dt>
+            <dd class="mt-1 text-sm/6 text-gray-600 sm:col-span-2 sm:mt-0">
+              {{ new Date(stampDetail.created_at).toLocaleDateString() }}
+            </dd>
+          </div>
+          <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt class="text-sm/6 font-medium text-primary">
+              最終更新日
+            </dt>
+            <dd class="mt-1 text-sm/6 text-gray-600 sm:col-span-2 sm:mt-0">
+              {{ new Date(stampDetail.updated_at).toLocaleDateString() }}
+            </dd>
+          </div>
+        </dl>
+      </UCard>
+      <UCard class="my-4">
+        <template #header>
+          <h3 class="text-xl">
+            説明
+          </h3>
+        </template>
+        <UCard class="my-2">
+          <template #header>
+            aaa
+          </template>
+        </UCard>
+      </UCard>
 
       <div class="space-y-2">
         <p><strong>作成日:</strong> {{ new Date(stampDetail.created_at).toLocaleDateString() }}</p>
@@ -98,7 +160,7 @@
     >
       <p>スタンプの詳細情報がありません</p>
     </div>
-  </div>
+  </UContainer>
 </template>
 
 <script setup lang="ts">
