@@ -72,7 +72,7 @@
         class="my-4"
       >
         <template #header>
-          <h3 class="text-xl">
+          <h3 class="text-xl font-medium">
             概要
           </h3>
         </template>
@@ -81,16 +81,49 @@
             <dt class="text-sm/6 font-medium text-primary">
               保持者
             </dt>
-            <dd class="mt-1 text-sm/6 text-gray-600 sm:col-span-2 sm:mt-0">
-              {{ stampDetail.creator_id }}
+            <dd class="mt-1 text-sm/6 text-gray-600 sm:col-span-2 sm:mt-0 gap-1 flex">
+              <template v-if="stampDetail.is_unicode">
+                <span>Unicode絵文字</span>
+              </template>
+              <template v-else-if="!users.getUserById(stampDetail.creator_id)">
+                <span>凍結されたユーザー</span>
+                <span>({{ stampDetail.creator_id }})</span>
+              </template>
+              <template v-else>
+                <UAvatar
+                  :src="`https://q.trap.jp/api/v3/public/icon/${users.getUserById(stampDetail.creator_id)?.traq_id}`"
+                  :alt="stampDetail.creator_id"
+                  size="sm"
+                />
+                <span>{{ users.getUserById(stampDetail.creator_id)?.user_display_name }}</span>
+                <span>(@{{ users.getUserById(stampDetail.creator_id)?.traq_id }})</span>
+                <UButton
+                  icon="material-symbols:content-copy-outline-sharp"
+                  size="xs"
+                  color="primary"
+                  variant="subtle"
+                  class="cursor-pointer"
+                  @click="copyTraqId"
+                />
+              </template>
             </dd>
           </div>
           <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt class="text-sm/6 font-medium text-primary">
+              <!-- <span> -->
               スタンプID
+              <!-- </span> -->
             </dt>
-            <dd class="mt-1 text-sm/6 text-gray-600 sm:col-span-2 sm:mt-0">
-              {{ stampDetail.stamp_id }}
+            <dd class="mt-1 text-sm/6 text-gray-600 sm:col-span-2 sm:mt-0 flex items-center gap-3">
+              <span>{{ stampDetail.stamp_id }}</span>
+              <UButton
+                icon="material-symbols:content-copy-outline-sharp"
+                size="xs"
+                color="primary"
+                variant="subtle"
+                class="cursor-pointer"
+                @click="copyStampId"
+              />
             </dd>
           </div>
           <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -113,7 +146,7 @@
       </UCard>
       <UCard class="my-4">
         <template #header>
-          <h3 class="text-xl">
+          <h3 class="text-xl font-medium">
             説明
           </h3>
         </template>
@@ -169,31 +202,58 @@ const { getStampById } = useStamps();
 
 const { stampDetail, loading, error } = useStampDetail(props.stampId);
 
-const isCopyingName = ref(false);
-const isCopyingWithColon = ref(false);
+const isCopyingStampName = ref(false);
+const isCopyingStampNameWithColon = ref(false);
+const isCopyingStampId = ref(false);
+const isCopyingTraqId = ref(false);
 const toast = useToast();
+const users = useUsers();
 
 const copySelectedStampName = () => {
   if (!props.stampId) return;
-  isCopyingName.value = true;
+  isCopyingStampName.value = true;
   navigator.clipboard.writeText(`${getStampById(props.stampId)?.stamp_name}`);
   toast.add({
     title: 'copied',
   });
   setTimeout(() => {
-    isCopyingName.value = false;
+    isCopyingStampName.value = false;
   }, 500);
 };
 
 const copySelectedStampWithColon = () => {
   if (!props.stampId) return;
-  isCopyingWithColon.value = true;
-  navigator.clipboard.writeText(`${getStampById(props.stampId)?.stamp_name}`);
+  isCopyingStampNameWithColon.value = true;
+  navigator.clipboard.writeText(`:${getStampById(props.stampId)?.stamp_name}:`);
   toast.add({
     title: 'copied with colon',
   });
   setTimeout(() => {
-    isCopyingWithColon.value = false;
+    isCopyingStampNameWithColon.value = false;
+  }, 500);
+};
+
+const copyStampId = () => {
+  if (!props.stampId) return;
+  isCopyingStampId.value = true;
+  navigator.clipboard.writeText(props.stampId);
+  toast.add({
+    title: 'copied',
+  });
+  setTimeout(() => {
+    isCopyingStampId.value = false;
+  }, 500);
+};
+
+const copyTraqId = () => {
+  if (!users.getUserById(stampDetail.value.creator_id)) return;
+  isCopyingTraqId.value = true;
+  navigator.clipboard.writeText(users.getUserById(stampDetail.value.creator_id)?.traq_id);
+  toast.add({
+    title: 'copied',
+  });
+  setTimeout(() => {
+    isCopyingTraqId.value = false;
   }, 500);
 };
 
