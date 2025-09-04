@@ -54,4 +54,11 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 	{
 		userAPI.GET("", h.getUsersList)
 	}
+
+	bulkAPI := api.Group("/bulk")
+	{
+		bulkAPI.POST("/tags", h.BulkCreateTags)
+		bulkAPI.POST("/stamps-meta", h.BulkAddStampMeta)
+	}
+
 }
