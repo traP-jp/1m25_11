@@ -11,8 +11,8 @@ import (
 type (
 	// stamps table
 	Stamp struct {
-		ID           uuid.UUID `db:"id" json:"id"`
-		Name         string    `db:"name" json:"name"`
+		ID           uuid.UUID `db:"id" json:"stamp_id"`
+		Name         string    `db:"name" json:"stamp_name"`
 		FileID       uuid.UUID `db:"file_id" json:"file_id"`
 		CreatorID    uuid.UUID `db:"creator_id" json:"creator_id"`
 		IsUnicode    bool      `db:"is_unicode" json:"is_unicode"`
@@ -23,8 +23,8 @@ type (
 	}
 
 	StampSummary struct {
-		ID     uuid.UUID `db:"id" json:"id"`
-		Name   string    `db:"name" json:"name"`
+		ID     uuid.UUID `db:"id" json:"stamp_id"`
+		Name   string    `db:"name" json:"stamp_name"`
 		FileID uuid.UUID `db:"file_id" json:"file_id"`
 	}
 )
