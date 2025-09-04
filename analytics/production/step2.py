@@ -24,11 +24,11 @@ try:
         }
         traQ_params = {
             "word": f"\":{stamp['name']}:\"",
-            "after": "2006-01-02T15%3A04%3A05Z",
-            "before": "2026-01-02T15%3A04%3A05Z",
-            "bot": False,
-            "limit": 100,
-            "offset": 0,
+            "after": "2006-01-02T15:04:05Z",
+            "before": "2006-01-02T15:04:05Z",
+            "bot": "false",
+            "limit": "100",
+            "offset": "0",
             "sort": "createdAt",
         }
 
