@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -23,6 +24,25 @@ type tagInsertData struct {
 	CreatorID uuid.UUID `db:"creator_id"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
+}
+type StampMetaAddition struct {
+	StampID     uuid.UUID   `json:"stamp_id"`
+	TagIDs      []uuid.UUID `json:"tag_ids"`
+	Description string      `json:"description"`
+}
+
+type stampTagLinkData struct {
+	StampID   uuid.UUID `db:"stamp_id" json:"stamp_id"`
+	TagID     uuid.UUID `db:"tag_id" json:"tag_id"`
+	CreatorID uuid.UUID `db:"creator_id" json:"creator_id"`
+}
+
+type stampDescriptionData struct {
+	StampID     uuid.UUID `db:"stamp_id" json:"stamp_id"`
+	Description string    `db:"description" json:"description"`
+	CreatorID   uuid.UUID `db:"creator_id" json:"creator_id"`
+	CreatedAt   time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt   time.Time `db:"updated_at" json:"updated_at"`
 }
 
 func (r *Repository) BulkCreateTags(ctx context.Context, tags []TagInfo) ([]CreatedTagInfo, error) {
@@ -63,7 +83,6 @@ func (r *Repository) BulkCreateTags(ctx context.Context, tags []TagInfo) ([]Crea
 	_, err = tx.NamedExecContext(ctx, `
 		INSERT INTO tags (id, name, creator_id, created_at, updated_at)
 		VALUES (:id, :name, :creator_id, :created_at, :updated_at)
-		ON DUPLICATE KEY UPDATE name=VALUES(name)
 	`, tagsToInsert)
 	if err != nil {
 		return nil, fmt.Errorf("failed to bulk insert tags: %w", err)
@@ -74,26 +93,6 @@ func (r *Repository) BulkCreateTags(ctx context.Context, tags []TagInfo) ([]Crea
 	}
 
 	return createdTags, nil
-}
-
-type StampMetaAddition struct {
-	StampID     uuid.UUID
-	TagIDs      []uuid.UUID
-	Description string
-}
-
-type stampTagLinkData struct {
-	StampID   uuid.UUID `db:"stamp_id"`
-	TagID     uuid.UUID `db:"tag_id"`
-	CreatorID uuid.UUID `db:"creator_id"`
-}
-
-type stampDescriptionData struct {
-	StampID     uuid.UUID `db:"stamp_id"`
-	Description string    `db:"description"`
-	CreatorID   uuid.UUID `db:"creator_id"`
-	CreatedAt   time.Time `db:"created_at"`
-	UpdatedAt   time.Time `db:"updated_at"`
 }
 
 func (r *Repository) BulkAddStampMeta(ctx context.Context, additions []StampMetaAddition) error {
@@ -137,10 +136,10 @@ func (r *Repository) BulkAddStampMeta(ctx context.Context, additions []StampMeta
 	}
 
 	if len(linksToInsert) > 0 {
+		log.Printf("Inserting %d stamp-tag links", len(linksToInsert))
 		_, err = tx.NamedExecContext(ctx, `
 			INSERT INTO stamp_tags (stamp_id, tag_id, creator_id)
 			VALUES (:stamp_id, :tag_id, :creator_id)
-			ON DUPLICATE KEY UPDATE stamp_id=VALUES(stamp_id)
 		`, linksToInsert)
 		if err != nil {
 			return fmt.Errorf("failed to bulk insert stamp_tags: %w", err)
@@ -148,12 +147,15 @@ func (r *Repository) BulkAddStampMeta(ctx context.Context, additions []StampMeta
 	}
 
 	if len(descriptionsToInsert) > 0 {
+		log.Printf("Inserting %d stamp descriptions", len(descriptionsToInsert))
 		_, err = tx.NamedExecContext(ctx, `
 			INSERT INTO stamp_descriptions (stamp_id, description, creator_id, created_at, updated_at)
 			VALUES (:stamp_id, :description, :creator_id, :created_at, :updated_at)
-			ON DUPLICATE KEY UPDATE description=VALUES(description), updated_at=VALUES(updated_at)
 		`, descriptionsToInsert)
 		if err != nil {
+			log.Printf("Failed to insert stamp_descriptions. The data was: %+v", descriptionsToInsert)
+
+			log.Printf("Error inserting descriptions: %v", err)
 			return fmt.Errorf("failed to bulk insert/update stamp_descriptions: %w", err)
 		}
 	}
