@@ -37,7 +37,7 @@ func (r *Repository) GetTagDetails(ctx context.Context, tagID uuid.UUID) (*TagDe
 	err := r.db.GetContext(ctx, &tagDetails, "SELECT id, name, creator_id, created_at, updated_at FROM tags WHERE id = ?", tagID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrTagNotFound
+			return nil, ErrNotFound
 		}
 		return nil, err
 	}
