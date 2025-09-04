@@ -53,7 +53,7 @@
       </div>
       <UCard class="my-4">
         <template #header>
-          <h3 class="text-xl">
+          <h3 class="text-xl font-medium">
             タグ
           </h3>
         </template>
@@ -81,49 +81,52 @@
             <dt class="text-sm/6 font-medium text-primary">
               保持者
             </dt>
-            <dd class="mt-1 text-sm/6 text-gray-600 sm:col-span-2 sm:mt-0 gap-1 flex">
+            <dd class="mt-1 text-sm/6 text-gray-600 sm:col-span-2 sm:mt-0 gap-1 flex items-center min-w-0">
               <template v-if="stampDetail.is_unicode">
                 <span>Unicode絵文字</span>
-              </template>
-              <template v-else-if="!users.getUserById(stampDetail.creator_id)">
-                <span>凍結されたユーザー</span>
-                <span>({{ stampDetail.creator_id }})</span>
               </template>
               <template v-else>
                 <UAvatar
                   :src="`https://q.trap.jp/api/v3/public/icon/${users.getUserById(stampDetail.creator_id)?.traq_id}`"
                   :alt="stampDetail.creator_id"
                   size="sm"
+                  class="flex-shrink-0"
                 />
-                <span>{{ users.getUserById(stampDetail.creator_id)?.user_display_name }}</span>
-                <span>(@{{ users.getUserById(stampDetail.creator_id)?.traq_id }})</span>
+                <span class="overflow-x-scroll whitespace-nowrap min-w-0 text-sm/7">{{ users.getUserById(stampDetail.creator_id)?.user_display_name }}</span>
+                <span class="flex-shrink-0 whitespace-nowrap">(<span class=" text-primary-400">@{{ users.getUserById(stampDetail.creator_id)?.traq_id }}</span>
+                  <template v-if="users.getUserById(stampDetail.creator_id)?.user_state == 0">
+                    <span class="text-xs">&nbsp;凍結済み</span>
+                  </template>)
+                </span>
                 <UButton
                   icon="material-symbols:content-copy-outline-sharp"
                   size="xs"
                   color="primary"
                   variant="subtle"
-                  class="cursor-pointer"
+                  class="cursor-pointer flex-shrink-0 h-7"
                   @click="copyTraqId"
-                />
+                >
+                  traQ ID
+                </UButton>
               </template>
             </dd>
           </div>
           <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt class="text-sm/6 font-medium text-primary">
-              <!-- <span> -->
               スタンプID
-              <!-- </span> -->
             </dt>
             <dd class="mt-1 text-sm/6 text-gray-600 sm:col-span-2 sm:mt-0 flex items-center gap-3">
-              <span>{{ stampDetail.stamp_id }}</span>
+              <span class="overflow-x-scroll whitespace-nowrap min-w-0 text-sm/7">{{ stampDetail.stamp_id }}</span>
               <UButton
                 icon="material-symbols:content-copy-outline-sharp"
                 size="xs"
                 color="primary"
                 variant="subtle"
-                class="cursor-pointer"
+                class="cursor-pointer h-7 flex-shrink-0"
                 @click="copyStampId"
-              />
+              >
+                スタンプID
+              </UButton>
             </dd>
           </div>
           <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -150,41 +153,48 @@
             説明
           </h3>
         </template>
-        <UCard class="my-2">
-          <template #header>
-            aaa
-          </template>
-        </UCard>
-      </UCard>
-
-      <div class="space-y-2">
-        <p><strong>作成日:</strong> {{ new Date(stampDetail.created_at).toLocaleDateString() }}</p>
-        <p><strong>月間使用回数:</strong> {{ stampDetail.count_monthly }}回</p>
-        <p><strong>総使用回数:</strong> {{ stampDetail.count_total }}回</p>
-
-        <div v-if="sampleTag && sampleTag.length > 0">
-          <strong>タグ:</strong>
-          <span
-            v-for="tag in sampleTag"
-            :key="tag.tag_id"
-            class="inline-block bg-gray-200 rounded px-2 py-1 text-sm mr-1 mt-1 "
+        <div
+          v-if="sampleDescriptions && sampleDescriptions.length > 0"
+          class="space-y-3"
+        >
+          <div
+            v-for="description in sampleDescriptions"
+            :key="description.creator_id"
+            class="border-l-4 border-primary-200 pl-4 py-2"
           >
-            {{ tag.tag_name }}
-          </span>
+            <p class="text-sm text-gray-700 mb-2">
+              {{ description.description }}
+            </p>
+            <div class="flex items-center gap-2 text-xs text-gray-500">
+              <template v-if="description.creator_id == '3b261ff3-f940-4e2c-a626-27387b6dd71b'">
+                <span>LLMによる説明</span>
+              </template>
+              <template v-else-if="users.getUserById(description.creator_id)">
+                <UAvatar
+                  :src="`https://q.trap.jp/api/v3/public/icon/${users.getUserById(description.creator_id)?.traq_id}`"
+                  :alt="description.creator_id"
+                  size="xs"
+                />
+                <span>{{ users.getUserById(description.creator_id)?.user_display_name }}</span>
+                <span>(@{{ users.getUserById(description.creator_id)?.traq_id }})</span>
+                <span>•</span>
+                <span>{{ new Date(description.created_at).toLocaleDateString() }}</span>
+              </template>
+              <template v-else>
+                <span>凍結されたユーザー ({{ description.creator_id }})</span>
+                <span>•</span>
+                <span>{{ new Date(description.created_at).toLocaleDateString() }}</span>
+              </template>
+            </div>
+          </div>
         </div>
-
-        <div v-if="stampDetail.descriptions && stampDetail.descriptions.length > 0">
-          <strong>説明:</strong>
-          <ul class="list-disc list-inside">
-            <li
-              v-for="desc in stampDetail.descriptions"
-              :key="desc.creator_id + props.stampId"
-            >
-              {{ desc.description }}
-            </li>
-          </ul>
+        <div
+          v-else
+          class="text-center text-gray-500 py-4"
+        >
+          <p>説明はまだありません</p>
         </div>
-      </div>
+      </UCard>
     </div>
 
     <div
@@ -246,7 +256,7 @@ const copyStampId = () => {
 };
 
 const copyTraqId = () => {
-  if (!users.getUserById(stampDetail.value.creator_id)) return;
+  if (typeof stampDetail.value === null || !users.getUserById(stampDetail.value.creator_id)) return;
   isCopyingTraqId.value = true;
   navigator.clipboard.writeText(users.getUserById(stampDetail.value.creator_id)?.traq_id);
   toast.add({
@@ -287,5 +297,27 @@ const sampleTag: Schemas['TagSummary'][] = [
   {
     tag_id: 'sample-tag-id4',
     tag_name: 'タグtag４',
-  }];
+  },
+];
+
+const sampleDescriptions: Schemas['StampDescription'][] = [
+  {
+    description: 'スタンプ説明文説明文',
+    creator_id: '3b261ff3-f940-4e2c-a626-27387b6dd71b',
+    created_at: '2024-01-15T10:30:00Z',
+    updated_at: '2024-01-15T10:30:00Z',
+  },
+  {
+    description: 'あああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ',
+    creator_id: '01960efa-f1ed-7d54-bf3d-6d62fe8af5aa',
+    created_at: '2024-02-20T14:45:00Z',
+    updated_at: '2024-02-20T14:45:00Z',
+  },
+  {
+    description: '-nya シリーズ\nあああｓ',
+    creator_id: '01963cec-d1bb-7a6e-b8df-16c7ca978464',
+    created_at: '2024-03-10T09:15:00Z',
+    updated_at: '2024-03-10T09:15:00Z',
+  },
+];
 </script>

@@ -32,6 +32,12 @@ const goToDetailPage = () => {
     :ui="{ header: ' top-0 -mt-px bg-white w-full pb-3', container: 'pt-0 mt-4 pb-0 gap-0', body: 'overflow-y-scroll' }"
     @update:open="handleDrawerClose"
   >
+    <template #title>
+      スタンプの詳細
+    </template>
+    <template #description>
+      スタンプの詳細情報を表示します
+    </template>
     <template #header>
       <UContainer class="flex items-center justify-end">
         <div class="flex items-center gap-2">
