@@ -237,6 +237,15 @@ components:
           type: string
           format: uuid
           description: ユーザーアイコンのファイルID
+        user_state:
+          type: number
+          enum: [0, 1]
+      required:
+        - user_id
+        - traq_id
+        - user_display_name
+        - user_icon_file_id
+        - user_state
 
     SearchResult:
       type: object
@@ -877,5 +886,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserStatus"
+        "401":
+          description: 認証エラー
+
+  /users-list:
+    get:
+      tags:
+        - User
+      summary: 全ユーザーの一覧
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserProfile"
         "401":
           description: 認証エラー
