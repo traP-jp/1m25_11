@@ -93,11 +93,10 @@
                   class="flex-shrink-0"
                 />
                 <span class="overflow-x-scroll whitespace-nowrap min-w-0 text-sm/7">{{ users.getUserById(stampDetail.creator_id)?.user_display_name }}</span>
-                <span class="flex-shrink-0 whitespace-nowrap">(<span class=" text-primary-400">@{{ users.getUserById(stampDetail.creator_id)?.traq_id }}</span>
-                  <template v-if="users.getUserById(stampDetail.creator_id)?.user_state == 0">
-                    <span class="text-xs">&nbsp;凍結済み</span>
-                  </template>)
-                </span>
+                <span class="flex-shrink-0">(<span class="text-primary-400">@{{ users.getUserById(stampDetail.creator_id)?.traq_id }}</span><span
+                  v-if="users.getUserById(stampDetail.creator_id)?.user_state == 0"
+                  class="text-xs"
+                >&nbsp;凍結済み</span>)</span>
                 <UButton
                   icon="material-symbols:content-copy-outline-sharp"
                   size="xs"
@@ -165,25 +164,28 @@
             <p class="text-sm text-gray-700 mb-2">
               {{ description.description }}
             </p>
-            <div class="flex items-center gap-2 text-xs text-gray-500">
+            <div class="flex items-center gap-1 text-xs text-gray-500 min-w-0">
               <template v-if="description.creator_id == '3b261ff3-f940-4e2c-a626-27387b6dd71b'">
                 <span>LLMによる説明</span>
+                <span class="flex-shrink-0">•</span>
+                <span class="flex-shrink-0 whitespace-nowrap">{{ new Date(description.created_at).toLocaleDateString() }}</span>
               </template>
-              <template v-else-if="users.getUserById(description.creator_id)">
+              <template v-else>
                 <UAvatar
                   :src="`https://q.trap.jp/api/v3/public/icon/${users.getUserById(description.creator_id)?.traq_id}`"
                   :alt="description.creator_id"
                   size="xs"
+                  class="flex-shrink-0"
                 />
-                <span>{{ users.getUserById(description.creator_id)?.user_display_name }}</span>
-                <span>(@{{ users.getUserById(description.creator_id)?.traq_id }})</span>
-                <span>•</span>
-                <span>{{ new Date(description.created_at).toLocaleDateString() }}</span>
-              </template>
-              <template v-else>
-                <span>凍結されたユーザー ({{ description.creator_id }})</span>
-                <span>•</span>
-                <span>{{ new Date(description.created_at).toLocaleDateString() }}</span>
+                <template v-if="users.getUserById(description.creator_id)">
+                  <span class="overflow-hidden text-ellipsis whitespace-nowrap min-w-0">{{ users.getUserById(description.creator_id)?.user_display_name }}</span>
+                  <span class="flex-shrink-0 whitespace-nowrap">(@{{ users.getUserById(description.creator_id)?.traq_id }}<template v-if="users.getUserById(description.creator_id)?.user_state == 0"><span class="text-xs">&nbsp;凍結済み</span></template>)</span>
+                </template>
+                <template v-else>
+                  <span class="flex-shrink-0">凍結されたユーザー ({{ description.creator_id }})</span>
+                </template>
+                <span class="flex-shrink-0">•</span>
+                <span class="flex-shrink-0 whitespace-nowrap">{{ new Date(description.created_at).toLocaleDateString() }}</span>
               </template>
             </div>
           </div>
@@ -256,9 +258,13 @@ const copyStampId = () => {
 };
 
 const copyTraqId = () => {
-  if (typeof stampDetail.value === null || !users.getUserById(stampDetail.value.creator_id)) return;
+  if (!stampDetail.value) return;
+
+  const user = users.getUserById(stampDetail.value.creator_id);
+  if (!user?.traq_id) return;
+
   isCopyingTraqId.value = true;
-  navigator.clipboard.writeText(users.getUserById(stampDetail.value.creator_id)?.traq_id);
+  navigator.clipboard.writeText(user.traq_id);
   toast.add({
     title: 'copied',
   });
@@ -316,6 +322,12 @@ const sampleDescriptions: Schemas['StampDescription'][] = [
   {
     description: '-nya シリーズ\nあああｓ',
     creator_id: '01963cec-d1bb-7a6e-b8df-16c7ca978464',
+    created_at: '2024-03-10T09:15:00Z',
+    updated_at: '2024-03-10T09:15:00Z',
+  },
+  {
+    description: '凍結されたユーザーのテスト',
+    creator_id: '2cc1df43-d5d7-42aa-8831-00a4efe48ce4',
     created_at: '2024-03-10T09:15:00Z',
     updated_at: '2024-03-10T09:15:00Z',
   },
