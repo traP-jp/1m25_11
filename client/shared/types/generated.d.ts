@@ -1014,7 +1014,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/user-list': {
+  '/users-list': {
     parameters: {
       query?: never;
       header?: never;
@@ -1193,16 +1193,16 @@ export interface components {
              * Format: uuid
              * @description traQユーザーのUUID
              */
-      user_id?: string;
+      user_id: string;
       /** @description traQId(ユーザー名) */
-      traq_id?: string;
+      traq_id: string;
       /** @description traQ での表示名 */
-      user_display_name?: string;
+      user_display_name: string;
       /**
              * Format: uuid
              * @description ユーザーアイコンのファイルID
              */
-      user_icon_file_id?: string;
+      user_icon_file_id: string;
     };
     SearchResult: {
       /** @description 検索条件を満たすスタンプの配列 */

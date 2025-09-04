@@ -237,6 +237,11 @@ components:
           type: string
           format: uuid
           description: ユーザーアイコンのファイルID
+      required:
+        - user_id
+        - traq_id
+        - user_display_name
+        - user_icon_file_id
 
     SearchResult:
       type: object
@@ -880,7 +885,7 @@ paths:
         "401":
           description: 認証エラー
 
-  /user-list:
+  /users-list:
     get:
       tags:
         - User
