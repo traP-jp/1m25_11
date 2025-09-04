@@ -46,9 +46,6 @@ type scoredStamp struct {
 
 func (h *Handler) SearchStamps(c echo.Context) error {
 	var params searchStampsParams
-	if err := c.Bind(&params); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid query parameters")
-	}
 
 	repoParams := repository.SearchStampsParams{}
 	if params.Q != nil {
