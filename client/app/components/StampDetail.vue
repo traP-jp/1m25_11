@@ -65,7 +65,7 @@
             class="bg-gray-100 text-primary cursor-pointer hover:bg-gray-200 transition-colors"
           >
             {{ tag.tag_name }}
-          </ubadge>
+          </Ubadge>
         </div>
       </UCard>
       <UCard
