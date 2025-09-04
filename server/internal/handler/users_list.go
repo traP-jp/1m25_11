@@ -19,7 +19,7 @@ type (
 		DisplayName string    `json:"displayName"`
 		IconFileID  uuid.UUID `json:"iconFileId"`
 		Bot         bool      `json:"bot"`
-		State       int       `json:"state"`
+		State       int      `json:"state"`
 		UpdatedAt   time.Time `json:"updatedAt"`
 	}
 
@@ -28,6 +28,7 @@ type (
 		Name        string    `json:"traq_id"`
 		DisplayName string    `json:"user_display_name"`
 		IconFileID  uuid.UUID `json:"user_icon_file_id"`
+		State       int      `json:"user_state"`
 	}
 )
 
@@ -47,6 +48,10 @@ func (h *Handler) getUsersList(c echo.Context) error {
 
 		return fmt.Errorf("error creating request: %w", err)
 	}
+	q := req.URL.Query()
+	q.Add("include-suspended", "true")
+	req.URL.RawQuery = q.Encode()
+
 	req.Header.Add("accept", "application/json")
 	req.Header.Add("Authorization", "Bearer "+bot_key)
 	client := &http.Client{}
@@ -76,6 +81,7 @@ func (h *Handler) getUsersList(c echo.Context) error {
 				Name:        s.Name,
 				DisplayName: s.DisplayName,
 				IconFileID:  s.IconFileID,
+				State:       s.State,
 			})
 		}
 	}
