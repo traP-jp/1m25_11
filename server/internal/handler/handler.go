@@ -25,7 +25,7 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 
 	stampAPI := api.Group("/stamps")
 	{
-		stampAPI.GET("/search",h.getSearch)
+		stampAPI.GET("/search",h.SearchStamps)
 		stampAPI.GET("/ranking",h.getRanking)
 		stampAPI.GET("",h.getStamps)
 		stampAPI.GET("/:stampId",h.getDetails)
@@ -54,4 +54,11 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 	{
 		userAPI.GET("", h.getUsersList)
 	}
+
+	bulkAPI := api.Group("/bulk")
+	{
+		bulkAPI.POST("/tags", h.BulkCreateTags)
+		bulkAPI.POST("/stamps-meta", h.BulkAddStampMeta)
+	}
+
 }
