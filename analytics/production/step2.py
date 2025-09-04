@@ -119,9 +119,9 @@ try:
 ## 入力
 * 絵文字の名前: `{stamp['name']}`
 * 本文で使われた投稿（配列）:
-  `{traQ_prompt}`
+  `{traQ_data}`
 * リアクションとして使われた投稿（配列）:
-  `{traQing_prompt}`
+  `{traQing_data}`
 * 絵文字画像: image_urlとして添付
 
 ### データ仕様
