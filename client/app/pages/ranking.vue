@@ -77,19 +77,19 @@ import type { Row } from '@tanstack/table-core';
 interface StampRankingData {
   stamp_id: string;
   stamp_name: string;
-  count_total: number;
-  count_monthly: number;
+  total_count: number;
+  month_count: number;
   rank: number; // すべてのスタンプに初期値として0を付与
   count?: number; // count_total / count_monthly を注入して利用
 }
 
 const rankingTestData = ref<StampRankingData[]>([
-  { stamp_id: 'e1e4a295-cf24-4de9-936c-e72469170d8f', stamp_name: 'kyapi-nya', count_monthly: 30, count_total: 25, rank: 0 },
-  { stamp_id: 'e1e4a295-cf24-4de9-936c-e72469170d8f', stamp_name: 'kyapi-nya', count_monthly: 40, count_total: 30, rank: 0 },
-  { stamp_id: '0197a63e-44f2-7779-b843-c805c52baacc', stamp_name: 'korosu-nya', count_monthly: 25, count_total: 30, rank: 0 },
-  { stamp_id: '0197a63e-44f2-7779-b843-c805c52baacc', stamp_name: 'korosu-nya', count_monthly: 10, count_total: 40, rank: 0 },
-  { stamp_id: '0197a69d-c3ce-7822-9666-ace99bd35068', stamp_name: '403_forbidden', count_monthly: 15, count_total: 30, rank: 0 },
-  { stamp_id: '0197a69d-c3ce-7822-9666-ace99bd35068', stamp_name: '403_forbidden', count_monthly: 25, count_total: 10, rank: 0 },
+  { stamp_id: 'e1e4a295-cf24-4de9-936c-e72469170d8f', stamp_name: 'kyapi-nya', month_count: 30, total_count: 25, rank: 0 },
+  { stamp_id: 'e1e4a295-cf24-4de9-936c-e72469170d8f', stamp_name: 'kyapi-nya', month_count: 40, total_count: 30, rank: 0 },
+  { stamp_id: '0197a63e-44f2-7779-b843-c805c52baacc', stamp_name: 'korosu-nya', month_count: 25, total_count: 30, rank: 0 },
+  { stamp_id: '0197a63e-44f2-7779-b843-c805c52baacc', stamp_name: 'korosu-nya', month_count: 10, total_count: 40, rank: 0 },
+  { stamp_id: '0197a69d-c3ce-7822-9666-ace99bd35068', stamp_name: '403_forbidden', month_count: 15, total_count: 30, rank: 0 },
+  { stamp_id: '0197a69d-c3ce-7822-9666-ace99bd35068', stamp_name: '403_forbidden', month_count: 25, total_count: 10, rank: 0 },
 ]);
 
 const columns: TableColumn<StampRankingData>[] = [
@@ -130,8 +130,8 @@ const columns: TableColumn<StampRankingData>[] = [
 ];
 
 const items = ref<TabsItem[]>([
-  { label: '総合', slot: 'count_total' },
-  { label: '1か月以内', slot: 'count_monthly' },
+  { label: '総合', slot: 'total_count' },
+  { label: '1か月以内', slot: 'month_count' },
 ]);
 
 const paginationTotal = ref({ pageIndex: 0, pageSize: 20 });
@@ -157,7 +157,7 @@ const medalMap: Record<number, string> = {
   3: '🥉 3',
 };
 
-function useSortedData(key: 'count_total' | 'count_monthly') {
+function useSortedData(key: 'total_count' | 'month_count') {
   return computed(() =>
     [...rankingTestData.value]
       .sort((a, b) => b[key] - a[key])
@@ -169,6 +169,6 @@ function useSortedData(key: 'count_total' | 'count_monthly') {
   );
 }
 
-const sortedCountTotal = useSortedData('count_total');
-const sortedCountMonthly = useSortedData('count_monthly');
+const sortedCountTotal = useSortedData('total_count');
+const sortedCountMonthly = useSortedData('month_count');
 </script>
