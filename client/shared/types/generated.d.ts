@@ -1203,6 +1203,8 @@ export interface components {
              * @description ユーザーアイコンのファイルID
              */
       user_icon_file_id: string;
+      /** @enum {number} */
+      user_state: 0 | 1;
     };
     SearchResult: {
       /** @description 検索条件を満たすスタンプの配列 */

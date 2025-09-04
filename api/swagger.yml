@@ -237,11 +237,15 @@ components:
           type: string
           format: uuid
           description: ユーザーアイコンのファイルID
+        user_state:
+          type: number
+          enum: [0, 1]
       required:
         - user_id
         - traq_id
         - user_display_name
         - user_icon_file_id
+        - user_state
 
     SearchResult:
       type: object
