@@ -1,12 +1,12 @@
 <script setup lang="ts">
 const stamps = useStamps();
 const route = useRoute();
-const stampName = stamps.getStampByName(route.params.stampName as string)?.file_id;
+const stamp = stamps.getStampByName(route.params.stampName as string);
 </script>
 
 <template>
-  <div v-if="stampName">
-    {{ stampName }}
+  <div v-if="stamp">
+    <StampDetail :stamp-id="stamp?.stamp_id" />
     <!-- <StampDetail /> -->
   </div>
   <div v-else>

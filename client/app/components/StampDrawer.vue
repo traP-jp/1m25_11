@@ -1,10 +1,8 @@
 <script setup lang="ts">
 const selectedStampId = useSelectedStampId();
 const { getStampById } = useStamps();
-const toast = useToast();
 
 const drawerOpen = ref(false);
-const isCopying = ref(false);
 
 watch(selectedStampId, (newValue) => {
   drawerOpen.value = !!newValue;
@@ -16,31 +14,14 @@ const handleDrawerClose = (isOpen: boolean) => {
   }
 };
 
-const selectedStamp = computed(() => {
-  if (!selectedStampId.value) return undefined;
-  return getStampById(selectedStampId.value);
-});
-
 const closeStampDrawer = () => {
   selectedStampId.value = undefined;
 };
 
 const goToDetailPage = () => {
   if (!selectedStampId.value) return;
-  navigateTo(`/stamp/${selectedStampId.value}`);
+  navigateTo(`/stamp/${getStampById(selectedStampId.value)?.stamp_name}`);
   closeStampDrawer();
-};
-
-const copySelectedStampName = () => {
-  if (!selectedStamp.value) return;
-  isCopying.value = true;
-  navigator.clipboard.writeText(`:${selectedStamp.value.stamp_name}:`);
-  toast.add({
-    title: 'クリップボードにコピーしました。',
-  });
-  setTimeout(() => {
-    isCopying.value = false;
-  }, 500);
 };
 </script>
 
@@ -55,19 +36,13 @@ const copySelectedStampName = () => {
       <UContainer class="flex items-center justify-end">
         <div class="flex items-center gap-2">
           <UButton
-            color="info"
-            variant="ghost"
-            icon="material-symbols:content-copy-outline-sharp"
-            @click="copySelectedStampName"
-          />
-          <UButton
-            color="info"
+            color="primary"
             variant="ghost"
             icon="material-symbols:expand-content"
             @click="goToDetailPage"
           />
           <UButton
-            color="info"
+            color="primary"
             variant="ghost"
             icon="material-symbols:close"
             @click="closeStampDrawer"

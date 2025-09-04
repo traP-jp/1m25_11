@@ -51,12 +51,12 @@
           <UIcon name="material-symbols:ios-share-sharp" />
         </UButton>
       </div>
-      <div class="flex w-full flex-wrap justify-start overflow-scroll gap-2 text-xs mt-2">
+      <div class="flex w-full flex-wrap justify-start gap-2 text-xs mt-2">
         <UBadge
           v-for="tag in sampleTag"
           :key="tag.tag_id"
           icon="material-symbols:tag"
-          class="bg-gray-100 text-primary"
+          class="bg-gray-100 text-primary cursor-pointer hover:bg-gray-200 transition-colors"
         >
           {{ tag.tag_name }}
         </ubadge>
