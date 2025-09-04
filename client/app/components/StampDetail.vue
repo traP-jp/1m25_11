@@ -279,8 +279,8 @@ const share = () => {
   if (!stamp) return;
   const shareData = {
     title: stamp.stamp_name,
-    text: `Check out this stamp: ${stamp.stamp_name}`,
-    url: `https://stampedia.trap.show/stamps/` + getStampById(props.stampId)?.stamp_name,
+    text: `https://stampedia.trap.show/stamps/${getStampById(props.stampId)?.stamp_name}`,
+    url: `https://stampedia.trap.show/stamps/${getStampById(props.stampId)?.stamp_name}`,
   };
   navigator.share(shareData).catch((err) => {
     console.error('Error sharing:', err);
