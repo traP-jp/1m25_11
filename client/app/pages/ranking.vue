@@ -8,7 +8,7 @@
       <!-- 総合ランキング -->
       <template #count_total>
         <UTable
-          ref="tableBody"
+          ref="tableTotal"
           v-model:pagination="paginationTotal"
           :data="sortedCountTotal"
           :columns="columns"
@@ -27,10 +27,9 @@
         </UTable>
         <div class="flex justify-center border-t border-default pt-4">
           <UPagination
-            :default-page="(tableBody?.tableApi?.getState().pagination.pageIndex || 0) + 1"
-            :items-per-page="tableBody?.tableApi?.getState().pagination.pageSize"
-            :total="tableBody?.tableApi?.getFilteredRowModel().rows.length"
-            @update:page="(p) => tableBody?.tableApi?.setPageIndex(p - 1)"
+            v-model:page="pageTotal"
+            :items-per-page="tableTotal?.tableApi?.getState().pagination.pageSize"
+            :total="tableTotal?.tableApi?.getFilteredRowModel().rows.length"
           />
         </div>
       </template>
@@ -38,7 +37,7 @@
       <!-- 1か月ランキング -->
       <template #count_monthly>
         <UTable
-          ref="tableReaction"
+          ref="tableMonthly"
           v-model:pagination="paginationMonthly"
           :data="sortedCountMonthly"
           :columns="columns"
@@ -58,10 +57,9 @@
 
         <div class="flex justify-center border-t border-default pt-4">
           <UPagination
-            :default-page="(tableReaction?.tableApi?.getState().pagination.pageIndex || 0) + 1"
-            :items-per-page="tableReaction?.tableApi?.getState().pagination.pageSize"
-            :total="tableReaction?.tableApi?.getFilteredRowModel().rows.length"
-            @update:page="(p) => tableReaction?.tableApi?.setPageIndex(p - 1)"
+            v-model:page="pageMonthly"
+            :items-per-page="tableMonthly?.tableApi?.getState().pagination.pageSize"
+            :total="tableMonthly?.tableApi?.getFilteredRowModel().rows.length"
           />
         </div>
       </template>
@@ -73,9 +71,6 @@
 import { getPaginationRowModel } from '@tanstack/vue-table';
 import type { TableColumn, TabsItem } from '@nuxt/ui';
 import type { Row } from '@tanstack/table-core';
-
-const tableBody = useTemplateRef('tableBody');
-const tableReaction = useTemplateRef('tableReaction');
 
 interface StampRankingData {
   stamp_id: string;
@@ -137,8 +132,22 @@ const items = ref<TabsItem[]>([
   { label: '1か月以内', slot: 'count_monthly' },
 ]);
 
-const paginationTotal = ref({ pageIndex: 0, pageSize: 20 });
-const paginationMonthly = ref({ pageIndex: 0, pageSize: 20 });
+const paginationTotal = ref({ pageIndex: 0, pageSize: 2 });
+const paginationMonthly = ref({ pageIndex: 0, pageSize: 2 });
+
+const tableTotal = useTemplateRef('tableTotal');
+const tableMonthly = useTemplateRef('tableMonthly');
+
+const pageTotal = ref(1); // 総合ランキングのページ番号
+const pageMonthly = ref(1); // 1か月ランキングのページ番号
+
+watch(pageTotal, (p) => {
+  tableTotal.value?.tableApi.setPageIndex(p - 1);
+});
+
+watch(pageMonthly, (p) => {
+  tableMonthly.value?.tableApi.setPageIndex(p - 1);
+});
 
 const medalMap: Record<number, string> = {
   1: '👑 1',
