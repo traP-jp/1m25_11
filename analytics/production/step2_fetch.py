@@ -8,7 +8,7 @@ import requests
 bearer_token = os.environ.get("BEARER_TOKEN")
 auth_token = os.getenv('TRAQ_AUTH_TOKEN')
 
-max_messages = 10000 # スタンプごとに取得する最大メッセージ数。最終的にはwhileの条件式が常にTrueになる程度に大きくしたいが、offsetは9900なでしか指定できないので10000にした
+max_messages = 10000 # スタンプごとに取得する最大メッセージ数。最終的にはwhileの条件式が常にTrueになる程度に大きくしたいが、offsetは9900までしか指定できないので10000にした
 messages_per_request = 100 # 1回のリクエストで取得するメッセージ数。テスト用に小さくしているが、本番では100にする
 stamps_file = 'stamps.json'
 
