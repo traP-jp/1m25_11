@@ -24,7 +24,10 @@ func (h *Handler) createStampTags(c echo.Context) error {
 		}
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	creatorID := uuid.Nil // 仮でNil UUIDを用いている
+	creatorID, err := h.getUserID(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
+	}
 	err = h.repo.CreateStampTags(c.Request().Context(), repository.CreateStampTagParams{
 		StampID:   stampID,
 		TagID:     tagID,

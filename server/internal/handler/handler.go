@@ -1,9 +1,8 @@
 package handler
 
 import (
-	"github.com/traP-jp/1m25_11/server/internal/repository"
-
 	"github.com/labstack/echo/v4"
+	"github.com/traP-jp/1m25_11/server/internal/repository"
 )
 
 type Handler struct {
@@ -14,51 +13,58 @@ func New(repo *repository.Repository) *Handler {
 	return &Handler{
 		repo: repo,
 	}
+
 }
 
 func (h *Handler) SetupRoutes(api *echo.Group) {
-	// ping API
-	pingAPI := api.Group("/ping")
+	api.Use(h.AuthMiddleware)
 	{
-		pingAPI.GET("", h.Ping)
-	}
+		stampAPI := api.Group("/stamps")
+		{
+			stampAPI.GET("/search", h.SearchStamps)
+			stampAPI.GET("/ranking", h.getRanking)
+			stampAPI.GET("", h.getStamps)
+			stampAPI.GET("/:stampId", h.getDetails)
+			stampAPI.POST("/:stampId/tags/:tagId", h.createStampTags)
+			stampAPI.DELETE("/:stampId/tags/:tagId", h.deleteStampTags)
+			stampAPI.GET("/:stampId/descriptions", h.getDescriptions)
+			stampAPI.POST("/:stampId/descriptions", h.createDescriptions)
+			stampAPI.PUT("/:stampId/descriptions", h.updateDescriptions)
+			stampAPI.DELETE("/:stampId/descriptions", h.deleteDescriptions)
+		}
 
-	stampAPI := api.Group("/stamps")
-	{
-		stampAPI.GET("/search",h.SearchStamps)
-		stampAPI.GET("/ranking",h.getRanking)
-		stampAPI.GET("",h.getStamps)
-		stampAPI.GET("/:stampId",h.getDetails)
-		stampAPI.POST("/:stampId/tags/:tagId",h.createStampTags)
-		stampAPI.DELETE("/:stampId/tags/:tagId",h.deleteStampTags)
-		stampAPI.GET("/:stampId/descriptions",h.getDescriptions)
-		stampAPI.POST("/:stampId/descriptions",h.createDescriptions)
-		stampAPI.PUT("/:stampId/descriptions",h.updateDescriptions)
-		stampAPI.DELETE("/:stampId/descriptions",h.deleteDescriptions)
-	}
+		tagAPI := api.Group("/tags")
+		{
+			tagAPI.GET("", h.getTags)
+			tagAPI.POST("", h.createTags)
+			tagAPI.GET("/:tagId", h.getTagDetails)
+			tagAPI.PUT("/:tagId", h.updateTags)
+			tagAPI.DELETE("/:tagId", h.deleteTags)
+			tagAPI.GET("/:tagId/stamps", h.getStampsByTag)
+		}
+		creatorAPI := api.Group("/me")
+		{
+			creatorAPI.GET("", h.GetUser)
+		}
+		userAPI := api.Group("/users-list")
+		{
+			userAPI.GET("", h.getUsersList)
+		}
 
-	tagAPI := api.Group("/tags")
-	{
-		tagAPI.GET("", h.getTags)
-		tagAPI.POST("", h.createTags)
-		tagAPI.GET("/:tagId", h.getTagDetails)
-		tagAPI.PUT("/:tagId", h.updateTags)
-		tagAPI.DELETE("/:tagId", h.deleteTags)
-		tagAPI.GET("/:tagId/stamps", h.getStampsByTag)
-	}
-	creatorAPI := api.Group("/me")
-	{
-		creatorAPI.GET("", h.GetUser)
-	}
-	userAPI := api.Group("/users-list")
-	{
-		userAPI.GET("", h.getUsersList)
-	}
+		bulkAPI := api.Group("/bulk")
+		{
+			bulkAPI.POST("/tags", h.BulkCreateTags)
+			bulkAPI.POST("/stamps-meta", h.BulkAddStampMeta)
+		}
 
-	bulkAPI := api.Group("/bulk")
-	{
-		bulkAPI.POST("/tags", h.BulkCreateTags)
-		bulkAPI.POST("/stamps-meta", h.BulkAddStampMeta)
+		loginAPI := api.Group("/login")
+		{
+			loginAPI.GET("", h.login)
+		}
+		callbackAPI := api.Group("/callback")
+		{
+			callbackAPI.GET("", h.callback)
+		}
 	}
 
 }

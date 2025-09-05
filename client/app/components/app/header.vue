@@ -26,17 +26,30 @@
       Service Name
     </h1>
 
-    <UDropdownMenu
-      :items="dropdownItems"
-      :ui="{
-        content: 'w-48',
-      }"
-    >
-      <UAvatar
-        :src="`https://q.trap.jp/api/v3/public/icon/${userName}`"
-        class="text-5xl cursor-pointer"
-      />
-    </UDropdownMenu>
+    <!-- 認証済みの場合: アバター表示 -->
+    <div v-if="isAuthenticated && user">
+      <UDropdownMenu
+        :items="dropdownItems"
+        :ui="{
+          content: 'w-48',
+        }"
+      >
+        <UAvatar
+          :src="`https://q.trap.jp/api/v3/public/icon/${user.traq_id}`"
+          class="text-5xl cursor-pointer"
+        />
+      </UDropdownMenu>
+    </div>
+
+    <!-- 未認証の場合: ログインボタン -->
+    <div v-else>
+      <UButton
+        color="primary"
+        to="/login"
+      >
+        ログイン
+      </UButton>
+    </div>
 
     <!-- </div> -->
   </UContainer>
@@ -45,8 +58,7 @@
 <script setup lang="ts">
 import type { NavigationMenuItem, DropdownMenuItem } from '@nuxt/ui';
 
-const userName = useUser();
-console.log(`userName: ${userName.value}`);
+const { user, isAuthenticated, logout } = useAuth();
 
 const navigationSlideOver = ref(false);
 
@@ -85,27 +97,39 @@ const navigationItems = ref<NavigationMenuItem[][]>([
   ],
 ]);
 
-const dropdownItems = ref<DropdownMenuItem[][]>([
-  [
-    {
-      label: `${userName.value}`,
-      avatar: {
-        src: `https://q.trap.jp/api/v3/public/icon/${userName.value}`,
+// 認証済みの場合のドロップダウンメニュー
+const dropdownItems = computed<DropdownMenuItem[][]>(() => {
+  if (!isAuthenticated.value || !user.value) return [];
+
+  return [
+    [
+      {
+        label: user.value.user_display_name || user.value.traq_id,
+        avatar: {
+          src: `https://q.trap.jp/api/v3/public/icon/${user.value.traq_id}`,
+        },
+        type: 'label',
       },
-      type: 'label',
-    },
-  ],
-  [
-    {
-      label: 'Profile',
-      icon: 'material-symbols:account-circle-outline-sharp',
-      to: '/profile',
-    },
-    {
-      label: 'Settings',
-      icon: 'material-symbols:settings-outline-sharp',
-      to: '/settings',
-    },
-  ],
-]);
+    ],
+    [
+      {
+        label: 'Profile',
+        icon: 'material-symbols:account-circle-outline-sharp',
+        to: '/profile',
+      },
+      {
+        label: 'Settings',
+        icon: 'material-symbols:settings-outline-sharp',
+        to: '/settings',
+      },
+    ],
+    [
+      {
+        label: 'Logout',
+        icon: 'material-symbols:logout',
+        click: logout,
+      },
+    ],
+  ];
+});
 </script>
