@@ -26,29 +26,49 @@
       Service Name
     </h1>
 
-    <!-- 認証状態に応じた表示 -->
-    <div v-if="isLoggedIn">
-      <UDropdownMenu
-        :items="dropdownItems"
-        :ui="{
-          content: 'w-48',
-        }"
-      >
-        <UAvatar
-          :src="`https://q.trap.jp/api/v3/public/icon/${userName}`"
-          class="text-5xl cursor-pointer"
+    <!-- 認証状態に応じた表示（ClientOnlyで包む） -->
+    <ClientOnly>
+      <div v-if="isLoading">
+        <!-- 認証状態確認中の表示 -->
+        <UIcon
+          name="material-symbols:progress-activity"
+          class="text-2xl animate-spin text-primary"
         />
-      </UDropdownMenu>
-    </div>
-    <div v-else>
-      <UButton
-        color="primary"
-        size="lg"
-        @click="handleLogin"
-      >
-        ログイン
-      </UButton>
-    </div>
+      </div>
+      <div v-else-if="isLoggedIn">
+        <UDropdownMenu
+          :items="dropdownItems"
+          :ui="{
+            content: 'w-48',
+          }"
+        >
+          <UAvatar
+            :src="`https://q.trap.jp/api/v3/public/icon/${userName}`"
+            class="text-5xl cursor-pointer"
+          />
+        </UDropdownMenu>
+      </div>
+      <div v-else>
+        <UButton
+          color="primary"
+          size="lg"
+          @click="handleLogin"
+        >
+          ログイン
+        </UButton>
+      </div>
+
+      <!-- サーバーサイドでのフォールバック表示 -->
+      <template #fallback>
+        <UButton
+          color="primary"
+          size="lg"
+          @click="handleLogin"
+        >
+          ログイン
+        </UButton>
+      </template>
+    </ClientOnly>
 
     <!-- </div> -->
   </UContainer>
@@ -57,11 +77,16 @@
 <script setup lang="ts">
 import type { NavigationMenuItem, DropdownMenuItem } from '@nuxt/ui';
 
-const { isLoggedIn, login } = useAuth();
+const { isLoggedIn, isLoading, login } = useAuth();
 const userName = useUser();
 
-console.log(`userName: ${userName.value}`);
-console.log(`isLoggedIn: ${isLoggedIn.value}`);
+// リアクティブな値の変化を監視
+watch([isLoggedIn, isLoading, userName], ([newLoggedIn, newLoading, newUserName]) => {
+  console.log(`状態変化 - userName: ${newUserName}, isLoggedIn: ${newLoggedIn}, isLoading: ${newLoading}`);
+});
+
+// 初期値をログ出力
+console.log(`初期値 - userName: ${userName.value}, isLoggedIn: ${isLoggedIn.value}, isLoading: ${isLoading.value}`);
 
 const handleLogin = () => {
   login();

@@ -7,24 +7,23 @@ import { computed } from 'vue';
  * @returns {Ref<string | null>} ユーザー名を保持するリアクティブな Ref オブジェクト
  */
 export const useUser = () => {
-  const { isLoggedIn } = useAuth();
-  // 'user' というキーで state を定義。初期値は null。
-  const user = useState<string | null>('user', () => null);
+  const { isLoggedIn, currentUser } = useAuth();
+  const { getUserById } = useUsers();
 
-  // 未認証の場合はnullを返す
+  // 認証済みユーザーからユーザー名を取得
   const authenticatedUser = computed(() => {
-    return isLoggedIn.value ? user.value : null;
-  });
-
-  // user.value がまだセットされていない場合のみ、ヘッダーから値を取得する処理を行う。
-  // これにより、サーバーで一度だけヘッダーが読み込まれ、クライアントではその値が再利用される。
-  if (import.meta.server && user.value === null) {
-    const headers = useRequestHeaders(['x-forwarded-user']);
-    const username = headers['x-forwarded-user'];
-    if (username) {
-      user.value = username;
+    // サーバーサイドでは常にnullを返す
+    if (import.meta.server) {
+      return null;
     }
-  }
+
+    if (!isLoggedIn.value || !currentUser.value) {
+      return null;
+    }
+    // user_idからユーザー情報を検索してユーザー名を取得
+    const user = getUserById(currentUser.value.user_id);
+    return user?.traq_id || null;
+  });
 
   return authenticatedUser;
 };

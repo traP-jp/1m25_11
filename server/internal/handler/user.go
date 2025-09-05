@@ -17,6 +17,5 @@ func (h *Handler) GetUser(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
-
 	return c.JSON(http.StatusOK, user)
 }

@@ -1,4 +1,7 @@
 export default defineNuxtPlugin(async (_) => {
+  // クライアントサイドでのみ実行
+  if (import.meta.server) return;
+
   const userListState = useState<Schemas['UserProfile'][]>('user-list');
   const userMapState = useState<Map<string, Schemas['UserProfile']>>('user-map');
 
@@ -7,7 +10,7 @@ export default defineNuxtPlugin(async (_) => {
 
   if (data) {
     userListState.value = data;
-    // Map形式にも変換して保持（user_idをキーとして使用）
+    // Map形式にも変換して保持（user_id をキーとして使用）
     userMapState.value = new Map(data.map(user => [user.user_id, user]));
   }
 });

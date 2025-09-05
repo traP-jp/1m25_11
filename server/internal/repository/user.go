@@ -10,12 +10,12 @@ import (
 type (
 	// users table
 	User struct {
-		ID                      uuid.UUID         `db:"-"`
-		IsAdmin                 bool              `db:"-"`
-		StampsUserOwned         []StampSummary    `db:"-"`
-		TagsUserCreated         []TagSummary      `db:"-"`
-		StampsUserTagged        []StampTagSummary `db:"-"`
-		DescriptionsUserCreated []StampSummary    `db:"-"`
+		ID                      uuid.UUID         `json:"user_id"`
+		IsAdmin                 bool              `json:"is_admin"`
+		StampsUserOwned         []StampSummary    `json:"stamps_user_owned"`
+		TagsUserCreated         []TagSummary      `json:"tags_user_created"`
+		StampsUserTagged        []StampTagSummary `json:"stamps_user_tagged"`
+		DescriptionsUserCreated []StampSummary    `json:"descriptions_user_created"`
 	}
 
 	CreateUserParams struct {

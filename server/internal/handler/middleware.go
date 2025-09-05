@@ -35,9 +35,6 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		c.Set("display_name", claims.Name)
 		c.Set("token", token)
 
-		// x-forwarded-user ヘッダーを設定（クライアント側のuseUser.tsで使用）
-		c.Response().Header().Set("x-forwarded-user", claims.PreferredUsername)
-
 		return next(c)
 	}
 }
