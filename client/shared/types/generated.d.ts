@@ -26,8 +26,6 @@ export interface paths {
           tag?: string[];
           /** @description 説明文に含まれるキーワード（空白区切りで複数指定可能、いずれかを含んでいれば表示） */
           description?: string;
-          /** @description 作成者名に含まれるキーワード（空白区切りで複数指定可能、いずれかを含んでいれば表示） */
-          creator?: string;
           /** @description スタンプ作成日時の開始日 (YYYY-MM-DD) */
           created_since?: string;
           /** @description スタンプ作成日時の終了日 (YYYY-MM-DD) */

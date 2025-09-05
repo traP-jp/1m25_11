@@ -324,11 +324,6 @@ paths:
           description: 説明文に含まれるキーワード（空白区切りで複数指定可能、いずれかを含んでいれば表示）
           schema:
             type: string
-        - name: creator
-          in: query
-          description: 作成者名に含まれるキーワード（空白区切りで複数指定可能、いずれかを含んでいれば表示）
-          schema:
-            type: string
         - name: created_since
           in: query
           description: スタンプ作成日時の開始日 (YYYY-MM-DD)
