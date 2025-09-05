@@ -14,6 +14,7 @@ services:
       NS_MARIADB_HOSTNAME: db
       NS_MARIADB_PORT: "3306"
       NS_MARIADB_DATABASE: app
+      JWT_SECRET: "your_super_secure_jwt_secret_key_32_chars_minimum_length_required"
 
   
     depends_on:

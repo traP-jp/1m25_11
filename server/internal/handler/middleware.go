@@ -1,33 +1,42 @@
 package handler
 
 import (
-	"github.com/coreos/go-oidc/v3/oidc"
+	"log"
 	"net/http"
 	"strings"
-	"context"
+
 	"github.com/labstack/echo/v4"
 )
 
 func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		if strings.HasSuffix(c.Request().URL.Path, "/login") {
-
 			return next(c)
 		}
 		if strings.Contains(c.Request().URL.Path, "/callback") {
-
 			return next(c)
 		}
 
 		token := getToken(c)
 		if token == "" {
-			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized4")
+			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized: No token")
 		}
-		if err := getMe(c, token); err != nil {
-            return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized: Invalid token")
-        }
 
+		// 軽量JWT検証
+		claims, err := verifyLightweightJWT(token)
+		if err != nil {
+			log.Printf("JWT verification failed: %v", err)
+			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized: Invalid token")
+		}
+
+		// ユーザー情報をコンテキストに設定
+		c.Set("user_id", claims.Sub)
+		c.Set("username", claims.PreferredUsername)
+		c.Set("display_name", claims.Name)
 		c.Set("token", token)
+
+		// x-forwarded-user ヘッダーを設定（クライアント側のuseUser.tsで使用）
+		c.Response().Header().Set("x-forwarded-user", claims.PreferredUsername)
 
 		return next(c)
 	}
@@ -47,23 +56,12 @@ func getToken(c echo.Context) string {
 	return ""
 }
 
-func getMe(c echo.Context, rawToken string) error {
-	config := &oidc.Config{
-		ClientID: clientID,
-	}
-	provider, err := oidc.NewProvider(c.Request().Context(), "https://q.trap.jp")
+// verifyLightweightJWT は軽量JWTを検証します
+func verifyLightweightJWT(tokenString string) (*LightweightJWT, error) {
+	secret, err := GetJWTSecret()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	ctx := context.Background()
-	verifier := provider.Verifier(config)
-
-	_, err = verifier.Verify(ctx, rawToken)
-	if err != nil {
-
-		return err
-	}
-
-	return nil
+	return VerifyJWT(tokenString, secret)
 }

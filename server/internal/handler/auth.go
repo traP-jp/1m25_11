@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"log"
 	"math/big"
 	"net/http"
 	"net/url"
@@ -69,7 +70,33 @@ func (h *Handler) callback(c echo.Context) error {
 	if err != nil {
 		return c.Redirect(http.StatusFound, topPageURL)
 	}
-	idToken := tokenData.IDToken
+
+	// traQの元JWTから軽量JWTを作成
+	lightweightJWT, err := CreateLightweightJWTFromTraQ(tokenData.IDToken)
+	if err != nil {
+		log.Printf("Failed to create lightweight JWT: %v", err)
+		return c.Redirect(http.StatusFound, topPageURL)
+	}
+
+	// JWT署名用の秘密鍵を取得
+	secret, err := GetJWTSecret()
+	if err != nil {
+		log.Printf("Failed to get JWT secret: %v", err)
+		return c.Redirect(http.StatusFound, topPageURL)
+	}
+
+	// 軽量JWTトークン文字列を生成
+	lightweightToken, err := lightweightJWT.GenerateToken(secret)
+	if err != nil {
+		log.Printf("Failed to generate lightweight JWT token: %v", err)
+		return c.Redirect(http.StatusFound, topPageURL)
+	}
+
+	// デバッグログ: JWTサイズの比較
+	log.Printf("Original JWT size: %d bytes, Lightweight JWT size: %d bytes",
+		len(tokenData.IDToken), len(lightweightToken))
+
+	// Code verifier削除用Cookie
 	deleteCookie := &http.Cookie{
 		Name:     h.codeVerifierKey(state),
 		Secure:   config.GetCookieSecure(),
@@ -80,15 +107,15 @@ func (h *Handler) callback(c echo.Context) error {
 	}
 	c.SetCookie(deleteCookie)
 
+	// 軽量JWTを含むCookie設定
 	cookie := &http.Cookie{
 		Name:     tokenKey,
-		Value:    idToken,
+		Value:    lightweightToken, // 軽量JWT
 		Secure:   config.GetCookieSecure(),
 		HttpOnly: true,
 		SameSite: config.GetCookieSameSite(),
 		MaxAge:   tokenData.ExpiresIn,
 	}
-
 	c.SetCookie(cookie)
 
 	return c.Redirect(http.StatusFound, topPageURL)
