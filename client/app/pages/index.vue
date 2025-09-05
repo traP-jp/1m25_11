@@ -14,7 +14,7 @@
 const { stampsList } = useStamps();
 
 // ランダムに選ばれた10個のスタンプを保持するref
-const randomStamps = ref<StampSummary[]>([]);
+const randomStamps = ref<Schemas['StampSummary'][]>([]);
 
 // ランダムに10個のスタンプを選ぶ関数
 const generateRandomStamps = () => {

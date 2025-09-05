@@ -2,6 +2,7 @@
   <UContainer class="h-20 flex items-center justify-between font-bold">
     <!-- <div class="w-full h-20 flex items-center-safe justify-around font-bold text-3xl"> -->
     <USlideover
+      v-model:open="navigationSlideOver"
       title="メニュー"
       side="left"
       :close="{
@@ -17,6 +18,7 @@
         <UNavigationMenu
           orientation="vertical"
           :items="navigationItems"
+          @click="navigationSlideOver=false"
         />
       </template>
     </USlideover>
@@ -46,6 +48,8 @@ import type { NavigationMenuItem, DropdownMenuItem } from '@nuxt/ui';
 const userName = useUser();
 console.log(`userName: ${userName.value}`);
 
+const navigationSlideOver = ref(false);
+
 const navigationItems = ref<NavigationMenuItem[][]>([
   [
     {
@@ -66,23 +70,17 @@ const navigationItems = ref<NavigationMenuItem[][]>([
     {
       label: 'Tags',
       icon: 'material-symbols:tag',
-      to: '/tags',
+      to: '/tag',
     },
     {
-      label: 'Developer',
-      icon: 'material-symbols:code',
-      children: [
-        {
-          label: 'Swagger viewer',
-          to: '/developer',
-          icon: 'material-symbols:info',
-        },
-        {
-          label: 'GitHub',
-          to: 'https://github.com/traP-jp/1m25_11',
-          icon: 'material-symbols:arrow-outward',
-        },
-      ],
+      label: 'Swagger viewer',
+      to: '/developer',
+      icon: 'material-symbols:info',
+    },
+    {
+      label: 'GitHub',
+      to: 'https://github.com/traP-jp/1m25_11',
+      icon: 'material-symbols:arrow-outward',
     },
   ],
 ]);
