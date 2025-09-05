@@ -60,7 +60,6 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 
 	log.Println("successfully cronJobTask")
 
-
 	stampTotalCount := make(map[uuid.UUID]int)
 	allStamps, err := h.repo.GetStampSummaries(ctx)
 	if err != nil {
@@ -74,7 +73,7 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 		}
 		var statsData repository.StampStatus
 
-		stampID := stamp.ID 
+		stampID := stamp.ID
 		statsURL := fmt.Sprintf("https://q.trap.jp/api/v3/stamps/%s/stats", stampID)
 
 		statsReq, err := http.NewRequestWithContext(ctx, "GET", statsURL, nil)
@@ -93,7 +92,6 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 		defer statsResp.Body.Close()
 		if statsResp.StatusCode != http.StatusOK {
 			stampTotalCount[stamp.ID] = 0
-			statsResp.Body.Close() 
 
 			continue
 		} else {
@@ -102,8 +100,6 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 				return
 			}
 			stampTotalCount[stamp.ID] = statsData.TotalCount
-			statsResp.Body.Close() 
-
 
 		}
 
