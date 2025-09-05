@@ -3,12 +3,12 @@
     <h1 class="font-bold text-2xl">
       タグ一覧
     </h1>
-    <div class="pt-4">
+    <div class="pt-4 flex flex-wrap gap-2">
       <NuxtLink
         v-for="tagItem in tagTestData"
         :key="tagItem.tag_id"
         :to="`/tag/${encodeURIComponent(tagItem.tag_name)}`"
-        class="text-xl inline-block px-3 py-1 border-2 hover:bg-primary-100 transition"
+        class="text-xl font-medium inline-block px-3 py-1 border-0 bg-gray-100 text-primary cursor-pointer hover:bg-gray-200 transition-colors"
       >
         #{{ tagItem.tag_name }}
       </NuxtLink>
