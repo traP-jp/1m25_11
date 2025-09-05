@@ -7,7 +7,7 @@
         class="w-full"
       >
         <!-- 総合ランキング -->
-        <template #count_total>
+        <template #total_count>
           <UTable
             ref="tableTotal"
             v-model:pagination="paginationTotal"
@@ -36,7 +36,7 @@
         </template>
 
         <!-- 1か月ランキング -->
-        <template #count_monthly>
+        <template #month_count>
           <UTable
             ref="tableMonthly"
             v-model:pagination="paginationMonthly"
@@ -76,21 +76,28 @@ import type { Row } from '@tanstack/table-core';
 
 interface StampRankingData {
   stamp_id: string;
-  stamp_name: string;
+  stamp_name?: string; // 必要なら後で補う
   total_count: number;
   month_count: number;
-  rank: number; // すべてのスタンプに初期値として0を付与
-  count?: number; // count_total / count_monthly を注入して利用
+  rank: number;
+  count?: number;
 }
 
-const rankingTestData = ref<StampRankingData[]>([
-  { stamp_id: 'e1e4a295-cf24-4de9-936c-e72469170d8f', stamp_name: 'kyapi-nya', month_count: 30, total_count: 25, rank: 0 },
-  { stamp_id: 'e1e4a295-cf24-4de9-936c-e72469170d8f', stamp_name: 'kyapi-nya', month_count: 40, total_count: 30, rank: 0 },
-  { stamp_id: '0197a63e-44f2-7779-b843-c805c52baacc', stamp_name: 'korosu-nya', month_count: 25, total_count: 30, rank: 0 },
-  { stamp_id: '0197a63e-44f2-7779-b843-c805c52baacc', stamp_name: 'korosu-nya', month_count: 10, total_count: 40, rank: 0 },
-  { stamp_id: '0197a69d-c3ce-7822-9666-ace99bd35068', stamp_name: '403_forbidden', month_count: 15, total_count: 30, rank: 0 },
-  { stamp_id: '0197a69d-c3ce-7822-9666-ace99bd35068', stamp_name: '403_forbidden', month_count: 25, total_count: 10, rank: 0 },
-]);
+const { getStampById } = useStamps();
+
+const rankingData = ref<StampRankingData[]>([]);
+
+onMounted(async () => {
+  const { data } = await apiClient.GET('/stamps/ranking');
+
+  rankingData.value = (data ?? []).map(item => ({
+    ...item,
+    stamp_name: getStampById(item.stamp_id)?.stamp_name ?? '不明なスタンプ',
+    total_count: item.body_count,
+    month_count: item.reaction_count,
+    rank: 0,
+  }));
+});
 
 const columns: TableColumn<StampRankingData>[] = [
   {
@@ -159,7 +166,7 @@ const medalMap: Record<number, string> = {
 
 function useSortedData(key: 'total_count' | 'month_count') {
   return computed(() =>
-    [...rankingTestData.value]
+    [...rankingData.value]
       .sort((a, b) => b[key] - a[key])
       .map((item, index) => ({
         ...item,
