@@ -8,15 +8,16 @@ import requests
 bearer_token = os.environ.get("BEARER_TOKEN")
 auth_token = os.getenv('TRAQ_AUTH_TOKEN')
 
-max_messages = 10 # スタンプごとに取得する最大メッセージ数。最終的にはwhileの条件式が常にTrueになる程度に大きくする
-messages_per_request = 5 # 1回のリクエストで取得するメッセージ数。テスト用に小さくしているが、本番では100にする
+max_messages = 100000 # スタンプごとに取得する最大メッセージ数。最終的にはwhileの条件式が常にTrueになる程度に大きくする
+messages_per_request = 100 # 1回のリクエストで取得するメッセージ数。テスト用に小さくしているが、本番では100にする
+stamps_file = 'stamps.json'
 
 since = "2006-01-02T15:04:05Z"
 until = "2026-01-02T15:04:05Z"
 
 try:
     # with文でファイルを開く
-    with open('targeted_stamps.json', 'r', encoding='utf-8') as f_stamps:
+    with open(stamps_file, 'r', encoding='utf-8') as f_stamps:
         stamps = json.load(f_stamps)
 
     all_traQ_messages = []
