@@ -26,17 +26,29 @@
       Service Name
     </h1>
 
-    <UDropdownMenu
-      :items="dropdownItems"
-      :ui="{
-        content: 'w-48',
-      }"
-    >
-      <UAvatar
-        :src="`https://q.trap.jp/api/v3/public/icon/${userName}`"
-        class="text-5xl cursor-pointer"
-      />
-    </UDropdownMenu>
+    <!-- 認証状態に応じた表示 -->
+    <div v-if="isLoggedIn">
+      <UDropdownMenu
+        :items="dropdownItems"
+        :ui="{
+          content: 'w-48',
+        }"
+      >
+        <UAvatar
+          :src="`https://q.trap.jp/api/v3/public/icon/${userName}`"
+          class="text-5xl cursor-pointer"
+        />
+      </UDropdownMenu>
+    </div>
+    <div v-else>
+      <UButton
+        color="primary"
+        size="lg"
+        @click="handleLogin"
+      >
+        ログイン
+      </UButton>
+    </div>
 
     <!-- </div> -->
   </UContainer>
@@ -45,8 +57,15 @@
 <script setup lang="ts">
 import type { NavigationMenuItem, DropdownMenuItem } from '@nuxt/ui';
 
+const { isLoggedIn, login } = useAuth();
 const userName = useUser();
+
 console.log(`userName: ${userName.value}`);
+console.log(`isLoggedIn: ${isLoggedIn.value}`);
+
+const handleLogin = () => {
+  login();
+};
 
 const navigationSlideOver = ref(false);
 

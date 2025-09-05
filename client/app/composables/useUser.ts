@@ -3,12 +3,18 @@ import { computed } from 'vue';
 
 /**
  * アプリケーション全体で利用可能な、リアクティブなユーザー名を管理する composable。
- * サーバーで X-Forwarded-User ヘッダーから値を取得し、useState に格納する。
+ * 認証状態と連動し、未認証時はnullを返す。
  * @returns {Ref<string | null>} ユーザー名を保持するリアクティブな Ref オブジェクト
  */
 export const useUser = () => {
+  const { isLoggedIn } = useAuth();
   // 'user' というキーで state を定義。初期値は null。
   const user = useState<string | null>('user', () => null);
+
+  // 未認証の場合はnullを返す
+  const authenticatedUser = computed(() => {
+    return isLoggedIn.value ? user.value : null;
+  });
 
   // user.value がまだセットされていない場合のみ、ヘッダーから値を取得する処理を行う。
   // これにより、サーバーで一度だけヘッダーが読み込まれ、クライアントではその値が再利用される。
@@ -20,7 +26,7 @@ export const useUser = () => {
     }
   }
 
-  return user;
+  return authenticatedUser;
 };
 
 /**

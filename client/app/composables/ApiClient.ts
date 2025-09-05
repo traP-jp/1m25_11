@@ -21,11 +21,11 @@ export const useApiClient = () => {
     // 認証エラー時のハンドリング
     apiClientInstance.use({
       onResponse({ response }) {
-        // 401エラーの場合はログインページにリダイレクト
+        // 401エラーの場合は未ログイン状態として扱う
+        // 強制リダイレクトはせず、各ページで適切にハンドリング
         if (response.status === 401) {
-          console.warn('認証が必要です。ログインページにリダイレクトします。');
-          // サーバーのログインエンドポイントにリダイレクト
-          window.location.href = `${config.public.apiBase}/login`;
+          console.warn('認証が必要です。未ログイン状態として処理します。');
+          // 認証状態をリセット（グローバル状態管理があれば）
         }
       },
     });
