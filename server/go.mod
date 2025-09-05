@@ -5,7 +5,6 @@ go 1.24.2
 require (
 	github.com/coreos/go-oidc/v3 v3.15.0
 	github.com/go-co-op/gocron/v2 v2.16.3
-	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/google/uuid v1.6.0
 	github.com/jmoiron/sqlx v1.4.0
@@ -15,7 +14,6 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.5 // indirect
 	github.com/jonboulle/clockwork v0.5.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect

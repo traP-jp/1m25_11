@@ -39,6 +39,7 @@ func (r *Repository) GetTagDetails(ctx context.Context, tagID uuid.UUID) (*TagDe
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrTagNotFound
 		}
+
 		return nil, err
 	}
 
@@ -52,6 +53,7 @@ func (r *Repository) GetTagDetails(ctx context.Context, tagID uuid.UUID) (*TagDe
 	}
 
 	tagDetails.Stamps = stamps
+
 	return &tagDetails, nil
 }
 

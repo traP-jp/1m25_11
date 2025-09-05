@@ -156,6 +156,7 @@ func (r *Repository) BulkAddStampMeta(ctx context.Context, additions []StampMeta
 			log.Printf("Failed to insert stamp_descriptions. The data was: %+v", descriptionsToInsert)
 
 			log.Printf("Error inserting descriptions: %v", err)
+
 			return fmt.Errorf("failed to bulk insert/update stamp_descriptions: %w", err)
 		}
 	}

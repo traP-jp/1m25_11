@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -34,7 +35,25 @@ func MySQL() *mysql.Config {
 	c.DBName = getEnv("NS_MARIADB_DATABASE", "app")
 	c.Collation = "utf8mb4_general_ci"
 	c.AllowNativePasswords = true
-    c.ParseTime = true
-	
+	c.ParseTime = true
+
 	return c
+}
+
+// AllowedOrigins returns the list of CORS allowed origins.
+// Comma separated in ALLOWED_ORIGINS environment variable.
+// Defaults cover production & local development frontends.
+func AllowedOrigins() []string {
+	raw := getEnv("ALLOWED_ORIGINS", "https://stampedia.trap.show,https://1m25-11.trap.show,http://localhost:3000")
+	parts := strings.Split(raw, ",")
+	origins := make([]string, 0, len(parts))
+	for _, p := range parts {
+		o := strings.TrimSpace(p)
+		if o == "" {
+			continue
+		}
+		origins = append(origins, o)
+	}
+
+	return origins
 }

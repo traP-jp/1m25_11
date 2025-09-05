@@ -31,6 +31,7 @@ func (h *Handler) BulkAddStampMeta(c echo.Context) error {
 	err := h.repo.BulkAddStampMeta(c.Request().Context(), req)
 	if err != nil {
 		log.Printf("error in BulkAddStampMeta repository call: %v", err)
+
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to link tags and add descriptions")
 	}
 
