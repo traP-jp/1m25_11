@@ -1,11 +1,9 @@
-import { apiClient } from '#imports';
-
 export default defineNuxtPlugin(async (_) => {
   const userListState = useState<Schemas['UserProfile'][]>('user-list');
   const userMapState = useState<Map<string, Schemas['UserProfile']>>('user-map');
 
   // /user-list APIを叩き、ユーザーのすべてのリストを取得する
-  const { data } = await apiClient.GET('/users-list');
+  const { data } = await useApiClient().GET('/users-list');
 
   if (data) {
     userListState.value = data;

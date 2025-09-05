@@ -9,6 +9,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       userName: 'traP',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE,
     },
   },
   compatibilityDate: '2025-07-15',

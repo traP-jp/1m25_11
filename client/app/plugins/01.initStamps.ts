@@ -1,15 +1,16 @@
-import { apiClient } from '#imports';
+export default defineNuxtPlugin(async () => {
+  // Map形式のstateを削除
+  const listState = useState<Schemas['StampSummary'][]>('stamps-list', () => []);
 
-export default defineNuxtPlugin(async (_) => {
-  const listState = useState<Schemas['StampSummary'][]>('stamps-list');
-  const mapState = useState<Map<string, Schemas['StampSummary']>>('stamps-map');
+  // アプリの初期化時にすでにデータがあれば何もしない（クライアント側での重複実行防止）
+  if (listState.value.length > 0) {
+    return;
+  }
 
-  // /stamps APIを叩き、スタンプのすべてのリストを取得する
+  const apiClient = useApiClient();
   const { data } = await apiClient.GET('/stamps');
 
   if (data) {
     listState.value = data;
-    // Map形式にも変換して保持
-    mapState.value = new Map(data.map(stamp => [stamp.stamp_id, stamp]));
   }
 });
