@@ -19,7 +19,7 @@
             <template #stamp_name-cell="{ row }">
               <div class="flex items-center gap-3">
                 <NuxtImg
-                  :src="`https://q.trap.jp/api/1.0/public/emoji/${row.original.stamp_id}`"
+                  :src="getFileUrl(row.original.stamp_id)"
                   class="m-auto w-12 h-12"
                 />
                 <p>{{ row.original.stamp_name }}</p>
@@ -48,7 +48,7 @@
             <template #stamp_name-cell="{ row }">
               <div class="flex items-center gap-3">
                 <NuxtImg
-                  :src="`https://q.trap.jp/api/1.0/public/emoji/${row.original.stamp_id}`"
+                  :src="getFileUrl(row.original.stamp_id)"
                   class="mx-auto w-12 h-12"
                 />
                 <p>{{ row.original.stamp_name }}</p>
@@ -73,6 +73,7 @@
 import { getPaginationRowModel } from '@tanstack/vue-table';
 import type { TableColumn, TabsItem } from '@nuxt/ui';
 import type { Row } from '@tanstack/table-core';
+import { getFileUrl } from '#imports';
 
 interface StampRankingData {
   stamp_id: string;
@@ -84,21 +85,23 @@ interface StampRankingData {
 }
 
 const { getStampById } = useStamps();
-
 const rankingData = ref<StampRankingData[]>([]);
 
 onMounted(async () => {
-  const { data } = await apiClient.GET('/stamps/ranking');
-
-  // stamp_name を stamp_id から取得、rank は 0、count を初期化
-  rankingData.value = (data ?? []).map(item => ({
-    stamp_id: item.stamp_id,
-    stamp_name: getStampById(item.stamp_id)?.stamp_name ?? '不明なスタンプ',
-    total_count: item.total_count,
-    monthly_count: item.monthly_count,
+  const { data: ranking } = await apiClient.GET('/stamps/ranking');
+  if (!ranking) return;
+  rankingData.value = ranking.map(item => ({
+    stamp_id: item.StampID,
+    total_count: item.TotalCount,
+    monthly_count: item.MonthlyCount,
     rank: 0,
-    count: item.total_count,
+    count: item.TotalCount,
   }));
+});
+
+onMounted(async () => {
+  const { data: ranking } = await apiClient.GET('/stamps/ranking');
+  console.log('API ranking:', ranking); // ここで実際に stamp_id が存在するか確認
 });
 
 const columns: TableColumn<StampRankingData>[] = [
@@ -169,7 +172,7 @@ const medalMap: Record<number, string> = {
 function useSortedData(key: 'total_count' | 'monthly_count') {
   return computed(() =>
     [...rankingData.value]
-      .map(item => ({ ...item, count: item[key] }))
+      .map(item => ({ ...item, count: item[key] })) // count を key に置き換える
       .sort((a, b) => b[key] - a[key])
       .map((item, index) => ({ ...item, rank: index + 1 })),
   );
