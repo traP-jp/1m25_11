@@ -11,14 +11,24 @@ export default defineNuxtConfig({
     public: {
       userName: 'traP',
       // APIベースURL（環境変数で上書き可能）
-      apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api/v1',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || '/server/api/v1',
       // ログイン開始URL
-      loginUrl: process.env.NUXT_PUBLIC_LOGIN_URL || 'http://localhost:8080/api/v1/login',
+      loginUrl: process.env.NUXT_PUBLIC_LOGIN_URL || '/server/api/v1/login',
       // フロントトップページURL（callback後の遷移先と整合させる）
       topPageUrl: process.env.NUXT_PUBLIC_TOP_PAGE_URL || 'http://localhost:3000',
     },
   },
   compatibilityDate: '2025-07-15',
+  nitro: {
+    devProxy: {
+      '/server': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+      },
+    },
+  },
   vite: {
     server: {
       allowedHosts: [

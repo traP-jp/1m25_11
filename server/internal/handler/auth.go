@@ -20,13 +20,15 @@ var tokenKey = "traq-auth-token"
 
 type TokenData struct {
 	TokenType   string `json:"token_type"`
-	AccessToken string `json:"access_token"`	
+	AccessToken string `json:"access_token"`
 	IDToken     string `json:"id_token"`
 	ExpiresIn   int    `json:"expires_in"`
 }
 
 var clientID = os.Getenv("CLIENT_ID")
 var topPageURL = os.Getenv("TOP_PAGE_URL")
+var callbackURL = os.Getenv("CALLBACK_URL")
+
 func (h *Handler) login(c echo.Context) error {
 	redirectURI, codeVerifier, state, err := h.getTraqAuthCode(c)
 	if err != nil {
@@ -35,8 +37,9 @@ func (h *Handler) login(c echo.Context) error {
 	cookie := &http.Cookie{
 		Name:     h.codeVerifierKey(state),
 		Value:    codeVerifier,
-		MaxAge:   60 * 60, // 3600秒 = 1時間
-		Secure:   true,
+		Domain:   "localhost", // 追加
+		Path:     "/",         // 追加
+		MaxAge:   60 * 60,     // 3600秒 = 1時間
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
 	}
@@ -51,7 +54,7 @@ func (h *Handler) callback(c echo.Context) error {
 	if code == "" || state == "" {
 		return c.Redirect(http.StatusFound, topPageURL)
 	}
-	
+
 	resCodeVerifier, err := c.Cookie(h.codeVerifierKey(state))
 	if err != nil {
 		return c.Redirect(http.StatusFound, topPageURL)
@@ -69,22 +72,25 @@ func (h *Handler) callback(c echo.Context) error {
 	}
 	idToken := tokenData.IDToken
 	deleteCookie := &http.Cookie{
-    Name:     h.codeVerifierKey(state),
-    Secure:   true,
-    HttpOnly: true,
-    SameSite: http.SameSiteLaxMode,
-    Value:    "",    
-    MaxAge:   -1,    
-}
+		Name:     h.codeVerifierKey(state),
+		Domain:   "localhost", // 同じドメイン設定
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Value:    "",
+		MaxAge:   -1,
+	}
 	c.SetCookie(deleteCookie)
 
 	cookie := &http.Cookie{
 		Name:     tokenKey,
 		Value:    idToken,
-		Secure:   true,
+		Domain:   "localhost", // 両方のポートで有効
+		Path:     "/",
 		HttpOnly: true,
-		SameSite: http.SameSiteNoneMode, // 'None'に対応
+		SameSite: http.SameSiteLaxMode, // 開発環境ではLax
 		MaxAge:   tokenData.ExpiresIn,
+		// Secureは設定しない（HTTP環境のため）
 	}
 
 	c.SetCookie(cookie)
@@ -105,6 +111,7 @@ func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string, error
 	params := url.Values{}
 	params.Set("response_type", "code")
 	params.Set("client_id", clientID)
+	params.Set("redirect_uri", callbackURL)
 	params.Set("state", state)
 	params.Set("code_challenge", codeChallenge)
 	params.Set("code_challenge_method", "S256")
