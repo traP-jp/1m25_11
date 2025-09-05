@@ -208,10 +208,6 @@ components:
             properties:
               stamp:
                 $ref: "#/components/schemas/StampSummary"
-              description_id:
-                type: string
-                format: uuid
-                description: ユーザーが投稿した説明文のUUID
       required:
         - user_id
         - is_admin
@@ -264,16 +260,16 @@ components:
         stamp_id:
           type: string
           format: uuid
-        body_count:
+        total_count:
           type: integer
-          description: 指定した期間で、各スタンプが本文中で使用された回数
-        reaction_count:
+          description: 各スタンプが使用された回数 (全期間)
+        monthly_count:
           type: integer
-          description: 指定した期間で、各スタンプがリアクションで使用された回数
-      required:
+          description: 各スタンプが使用された回数 (直近30日間)
+      required: 
         - stamp_id
-        - body_count
-        - reaction_count
+        - total_count
+        - monthly_count
 
   securitySchemes:
     traQOAuth2:
@@ -414,21 +410,21 @@ paths:
         - Search & Ranking
       summary: スタンプ使用回数ランキング
       description: スタンプとその使用回数のデータを返却する
-      parameters:
-        - name: since
-          in: query
-          required: false
-          description: 開始日 (YYYY-MM-DD)、未指定時は1ヶ月前
-          schema:
-            type: string
-            format: date
-        - name: until
-          in: query
-          required: false
-          description: 終了日 (YYYY-MM-DD)、未指定時は昨日。since以降、昨日までの入力を許可
-          schema:
-            type: string
-            format: date
+      # parameters:
+      #   - name: since
+      #     in: query
+      #     required: false
+      #     description: 開始日 (YYYY-MM-DD)、未指定時は1ヶ月前
+      #     schema:
+      #       type: string
+      #       format: date
+      #   - name: until
+      #     in: query
+      #     required: false
+      #     description: 終了日 (YYYY-MM-DD)、未指定時は昨日。since以降、昨日までの入力を許可
+      #     schema:
+      #       type: string
+      #       format: date
       responses:
         "200":
           description: 成功
