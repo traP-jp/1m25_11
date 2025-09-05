@@ -76,7 +76,7 @@ import type { Row } from '@tanstack/table-core';
 
 interface StampRankingData {
   stamp_id: string;
-  stamp_name?: string; // 必要なら後で補う
+  stamp_name: string;
   total_count: number;
   month_count: number;
   rank: number;
