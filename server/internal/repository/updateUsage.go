@@ -14,7 +14,7 @@ type (
 	}
 )
 
-func (r *Repository) updateUsage() error {
+func (r *Repository) UpdateMonthlyCount(ctx context.Context, stampCount map[uuid.UUID]int) error {
 
 	return nil
 }
@@ -61,3 +61,4 @@ func (r *Repository) UpdateTotalCount(ctx context.Context, stampTotalCount map[u
 
 	return nil
 }
+
