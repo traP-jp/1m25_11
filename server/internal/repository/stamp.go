@@ -11,8 +11,8 @@ import (
 type (
 	// stamps table
 	Stamp struct {
-		ID           uuid.UUID `db:"id" json:"id"`
-		Name         string    `db:"name" json:"name"`
+		ID           uuid.UUID `db:"id" json:"stamp_id"`
+		Name         string    `db:"name" json:"stamp_name"`
 		FileID       uuid.UUID `db:"file_id" json:"file_id"`
 		CreatorID    uuid.UUID `db:"creator_id" json:"creator_id"`
 		IsUnicode    bool      `db:"is_unicode" json:"is_unicode"`
@@ -23,8 +23,8 @@ type (
 	}
 
 	StampSummary struct {
-		ID     uuid.UUID `db:"id" json:"id"`
-		Name   string    `db:"name" json:"name"`
+		ID     uuid.UUID `db:"id" json:"stamp_id"`
+		Name   string    `db:"name" json:"stamp_name"`
 		FileID uuid.UUID `db:"file_id" json:"file_id"`
 	}
 )
@@ -61,6 +61,21 @@ func (r *Repository) GetStampsByTagID(ctx context.Context, tagID uuid.UUID) ([]*
 	}
 
 	return stampsByTagID, nil
+}
+
+func (r *Repository) getStampsByCreatorID(ctx context.Context, creatorID uuid.UUID) ([]*Stamp, error) {
+	stampsByCreatorID := []*Stamp{}
+	query := `SELECT
+            stamps.id, stamps.name, stamps.file_id, stamps.creator_id,
+						stamps.is_unicode, stamps.created_at, stamps.updated_at,
+						stamps.count_monthly, stamps.count_total
+        FROM stamps
+        WHERE stamps.creator_id = ?`
+	if err := r.db.SelectContext(ctx, &stampsByCreatorID, query, creatorID); err != nil {
+		return nil, fmt.Errorf("select stamps by creatorID: %w", err)
+	}
+
+	return stampsByCreatorID, nil
 }
 
 func (r *Repository) GetStampByStampID(ctx context.Context, stampID uuid.UUID) (*Stamp, error) {

@@ -3,5 +3,6 @@
     <NuxtRouteAnnouncer />
     <AppHeader />
     <NuxtPage />
+    <StampDrawer />
   </UApp>
 </template>

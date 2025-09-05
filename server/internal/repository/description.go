@@ -15,13 +15,13 @@ type (
 		Description string    `db:"description"`
 		CreatorID   uuid.UUID `db:"creator_id"`
 	}
-	Description struct {
-		StampID     uuid.UUID `db:"stamp_id"`
+	StampDescription struct {
 		Description string    `db:"description"`
 		CreatorID   uuid.UUID `db:"creator_id"`
 		CreatedAt   time.Time `db:"created_at"`
 		UpdatedAt   time.Time `db:"updated_at"`
 	}
+	
 )
 
 func (r *Repository) CreateDescriptions(ctx context.Context, params CreateDescriptionParams) error {
@@ -33,9 +33,9 @@ func (r *Repository) CreateDescriptions(ctx context.Context, params CreateDescri
 	return nil
 }
 
-func (r *Repository) GetDescriptionsByStampID(ctx context.Context, stampID uuid.UUID) ([]*Description, error) {
-	descriptions := []*Description{}
-	if err := r.db.SelectContext(ctx, &descriptions, "SELECT * FROM stamp_descriptions WHERE stamp_id = ?", stampID); err != nil {
+func (r *Repository) GetDescriptionsByStampID(ctx context.Context, stampID uuid.UUID) ([]*StampDescription, error) {
+	descriptions := []*StampDescription{}
+	if err := r.db.SelectContext(ctx, &descriptions, "SELECT description,creator_id,created_at,updated_at FROM stamp_descriptions WHERE stamp_id = ?", stampID); err != nil {
 		return nil, fmt.Errorf("failed to get descriptions by stampID: %w", err)
 	}
 

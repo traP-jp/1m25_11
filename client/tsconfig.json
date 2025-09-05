@@ -14,5 +14,8 @@
     {
       "path": "./.nuxt/tsconfig.node.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": true
+  }
 }

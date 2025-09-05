@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
 )
@@ -10,9 +11,12 @@ import (
 type (
 	// users table
 	User struct {
-		ID    uuid.UUID `db:"id"`
-		Name  string    `db:"name"`
-		Email string    `db:"email"`
+		ID                      uuid.UUID `db:"-"`
+		IsAdmin                 bool                `db:"-"`
+		StampsUserOwned         []StampSummary      `db:"-"`
+		TagsUserCreated         []TagSummary        `db:"-"`
+		StampsUserTagged        []StampTagSummary   `db:"-"`
+		DescriptionsUserCreated []StampSummary      `db:"-"`
 	}
 
 	CreateUserParams struct {
@@ -21,32 +25,42 @@ type (
 	}
 )
 
-func (r *Repository) GetUsers(ctx context.Context) ([]*User, error) {
-	users := []*User{}
-	if err := r.db.SelectContext(ctx, &users, "SELECT * FROM users"); err != nil {
-		return nil, fmt.Errorf("select users: %w", err)
-	}
-
-	return users, nil
-}
-
-func (r *Repository) CreateUser(ctx context.Context, params CreateUserParams) (uuid.UUID, error) {
-	userID, err := uuid.NewV7()
-	if err != nil {
-		return uuid.Nil, fmt.Errorf("generate uuid: %w", err)
-	}
-	if _, err := r.db.ExecContext(ctx, "INSERT INTO users (id, name, email) VALUES (?, ?, ?)", userID, params.Name, params.Email); err != nil {
-		return uuid.Nil, fmt.Errorf("insert user: %w", err)
-	}
-
-	return userID, nil
-}
-
 func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, error) {
 	user := &User{}
-	if err := r.db.GetContext(ctx, user, "SELECT * FROM users WHERE id = ?", userID); err != nil {
-		return nil, fmt.Errorf("select user: %w", err)
+	user.ID = userID
+	user.IsAdmin = false // 仮でfalseに設定
+	// isAdmin, err := r.IsAdmin(ctx, userID)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("check admin: %w", err)
+	// }
+	// user.IsAdmin = isAdmin.(bool)
+
+	if err := r.db.SelectContext(ctx, &user.StampsUserOwned, "SELECT id , name ,file_id FROM stamps WHERE creator_id = ?", userID); err != nil {
+		return nil, fmt.Errorf("select stamps by creatorID: %w", err)
 	}
+	log.Print(1)
+	if err := r.db.SelectContext(ctx, &user.TagsUserCreated, "SELECT id, name FROM tags WHERE creator_id = ?", userID); err != nil {
+		return nil, fmt.Errorf("select tags by creatorID: %w", err)
+	}
+	log.Print(2)
+	if err := r.db.SelectContext(ctx, &user.StampsUserTagged, `SELECT 
+			s.id AS "stamp.id", s.name AS "stamp.name", s.file_id AS "stamp.file_id",
+			t.id AS "tag.id", t.name AS "tag.name"
+			FROM stamp_tags AS st
+			JOIN stamps AS s ON st.stamp_id = s.id
+			JOIN tags AS t ON st.tag_id = t.id
+			WHERE st.creator_id = ?`, userID); err != nil {
+		return nil, fmt.Errorf("select stamp_tags by creatorID: %w", err)
+	}
+	log.Print(3)
+	if err := r.db.SelectContext(ctx, &user.DescriptionsUserCreated, `SELECT
+			s.id , s.name , s.file_id 
+			FROM stamp_descriptions AS d
+			JOIN stamps AS s ON d.stamp_id = s.id 
+			WHERE d.creator_id = ?`, userID); err != nil {
+		return nil, fmt.Errorf("select stamp_descriptions by creatorID: %w", err)
+	}
+	log.Print(4)	
 
 	return user, nil
 }

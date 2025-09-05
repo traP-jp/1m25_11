@@ -1,13 +1,12 @@
 package handler
 
 import (
-	"github.com/traP-jp/1m25_11/server/internal/repository"
 	"github.com/labstack/echo/v4"
+	"github.com/traP-jp/1m25_11/server/internal/repository"
 )
 
 type Handler struct {
 	repo *repository.Repository
-
 }
 
 func New(repo *repository.Repository) *Handler {
@@ -20,14 +19,9 @@ func New(repo *repository.Repository) *Handler {
 func (h *Handler) SetupRoutes(api *echo.Group) {
 	api.Use(h.AuthMiddleware)
 	{
-		pingAPI := api.Group("/ping")
-		{
-			pingAPI.GET("", h.Ping)
-		}
-
 		stampAPI := api.Group("/stamps")
 		{
-			stampAPI.GET("/search", h.getSearch)
+			stampAPI.GET("/search", h.SearchStamps)
 			stampAPI.GET("/ranking", h.getRanking)
 			stampAPI.GET("", h.getStamps)
 			stampAPI.GET("/:stampId", h.getDetails)
@@ -43,19 +37,26 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 		{
 			tagAPI.GET("", h.getTags)
 			tagAPI.POST("", h.createTags)
-			tagAPI.GET("/:tagId", h.getCertainStamps)
+			tagAPI.GET("/:tagId", h.getTagDetails)
 			tagAPI.PUT("/:tagId", h.updateTags)
 			tagAPI.DELETE("/:tagId", h.deleteTags)
-			tagAPI.GET("/:tagId/stamps", h.getCertainStamps)
+			tagAPI.GET("/:tagId/stamps", h.getStampsByTag)
 		}
 		creatorAPI := api.Group("/me")
 		{
-			creatorAPI.GET("", h.getCreatorDetails)
+			creatorAPI.GET("", h.GetUser)
 		}
 		userAPI := api.Group("/users-list")
 		{
 			userAPI.GET("", h.getUsersList)
 		}
+
+		bulkAPI := api.Group("/bulk")
+		{
+			bulkAPI.POST("/tags", h.BulkCreateTags)
+			bulkAPI.POST("/stamps-meta", h.BulkAddStampMeta)
+		}
+
 		loginAPI := api.Group("/login")
 		{
 			loginAPI.GET("", h.login)
@@ -65,6 +66,5 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 			callbackAPI.GET("", h.callback)
 		}
 	}
-
 
 }
