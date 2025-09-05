@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 
@@ -56,4 +57,30 @@ func AllowedOrigins() []string {
 	}
 
 	return origins
+}
+
+// IsDevelopment determines if the application is running in development mode
+// by checking if localhost is present in ALLOWED_ORIGINS
+func IsDevelopment() bool {
+	origins := AllowedOrigins()
+	for _, origin := range origins {
+		if strings.Contains(origin, "localhost") {
+			return true
+		}
+	}
+	return false
+}
+
+// GetCookieSameSite returns the appropriate SameSite setting based on environment
+func GetCookieSameSite() http.SameSite {
+	if IsDevelopment() {
+		return http.SameSiteLaxMode
+	}
+	return http.SameSiteNoneMode
+}
+
+// GetCookieSecure returns the appropriate Secure setting based on environment
+func GetCookieSecure() bool {
+	// 開発環境ではHTTPも許可、本番環境ではHTTPS必須
+	return !IsDevelopment()
 }

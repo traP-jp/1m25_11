@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
+	"github.com/traP-jp/1m25_11/server/pkg/config"
 )
 
 var requestURL = "https://q.trap.jp/api/v3/oauth2/authorize"
@@ -20,13 +21,14 @@ var tokenKey = "traq-auth-token"
 
 type TokenData struct {
 	TokenType   string `json:"token_type"`
-	AccessToken string `json:"access_token"`	
+	AccessToken string `json:"access_token"`
 	IDToken     string `json:"id_token"`
 	ExpiresIn   int    `json:"expires_in"`
 }
 
 var clientID = os.Getenv("CLIENT_ID")
 var topPageURL = os.Getenv("TOP_PAGE_URL")
+
 func (h *Handler) login(c echo.Context) error {
 	redirectURI, codeVerifier, state, err := h.getTraqAuthCode(c)
 	if err != nil {
@@ -36,9 +38,9 @@ func (h *Handler) login(c echo.Context) error {
 		Name:     h.codeVerifierKey(state),
 		Value:    codeVerifier,
 		MaxAge:   60 * 60, // 3600秒 = 1時間
-		Secure:   true,
+		Secure:   config.GetCookieSecure(),
 		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: config.GetCookieSameSite(),
 	}
 	c.SetCookie(cookie)
 
@@ -51,7 +53,7 @@ func (h *Handler) callback(c echo.Context) error {
 	if code == "" || state == "" {
 		return c.Redirect(http.StatusFound, topPageURL)
 	}
-	
+
 	resCodeVerifier, err := c.Cookie(h.codeVerifierKey(state))
 	if err != nil {
 		return c.Redirect(http.StatusFound, topPageURL)
@@ -69,21 +71,21 @@ func (h *Handler) callback(c echo.Context) error {
 	}
 	idToken := tokenData.IDToken
 	deleteCookie := &http.Cookie{
-    Name:     h.codeVerifierKey(state),
-    Secure:   true,
-    HttpOnly: true,
-    SameSite: http.SameSiteLaxMode,
-    Value:    "",    
-    MaxAge:   -1,    
-}
+		Name:     h.codeVerifierKey(state),
+		Secure:   config.GetCookieSecure(),
+		HttpOnly: true,
+		SameSite: config.GetCookieSameSite(),
+		Value:    "",
+		MaxAge:   -1,
+	}
 	c.SetCookie(deleteCookie)
 
 	cookie := &http.Cookie{
 		Name:     tokenKey,
 		Value:    idToken,
-		Secure:   true,
+		Secure:   config.GetCookieSecure(),
 		HttpOnly: true,
-		SameSite: http.SameSiteNoneMode, // 'None'に対応
+		SameSite: config.GetCookieSameSite(),
 		MaxAge:   tokenData.ExpiresIn,
 	}
 
