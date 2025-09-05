@@ -36,7 +36,7 @@
         </template>
 
         <!-- 1か月ランキング -->
-        <template #month_count>
+        <template #monthly_count>
           <UTable
             ref="tableMonthly"
             v-model:pagination="paginationMonthly"
@@ -78,7 +78,7 @@ interface StampRankingData {
   stamp_id: string;
   stamp_name: string;
   total_count: number;
-  month_count: number;
+  monthly_count: number;
   rank: number;
   count?: number;
 }
@@ -90,12 +90,14 @@ const rankingData = ref<StampRankingData[]>([]);
 onMounted(async () => {
   const { data } = await apiClient.GET('/stamps/ranking');
 
+  // stamp_name を stamp_id から取得、rank は 0、count を初期化
   rankingData.value = (data ?? []).map(item => ({
-    ...item,
+    stamp_id: item.stamp_id,
     stamp_name: getStampById(item.stamp_id)?.stamp_name ?? '不明なスタンプ',
-    total_count: item.body_count,
-    month_count: item.reaction_count,
+    total_count: item.total_count,
+    monthly_count: item.monthly_count,
     rank: 0,
+    count: item.total_count,
   }));
 });
 
@@ -138,7 +140,7 @@ const columns: TableColumn<StampRankingData>[] = [
 
 const items = ref<TabsItem[]>([
   { label: '総合', slot: 'total_count' },
-  { label: '1か月以内', slot: 'month_count' },
+  { label: '1か月以内', slot: 'monthly_count' },
 ]);
 
 const paginationTotal = ref({ pageIndex: 0, pageSize: 20 });
@@ -164,18 +166,15 @@ const medalMap: Record<number, string> = {
   3: '🥉 3',
 };
 
-function useSortedData(key: 'total_count' | 'month_count') {
+function useSortedData(key: 'total_count' | 'monthly_count') {
   return computed(() =>
     [...rankingData.value]
+      .map(item => ({ ...item, count: item[key] }))
       .sort((a, b) => b[key] - a[key])
-      .map((item, index) => ({
-        ...item,
-        rank: index + 1,
-        count: item[key],
-      })),
+      .map((item, index) => ({ ...item, rank: index + 1 })),
   );
 }
 
 const sortedCountTotal = useSortedData('total_count');
-const sortedCountMonthly = useSortedData('month_count');
+const sortedCountMonthly = useSortedData('monthly_count');
 </script>
