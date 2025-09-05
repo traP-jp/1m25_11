@@ -15,7 +15,7 @@
   "dependencies": {
     "@iconify-json/material-symbols": "^1.2.34",
     "@internationalized/date": "^3.9.0",
-    "@nuxt/eslint": "^1.8.0",
+    "@nuxt/eslint": "^1.9.0",
     "@nuxt/image": "^1.11.0",
     "@nuxt/ui": "^3.3.2",
     "eslint": "^9.34.0",
