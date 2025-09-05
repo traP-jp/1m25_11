@@ -102,10 +102,10 @@ try:
             "messages": traQing_messages
         })
 
-    with open('traQ_data.json', 'w', encoding='utf-8') as f:
-        json.dump(all_traQ_messages, f, ensure_ascii=False, indent=2)
-    with open('traQing_data.json', 'w', encoding='utf-8') as f:
-        json.dump(all_traQing_messages, f, ensure_ascii=False, indent=2)
+        with open('traQ_data.json', 'w', encoding='utf-8') as f:
+            json.dump(all_traQ_messages, f, ensure_ascii=False, indent=2)
+        with open('traQing_data.json', 'w', encoding='utf-8') as f:
+            json.dump(all_traQing_messages, f, ensure_ascii=False, indent=2)
 
 
 except FileNotFoundError as e:
