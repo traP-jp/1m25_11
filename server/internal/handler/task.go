@@ -3,11 +3,12 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/google/uuid"
+	"github.com/traP-jp/1m25_11/server/internal/repository"
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/traP-jp/1m25_11/server/internal/repository"
 )
 
 func (h *Handler) Test(ctx context.Context) {
@@ -59,4 +60,59 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 
 	log.Println("successfully cronJobTask")
 
+
+	stampTotalCount := make(map[uuid.UUID]int)
+	allStamps, err := h.repo.GetStampSummaries(ctx)
+	if err != nil {
+		log.Printf("Error retrieving all stamps: %v", err)
+		return
+	}
+	log.Print("Retrieved all stamps, starting to fetch stats...")
+	for _, stamp := range allStamps {
+		if len(stampTotalCount) >= 50 {
+			break
+		}
+		var statsData repository.StampStatus
+
+		stampID := stamp.ID 
+		statsURL := fmt.Sprintf("https://q.trap.jp/api/v3/stamps/%s/stats", stampID)
+
+		statsReq, err := http.NewRequestWithContext(ctx, "GET", statsURL, nil)
+		if err != nil {
+			log.Printf("Error creating request for stamp stats (%s): %v", stampID, err)
+			return
+		}
+		statsReq.Header.Set("accept", "application/json")
+		statsReq.Header.Set("Authorization", "Bearer "+bot_key)
+
+		statsResp, err := client.Do(statsReq)
+		if err != nil {
+			log.Printf("Error sending request for stamp stats (%s): %v", stampID, err)
+			return
+		}
+		defer statsResp.Body.Close()
+		if statsResp.StatusCode != http.StatusOK {
+			stampTotalCount[stamp.ID] = 0
+			statsResp.Body.Close() 
+
+			continue
+		} else {
+			if err := json.NewDecoder(statsResp.Body).Decode(&statsData); err != nil {
+				log.Printf("Error decoding stats response for stamp (%s): %v", stampID, err)
+				return
+			}
+			stampTotalCount[stamp.ID] = statsData.TotalCount
+			statsResp.Body.Close() 
+
+
+		}
+
+	}
+	log.Print("Fetched all stamp stats, starting to update database...")
+	if err := h.repo.UpdateTotalCount(ctx, stampTotalCount); err != nil {
+		log.Printf("Error updating total count for stamps: %v", err)
+		return
+	}
+	log.Println("Successfully updated total counts for all stamps")
+	return
 }
