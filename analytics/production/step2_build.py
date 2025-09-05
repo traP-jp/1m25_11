@@ -11,8 +11,18 @@ all_requests = []
 
 for stamp in stamps:
     
-    traQ_messages = next((m['messages'] for m in all_traQ_messages if m['stamp_id'] == stamp['id']), [])
-    traQing_messages = next((m['messages'] for m in all_traQing_messages if m['stamp_id'] == stamp['id']), [])
+    traQ_message_contents = []
+    for item in all_traQ_messages:
+        if item['stamp_name'] == stamp['name']:
+            traQ_messages = item['messages']
+            traQ_message_contents = [msg['content'] for msg in traQ_messages]
+            break
+    traQing_message_contents = []
+    for item in all_traQing_messages:
+        if item['stamp_name'] == stamp['name']:
+            traQing_messages = item['messages']
+            traQing_message_contents = [msg['content'] for msg in traQing_messages]
+            break
 
     request = {
     "model": "gpt-5-nano",
@@ -58,9 +68,9 @@ for stamp in stamps:
 ## 入力
 * 絵文字の名前: `{stamp['name']}`
 * 本文で使われた投稿（配列）:
-`{all_traQ_messages}`
+`{traQ_message_contents}`
 * リアクションとして使われた投稿（配列）:
-`{all_traQing_messages}`
+`{traQing_message_contents}`
 * 絵文字画像: image_urlとして添付
 
 ### データ仕様
