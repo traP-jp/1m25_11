@@ -13,6 +13,10 @@ type (
 		TagID     uuid.UUID `db:"tag_id" json:"tag_id"`
 		CreatorID uuid.UUID `db:"creator_id" json:"creator_id"`
 	}
+	StampTagSummary struct {
+		Stamp StampSummary `db:"stamp"`
+		Tag   TagSummary	`db:"tag"`
+	}
 )
 
 func (r *Repository) CreateStampTags(ctx context.Context, params CreateStampTagParams) error {
