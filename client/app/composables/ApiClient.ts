@@ -15,6 +15,19 @@ export const useApiClient = () => {
 
     apiClientInstance = createClient<paths>({
       baseUrl: config.public.apiBase,
+      credentials: 'include', // クロスオリジンでもCookieを送信
+    });
+
+    // 認証エラー時のハンドリング
+    apiClientInstance.use({
+      onResponse({ response }) {
+        // 401エラーの場合はログインページにリダイレクト
+        if (response.status === 401) {
+          console.warn('認証が必要です。ログインページにリダイレクトします。');
+          // サーバーのログインエンドポイントにリダイレクト
+          window.location.href = `${config.public.apiBase}/login`;
+        }
+      },
     });
   }
 
