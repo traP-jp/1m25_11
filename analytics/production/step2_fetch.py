@@ -8,22 +8,37 @@ import requests
 bearer_token = os.environ.get("BEARER_TOKEN")
 auth_token = os.getenv('TRAQ_AUTH_TOKEN')
 
-max_messages = 10000 # スタンプごとに取得する最大メッセージ数。最終的にはwhileの条件式が常にTrueになる程度に大きくしたいが、offsetは9900までしか指定できないので10000にした
+max_messages = 100 # スタンプごとに取得する最大メッセージ数。そもそもAPIの仕様的に10000までしか取得できないが、10000にしたら時間がかかりすぎる
 messages_per_request = 100 # 1回のリクエストで取得するメッセージ数。テスト用に小さくしているが、本番では100にする
 stamps_file = 'stamps.json'
 
 since = "2006-01-02T15:04:05Z"
 until = "2026-01-02T15:04:05Z"
 
+all_traQ_messages = []
+all_traQing_messages = []
+try:
+    with open('traQ_data.json', 'r', encoding='utf-8') as f:
+        all_traQ_messages = json.load(f)
+except (FileNotFoundError, json.JSONDecodeError):
+    pass
+try:
+    with open('traQing_data.json', 'r', encoding='utf-8') as f:
+        all_traQing_messages = json.load(f)
+except (FileNotFoundError, json.JSONDecodeError):
+    pass
+
+
 try:
     # with文でファイルを開く
     with open(stamps_file, 'r', encoding='utf-8') as f_stamps:
         stamps = json.load(f_stamps)
 
-    all_traQ_messages = []
-    all_traQing_messages = []
-
     for stamp in stamps:
+
+        if any(d['stamp_id'] == stamp['id'] for d in all_traQ_messages) and any(d['stamp_id'] == stamp['id'] for d in all_traQing_messages):
+            print(f"スタンプ {stamp['name']} ({stamp['id']}) は既に取得済みなのでスキップ")
+            continue
         # traQからデータ取得
         traQ_url = "https://q.trap.jp/api/v3/messages"
         traQ_headers = {
