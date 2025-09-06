@@ -211,6 +211,8 @@ components:
             properties:
               stamp:
                 $ref: "#/components/schemas/StampSummary"
+            required:
+              - stamp
       required:
         - user_id
         - is_admin

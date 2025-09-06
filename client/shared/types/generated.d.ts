@@ -1173,7 +1173,7 @@ export interface components {
         tag: components['schemas']['TagSummary'];
       }[];
       descriptions_user_created: {
-        stamp?: components['schemas']['StampSummary'];
+        stamp: components['schemas']['StampSummary'];
       }[];
     };
     UserProfile: {
