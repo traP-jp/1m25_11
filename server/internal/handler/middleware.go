@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"strings"
+	"log"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/labstack/echo/v4"
@@ -19,16 +20,12 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 			return next(c)
 		}
-
-		token := getToken(c)
-		if token == "" {
-			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized4")
-		}
-		if err := getMe(c, token); err != nil {
+		log.Printf("AuthMiddleware: Checking token")
+		_, err := h.getUserID(c)
+		if err != nil {
 			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized: Invalid token")
 		}
-
-		c.Set("token", token)
+		
 
 		return next(c)
 	}
