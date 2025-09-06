@@ -65,7 +65,7 @@ func (r *Repository) SaveStamp(ctx context.Context, stamps []*ResponseStamp) err
 					FileID:    s.FileID,
 					IsUnicode: s.IsUnicode,
 					CreatedAt: s.CreatedAt,
-					UpdatedAt: time.Now(),
+					UpdatedAt: s.UpdatedAt,
 				})
 			}
 		} else {

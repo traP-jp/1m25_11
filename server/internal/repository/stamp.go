@@ -63,6 +63,21 @@ func (r *Repository) GetStampsByTagID(ctx context.Context, tagID uuid.UUID) ([]*
 	return stampsByTagID, nil
 }
 
+func (r *Repository) getStampsByCreatorID(ctx context.Context, creatorID uuid.UUID) ([]*Stamp, error) {
+	stampsByCreatorID := []*Stamp{}
+	query := `SELECT
+            stamps.id, stamps.name, stamps.file_id, stamps.creator_id,
+						stamps.is_unicode, stamps.created_at, stamps.updated_at,
+						stamps.count_monthly, stamps.count_total
+        FROM stamps
+        WHERE stamps.creator_id = ?`
+	if err := r.db.SelectContext(ctx, &stampsByCreatorID, query, creatorID); err != nil {
+		return nil, fmt.Errorf("select stamps by creatorID: %w", err)
+	}
+
+	return stampsByCreatorID, nil
+}
+
 func (r *Repository) GetStampByStampID(ctx context.Context, stampID uuid.UUID) (*Stamp, error) {
 	stampByStampID := &Stamp{}
 	if err := r.db.GetContext(ctx, stampByStampID, "SELECT * FROM stamps WHERE id = ?", stampID); err != nil {
