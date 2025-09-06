@@ -1,33 +1,3 @@
-import { useState } from '#app';
-import { computed } from 'vue';
-
-/**
- * アプリケーション全体で利用可能な、リアクティブなユーザー名を管理する composable。
- * 認証状態と連動し、未認証時はnullを返す。
- * @returns {Ref<string | null>} ユーザー名を保持するリアクティブな Ref オブジェクト
- */
-export const useUser = () => {
-  const { isLoggedIn, currentUser } = useAuth();
-  const { getUserById } = useUsers();
-
-  // 認証済みユーザーからユーザー名を取得
-  const authenticatedUser = computed(() => {
-    // サーバーサイドでは常にnullを返す
-    if (import.meta.server) {
-      return null;
-    }
-
-    if (!isLoggedIn.value || !currentUser.value) {
-      return null;
-    }
-    // user_idからユーザー情報を検索してユーザー名を取得
-    const user = getUserById(currentUser.value.user_id);
-    return user?.traq_id || null;
-  });
-
-  return authenticatedUser;
-};
-
 /**
  * ユーザー一覧を管理し、検索機能を提供する composable。
  * アプリケーション全体でユーザーデータを共有し、ユーザー名やユーザーIDでの検索をサポートする。

@@ -26,49 +26,17 @@
       Service Name
     </h1>
 
-    <!-- 認証状態に応じた表示（ClientOnlyで包む） -->
-    <ClientOnly>
-      <div v-if="isLoading">
-        <!-- 認証状態確認中の表示 -->
-        <UIcon
-          name="material-symbols:progress-activity"
-          class="text-2xl animate-spin text-primary"
-        />
-      </div>
-      <div v-else-if="isLoggedIn">
-        <UDropdownMenu
-          :items="dropdownItems"
-          :ui="{
-            content: 'w-48',
-          }"
-        >
-          <UAvatar
-            :src="`https://q.trap.jp/api/v3/public/icon/${userName}`"
-            class="text-5xl cursor-pointer"
-          />
-        </UDropdownMenu>
-      </div>
-      <div v-else>
-        <UButton
-          color="primary"
-          size="lg"
-          @click="handleLogin"
-        >
-          ログイン
-        </UButton>
-      </div>
-
-      <!-- サーバーサイドでのフォールバック表示 -->
-      <template #fallback>
-        <UButton
-          color="primary"
-          size="lg"
-          @click="handleLogin"
-        >
-          ログイン
-        </UButton>
-      </template>
-    </ClientOnly>
+    <UDropdownMenu
+      :items="dropdownItems"
+      :ui="{
+        content: 'w-48',
+      }"
+    >
+      <UAvatar
+        :src="`https://q.trap.jp/api/v3/public/icon/${userName.getUserById(user.user.value?.user_id)?.traq_id}`"
+        class="text-5xl cursor-pointer"
+      />
+    </UDropdownMenu>
 
     <!-- </div> -->
   </UContainer>
@@ -77,21 +45,12 @@
 <script setup lang="ts">
 import type { NavigationMenuItem, DropdownMenuItem } from '@nuxt/ui';
 
-const { isLoggedIn, isLoading, login } = useAuth();
-const userName = useUser();
+const userName = useUsers();
+const user = useAuth();
 
-// リアクティブな値の変化を監視
-watch([isLoggedIn, isLoading, userName], ([newLoggedIn, newLoading, newUserName]) => {
-  console.log(`状態変化 - userName: ${newUserName}, isLoggedIn: ${newLoggedIn}, isLoading: ${newLoading}`);
-});
-
-// 初期値をログ出力
-console.log(`初期値 - userName: ${userName.value}, isLoggedIn: ${isLoggedIn.value}, isLoading: ${isLoading.value}`);
-
-const handleLogin = () => {
-  login();
-};
-
+if (user.user.value) {
+  console.log(`userName: ${userName.getUserById(user.user.value?.user_id)?.traq_id}`);
+}
 const navigationSlideOver = ref(false);
 
 const navigationItems = ref<NavigationMenuItem[][]>([
@@ -132,9 +91,9 @@ const navigationItems = ref<NavigationMenuItem[][]>([
 const dropdownItems = ref<DropdownMenuItem[][]>([
   [
     {
-      label: `${userName.value}`,
+      label: `${userName.getUserById(user.user.value?.user_id)?.user_display_name}`,
       avatar: {
-        src: `https://q.trap.jp/api/v3/public/icon/${userName.value}`,
+        src: `https://q.trap.jp/api/v3/public/icon/${userName.getUserById(user.user.value?.user_id)?.traq_id}`,
       },
       type: 'label',
     },
