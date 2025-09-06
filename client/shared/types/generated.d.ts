@@ -99,12 +99,7 @@ export interface paths {
          */
     get: {
       parameters: {
-        query?: {
-          /** @description 開始日 (YYYY-MM-DD)、未指定時は1ヶ月前 */
-          since?: string;
-          /** @description 終了日 (YYYY-MM-DD)、未指定時は昨日。since以降、昨日までの入力を許可 */
-          until?: string;
-        };
+        query?: never;
         header?: never;
         path?: never;
         cookie?: never;
@@ -1174,16 +1169,11 @@ export interface components {
       stamps_user_owned: components['schemas']['StampSummary'][];
       tags_user_created: components['schemas']['TagSummary'][];
       stamps_user_tagged: {
-        stamp?: components['schemas']['StampSummary'];
-        tag?: components['schemas']['TagSummary'];
+        stamp: components['schemas']['StampSummary'];
+        tag: components['schemas']['TagSummary'];
       }[];
       descriptions_user_created: {
         stamp?: components['schemas']['StampSummary'];
-        /**
-                 * Format: uuid
-                 * @description ユーザーが投稿した説明文のUUID
-                 */
-        description_id?: string;
       }[];
     };
     UserProfile: {
@@ -1211,10 +1201,10 @@ export interface components {
     RankingResult: {
       /** Format: uuid */
       stamp_id: string;
-      /** @description 指定した期間で、各スタンプが本文中で使用された回数 */
-      body_count: number;
-      /** @description 指定した期間で、各スタンプがリアクションで使用された回数 */
-      reaction_count: number;
+      /** @description 各スタンプが使用された回数 (全期間) */
+      total_count: number;
+      /** @description 各スタンプが使用された回数 (直近30日間) */
+      monthly_count: number;
     };
   };
   responses: never;
