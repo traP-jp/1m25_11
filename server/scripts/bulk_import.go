@@ -25,7 +25,7 @@ type Tag struct {
 	Name string    `json:"tag_name"`
 }
 type StampMetaAddition struct {
-	ID          uuid.UUID   `json:"id"`
+	ID          uuid.UUID   `json:"stamp_id"`
 	TagIDs      []uuid.UUID `json:"tag_ids"`
 	Description string      `json:"description"`
 }
@@ -114,7 +114,7 @@ func main() {
 		log.Fatalf("failed to send bulk stamps meta request: %v", err)
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusNoContent {
 		log.Fatalf("unexpected status code from bulk stamps meta request: %d", resp.StatusCode)
 	}
 }
