@@ -7,8 +7,8 @@
 const globalAuthState = {
   isLoggedIn: ref(false),
   currentUser: ref<Schemas['UserStatus'] | null>(null),
-  // サーバーサイドでは常にfalse、クライアントサイドで動的に変更
-  isLoading: ref(false),
+  // 初期状態はローディング中（Hydration エラー回避のため）
+  isLoading: ref(true),
 };
 
 export const useAuth = () => {

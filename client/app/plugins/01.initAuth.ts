@@ -1,19 +1,32 @@
 export default defineNuxtPlugin(async () => {
-  // サーバーサイドでは何もしない
-  if (import.meta.server) return;
+  // サーバーサイドでは認証状態を変更しない（Hydration エラー回避）
+  if (import.meta.server) {
+    console.log('サーバーサイド: 認証初期化をスキップ');
+    return;
+  }
 
-  console.log('アプリケーション初期化開始');
+  console.log('クライアントサイド: アプリケーション初期化開始');
 
-  // 認証状態の確認
-  const { checkAuthStatus, isLoggedIn } = useAuth();
-  await checkAuthStatus();
+  try {
+    // 認証状態の確認
+    const { checkAuthStatus, isLoggedIn } = useAuth();
+    await checkAuthStatus();
 
-  // 認証済みの場合のみデータを初期化
-  if (isLoggedIn.value) {
-    await Promise.all([
-      initializeStamps(),
-      initializeUsers(),
-    ]);
+    // 認証済みの場合のみデータを初期化
+    if (isLoggedIn.value) {
+      console.log('認証済みユーザー: データ初期化開始');
+      await Promise.all([
+        initializeStamps(),
+        initializeUsers(),
+      ]);
+      console.log('データ初期化完了');
+    }
+    else {
+      console.log('未認証ユーザー: データ初期化をスキップ');
+    }
+  }
+  catch (error) {
+    console.error('アプリケーション初期化エラー:', error);
   }
 
   console.log('アプリケーション初期化完了');
