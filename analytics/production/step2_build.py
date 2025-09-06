@@ -4,7 +4,7 @@ min_content_length = 10
 max_content_length = 200
 
 with open('stamps.json', 'r', encoding='utf-8') as f:
-    stamps = json.load(f)
+    all_stamps = json.load(f)
 with open('traQ_data.json', 'r', encoding='utf-8') as traQ_f:
     all_traQ_messages = json.load(traQ_f)
 with open('traQing_data.json', 'r', encoding='utf-8') as traQing_f:
@@ -12,7 +12,7 @@ with open('traQing_data.json', 'r', encoding='utf-8') as traQing_f:
 
 all_requests = []
 
-for stamp in stamps:
+for stamp in all_stamps:
     
     traQ_message_contents = []
     for item in all_traQ_messages:
@@ -25,15 +25,21 @@ for stamp in stamps:
         if min_content_length <= len(msg) <= max_content_length
     ][:5]
 
-    traQing_message_contents = []
+    traQing_message_contents_and_stamps = []
     for item in all_traQing_messages:
         if item['stamp_name'] == stamp['name']:
             traQing_messages = item['messages']
-            traQing_message_contents = [msg['content'] for msg in traQing_messages]
+            for msg in traQing_messages:
+                content = msg['content']
+                stamp_names = []
+                for message_stamp in msg['stamps']:
+                    stamp_name = next((s['name'] for s in all_stamps if s['id'] == message_stamp['stampId']), None)
+                    stamp_names.append(stamp_name)
+                traQing_message_contents_and_stamps.append({"content": content, "stamps": stamp_names})
             break
-    traQing_message_contents = [
-        msg for msg in traQing_message_contents 
-        if min_content_length <= len(msg) <= max_content_length
+    traQing_message_contents_and_stamps = [
+        msg for msg in traQing_message_contents_and_stamps 
+        if min_content_length <= len(msg["content"]) <= max_content_length
     ][:5]
 
     request = {
@@ -82,7 +88,9 @@ for stamp in stamps:
 * 本文で使われた投稿（配列）:
 `{traQ_message_contents}`
 * リアクションとして使われた投稿（配列）:
-`{traQing_message_contents}`
+```
+{json.dumps(traQing_message_contents_and_stamps, ensure_ascii=False, indent=2)}
+```
 * 絵文字画像: image_urlとして添付
 
 ### データ仕様
