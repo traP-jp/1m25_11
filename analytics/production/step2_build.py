@@ -1,5 +1,8 @@
 import json
 
+min_content_length = 10
+max_content_length = 200
+
 with open('stamps.json', 'r', encoding='utf-8') as f:
     stamps = json.load(f)
 with open('traQ_data.json', 'r', encoding='utf-8') as traQ_f:
@@ -17,12 +20,21 @@ for stamp in stamps:
             traQ_messages = item['messages']
             traQ_message_contents = [msg['content'] for msg in traQ_messages]
             break
+    traQ_message_contents = [
+        msg for msg in traQ_message_contents 
+        if min_content_length <= len(msg) <= max_content_length
+    ][:5]
+
     traQing_message_contents = []
     for item in all_traQing_messages:
         if item['stamp_name'] == stamp['name']:
             traQing_messages = item['messages']
             traQing_message_contents = [msg['content'] for msg in traQing_messages]
             break
+    traQing_message_contents = [
+        msg for msg in traQing_message_contents 
+        if min_content_length <= len(msg) <= max_content_length
+    ][:5]
 
     request = {
     "model": "gpt-5-nano",
