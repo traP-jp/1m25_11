@@ -48,7 +48,7 @@ func main() {
 	}
 
 	_, err = ss.NewJob(
-		gocron.CronJob("@daily", false),
+		gocron.CronJob("0 19 * * *", false),
 		gocron.NewTask(s.Handler.CronJobTask, context.Background()),
 	)
 

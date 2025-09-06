@@ -208,10 +208,6 @@ components:
             properties:
               stamp:
                 $ref: "#/components/schemas/StampSummary"
-              description_id:
-                type: string
-                format: uuid
-                description: ユーザーが投稿した説明文のUUID
       required:
         - user_id
         - is_admin
@@ -237,6 +233,15 @@ components:
           type: string
           format: uuid
           description: ユーザーアイコンのファイルID
+        user_state:
+          type: number
+          enum: [0, 1]
+      required:
+        - user_id
+        - traq_id
+        - user_display_name
+        - user_icon_file_id
+        - user_state
 
     SearchResult:
       type: object
@@ -255,16 +260,16 @@ components:
         stamp_id:
           type: string
           format: uuid
-        body_count:
+        total_count:
           type: integer
-          description: 指定した期間で、各スタンプが本文中で使用された回数
-        reaction_count:
+          description: 各スタンプが使用された回数 (全期間)
+        monthly_count:
           type: integer
-          description: 指定した期間で、各スタンプがリアクションで使用された回数
-      required:
+          description: 各スタンプが使用された回数 (直近30日間)
+      required: 
         - stamp_id
-        - body_count
-        - reaction_count
+        - total_count
+        - monthly_count
 
   securitySchemes:
     traQOAuth2:
@@ -313,11 +318,6 @@ paths:
         - name: description
           in: query
           description: 説明文に含まれるキーワード（空白区切りで複数指定可能、いずれかを含んでいれば表示）
-          schema:
-            type: string
-        - name: creator
-          in: query
-          description: 作成者名に含まれるキーワード（空白区切りで複数指定可能、いずれかを含んでいれば表示）
           schema:
             type: string
         - name: created_since
@@ -410,21 +410,21 @@ paths:
         - Search & Ranking
       summary: スタンプ使用回数ランキング
       description: スタンプとその使用回数のデータを返却する
-      parameters:
-        - name: since
-          in: query
-          required: false
-          description: 開始日 (YYYY-MM-DD)、未指定時は1ヶ月前
-          schema:
-            type: string
-            format: date
-        - name: until
-          in: query
-          required: false
-          description: 終了日 (YYYY-MM-DD)、未指定時は昨日。since以降、昨日までの入力を許可
-          schema:
-            type: string
-            format: date
+      # parameters:
+      #   - name: since
+      #     in: query
+      #     required: false
+      #     description: 開始日 (YYYY-MM-DD)、未指定時は1ヶ月前
+      #     schema:
+      #       type: string
+      #       format: date
+      #   - name: until
+      #     in: query
+      #     required: false
+      #     description: 終了日 (YYYY-MM-DD)、未指定時は昨日。since以降、昨日までの入力を許可
+      #     schema:
+      #       type: string
+      #       format: date
       responses:
         "200":
           description: 成功
@@ -877,5 +877,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserStatus"
+        "401":
+          description: 認証エラー
+
+  /users-list:
+    get:
+      tags:
+        - User
+      summary: 全ユーザーの一覧
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserProfile"
         "401":
           description: 認証エラー

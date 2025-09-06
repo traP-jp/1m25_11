@@ -19,14 +19,10 @@
 const selectedStampId = useSelectedStampId();
 
 defineProps<{
-  stamp: StampSummary;
+  stamp: Schemas['StampSummary'];
 }>();
 
 const selectStamp = (stampId: string) => {
   selectedStampId.value = stampId;
-};
-
-const getFileUrl = (fileId: string) => {
-  return `https://q.trap.jp/api/1.0/public/emoji/${fileId}`;
 };
 </script>
