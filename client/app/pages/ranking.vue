@@ -77,7 +77,7 @@ import { getFileUrl } from '#imports';
 
 interface StampRankingData {
   stamp_id: string;
-  stamp_name: string;
+  stamp_name?: string;
   total_count: number;
   monthly_count: number;
   rank: number;
@@ -90,14 +90,23 @@ const rankingData = ref<StampRankingData[]>([]);
 onMounted(async () => {
   const { data: ranking } = await apiClient.GET('/stamps/ranking');
   if (!ranking) return;
-  rankingData.value = ranking.map(item => ({
-    stamp_id: item.StampID,
-    total_count: item.TotalCount,
-    monthly_count: item.MonthlyCount,
-    rank: 0,
-    count: item.TotalCount,
-  }));
+
+  rankingData.value = ranking.map((item) => {
+    const stamp = getStampById(item.StampID); // stampsMap から取得
+    return {
+      stamp_id: item.StampID,
+      stamp_name: stamp?.stamp_name ?? '不明なスタンプ', // ここで埋める
+      total_count: item.TotalCount,
+      monthly_count: item.MonthlyCount,
+      rank: 0,
+      count: item.TotalCount,
+    };
+  });
+
+  console.log('rankingData mapped with names:', rankingData.value);
 });
+
+console.log('rankingData mapped:', rankingData.value);
 
 onMounted(async () => {
   const { data: ranking } = await apiClient.GET('/stamps/ranking');
