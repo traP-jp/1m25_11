@@ -5,10 +5,12 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"math/big"
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -80,16 +82,41 @@ func (h *Handler) callback(c echo.Context) error {
 	}
 	c.SetCookie(deleteCookie)
 
-	cookie := &http.Cookie{
-		Name:     tokenKey,
-		Value:    idToken,
+	var chunks []string
+	const maxCookieSize = 3500 // クッキーの最大サイズ（バイト）
+
+	for i := 0; i < len(idToken); i += maxCookieSize {
+		end := i + maxCookieSize
+		if end > len(idToken) {
+			end = len(idToken)
+		}
+		chunks = append(chunks, idToken[i:end])
+	}
+
+	// 分割したチャンクをそれぞれクッキーとして設定
+	for i, chunk := range chunks {
+		cookieName := fmt.Sprintf("%s_%d", tokenKey, i)
+		cookie := &http.Cookie{
+			Name:     cookieName,
+			Value:    chunk,
+			Secure:   config.GetCookieSecure(),
+			HttpOnly: true,
+			SameSite: config.GetCookieSameSite(),
+			MaxAge:   tokenData.ExpiresIn,
+		}
+		c.SetCookie(cookie)
+	}
+
+	// クッキーの総数を記録するためのクッキーも設定
+	countCookie := &http.Cookie{
+		Name:     fmt.Sprintf("%s_count", tokenKey),
+		Value:    strconv.Itoa(len(chunks)),
 		Secure:   config.GetCookieSecure(),
 		HttpOnly: true,
 		SameSite: config.GetCookieSameSite(),
 		MaxAge:   tokenData.ExpiresIn,
 	}
-
-	c.SetCookie(cookie)
+	c.SetCookie(countCookie)
 
 	return c.Redirect(http.StatusFound, topPageURL)
 }
