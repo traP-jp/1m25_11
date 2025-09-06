@@ -1,9 +1,14 @@
 import json
+import re
+
+def is_url(string):
+    pattern = r'^(https?|ftp)://[^\s/$.?#].[^\s]*$'
+    return re.match(pattern, string) is not None
 
 min_content_length = 10
 max_content_length = 200
 
-with open('stamps.json', 'r', encoding='utf-8') as f:
+with open('targeted_stamps.json', 'r', encoding='utf-8') as f:
     all_stamps = json.load(f)
 with open('traQ_data.json', 'r', encoding='utf-8') as traQ_f:
     all_traQ_messages = json.load(traQ_f)
@@ -22,7 +27,7 @@ for stamp in all_stamps:
             break
     traQ_message_contents = [
         msg for msg in traQ_message_contents 
-        if min_content_length <= len(msg) <= max_content_length
+        if min_content_length <= len(msg) <= max_content_length and not is_url(msg)
     ][:5]
 
     traQing_message_contents_and_stamps = []

@@ -8,7 +8,7 @@ import requests
 bearer_token = os.environ.get("BEARER_TOKEN")
 auth_token = os.getenv('TRAQ_AUTH_TOKEN')
 
-stamps_file = 'stamps.json'
+stamps_file = 'targeted_stamps.json'
 
 since = "2006-01-02T15:04:05Z"
 until = "2026-01-02T15:04:05Z"
