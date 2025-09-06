@@ -6,7 +6,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-
 func (h *Handler) GetUser(c echo.Context) error {
 	creatorID, err := h.getUserID(c)
 	if err != nil {

@@ -3,13 +3,12 @@ package handler
 import (
 	"encoding/base64"
 	"encoding/json"
-	"github.com/google/uuid"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"strings"
+
+	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 )
-
-
 
 func (h *Handler) getUserID(c echo.Context) (uuid.UUID, error) {
 	cookie, err := c.Cookie(tokenKey)
@@ -26,8 +25,8 @@ func (h *Handler) getUserID(c echo.Context) (uuid.UUID, error) {
 	var payloadMap map[string]interface{}
 
 	if err := json.Unmarshal(payloadBytes, &payloadMap); err != nil {
-        return uuid.Nil, echo.NewHTTPError(http.StatusInternalServerError, "failed to parse token payload")
-    }
+		return uuid.Nil, echo.NewHTTPError(http.StatusInternalServerError, "failed to parse token payload")
+	}
 
 	creatorIDStr, ok := payloadMap["sub"].(string)
 	if !ok {
@@ -37,8 +36,6 @@ func (h *Handler) getUserID(c echo.Context) (uuid.UUID, error) {
 	if err != nil {
 		return uuid.Nil, echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-
-
 
 	return creatorID, nil
 }

@@ -68,6 +68,7 @@ func IsDevelopment() bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -76,6 +77,7 @@ func GetCookieSameSite() http.SameSite {
 	if IsDevelopment() {
 		return http.SameSiteLaxMode
 	}
+
 	return http.SameSiteNoneMode
 }
 
