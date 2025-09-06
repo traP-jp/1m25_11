@@ -8,8 +8,6 @@ import requests
 bearer_token = os.environ.get("BEARER_TOKEN")
 auth_token = os.getenv('TRAQ_AUTH_TOKEN')
 
-max_messages = 100 # スタンプごとに取得する最大メッセージ数。そもそもAPIの仕様的に10000までしか取得できないが、10000にしたら時間がかかりすぎる
-messages_per_request = 100 # 1回のリクエストで取得するメッセージ数。テスト用に小さくしているが、本番では100にする
 stamps_file = 'stamps.json'
 
 since = "2006-01-02T15:04:05Z"
@@ -45,25 +43,22 @@ try:
             "accept": "application/json",
             "Authorization": f"Bearer {bearer_token}"
         }
-        traQ_messages_count = 0
         traQ_messages = []
-        while traQ_messages_count < max_messages:
-            traQ_params = {
-                "word": f"\":{stamp['name']}:\"",
-                "after": "2006-01-02T15:04:05Z",
-                "before": "2026-01-02T15:04:05Z",
-                "bot": "false",
-                "limit": str(messages_per_request),
-                "offset": str(traQ_messages_count),
-                "sort": "createdAt"
-            }
+        
+        traQ_params = {
+            "word": f"\":{stamp['name']}:\"",
+            "after": "2006-01-02T15:04:05Z",
+            "before": "2026-01-02T15:04:05Z",
+            "bot": "false",
+            "limit": "10",
+            "offset": "0",
+            "sort": "createdAt"
+        }
 
-            traQ_response = requests.get(traQ_url, params=traQ_params, headers=traQ_headers)
-            traQ_response.raise_for_status()
-            traQ_messages.extend(traQ_response.json()['hits'])
-            traQ_messages_count += messages_per_request # 404の場合もカウントするのでlen(traQ_response.json()['hits'])ではない
-            if len(traQ_response.json()['hits']) < messages_per_request:
-                break
+        traQ_response = requests.get(traQ_url, params=traQ_params, headers=traQ_headers)
+        traQ_response.raise_for_status()
+        traQ_messages.extend(traQ_response.json()['hits'])
+        
         all_traQ_messages.append({
             "stamp_name": stamp['name'],
             "stamp_id": stamp['id'],
@@ -76,27 +71,22 @@ try:
             'traq-auth-token': auth_token
         }
 
-        traQing_messageIds_count = 0
         traQing_messageIds = []
-        while traQing_messageIds_count < max_messages:
-            traQing_params = {
-                "stampId": stamp['id'],
-                "isBot": "false",
-                "groupBy": "message",
-                "orderBy": "date",
-                "order": "asc",
-                "limit": str(messages_per_request),
-                "offset": str(traQing_messageIds_count),
-                "after": "2006-01-02T15:00:00.000Z",
-                "before": "2026-01-02T14:59:59.999Z"
-            }
+        traQing_params = {
+            "stampId": stamp['id'],
+            "isBot": "false",
+            "groupBy": "message",
+            "orderBy": "date",
+            "order": "asc",
+            "limit": "10",
+            "offset": "0",
+            "after": "2006-01-02T15:00:00.000Z",
+            "before": "2026-01-02T14:59:59.999Z"
+        }
 
-            traQing_response = requests.get(traQing_url, params=traQing_params, cookies=traQing_cookies)
-            traQing_response.raise_for_status()
-            traQing_messageIds.extend(traQing_response.json())
-            traQing_messageIds_count += messages_per_request
-            if len(traQing_response.json()) < messages_per_request:
-                break
+        traQing_response = requests.get(traQing_url, params=traQing_params, cookies=traQing_cookies)
+        traQing_response.raise_for_status()
+        traQing_messageIds.extend(traQing_response.json())
 
         # traQing_messageIdsからmessageIdを取得してtraQ APIで詳細情報を取得
         traQing_messages = []

@@ -1,6 +1,6 @@
 import json
 
-with open('targeted_stamps.json', 'r', encoding='utf-8') as f:
+with open('stamps.json', 'r', encoding='utf-8') as f:
     stamps = json.load(f)
 with open('traQ_data.json', 'r', encoding='utf-8') as traQ_f:
     all_traQ_messages = json.load(traQ_f)
