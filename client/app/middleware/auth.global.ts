@@ -1,10 +1,14 @@
-export default defineNuxtRouteMiddleware((to) => {
+export default defineNuxtRouteMiddleware(async (to) => {
   // ログインページやコールバックページへの遷移は許可
   if (to.path === '/login') {
     return;
   }
 
   const user = useState<Schemas['UserStatus'] | null>('user');
+
+  const { data: userData, error } = await useApiClient().GET('/me');
+
+  user.value = userData;
 
   if (!user.value) {
     // サーバーサイドでは外部URLにリダイレクト

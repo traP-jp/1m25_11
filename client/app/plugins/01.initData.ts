@@ -4,7 +4,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const userState = useState<Schemas['UserStatus'] | null>('user', () => null);
 
   // サーバーサイドの場合、または、クライアントサイドでのレンダリングの初回
-  if (import.meta.server || !nuxtApp.payload.serverRendered) {
+  if (!nuxtApp.payload.serverRendered) {
     const apiClient = useApiClient();
     try {
       // ログインしているか確認
