@@ -70,7 +70,7 @@ const navigationItems = ref<NavigationMenuItem[][]>([
     {
       label: 'Tags',
       icon: 'material-symbols:tag',
-      to: '/tag',
+      to: '/tags',
     },
     {
       label: 'Swagger viewer',
