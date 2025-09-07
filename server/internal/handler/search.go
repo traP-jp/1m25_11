@@ -33,7 +33,7 @@ type searchResultResponse struct {
 }
 
 type stampSummaryResponse struct {
-	ID     string `json:"id"`
+	ID     string `json:"stamp_id"`
 	Name   string `json:"name"`
 	FileID string `json:"file_id"`
 }

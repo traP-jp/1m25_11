@@ -1,10 +1,10 @@
 <template>
   <div
     class="flex flex-col h-32 w-24 justify-center gap-0.5 hover:bg-primary-100 cursor-pointer"
-    @click="selectStamp(stamp.id)"
+    @click="selectStamp(stamp.stamp_id)"
   >
     <NuxtImg
-      :src="getFileUrl(stamp.id)"
+      :src="getFileUrl(stamp.stamp_id)"
       class="mx-auto w-full px-3"
       loading="lazy"
       :alt="stamp.stamp_name"
