@@ -5,6 +5,10 @@ import re # 正規表現
 import time # 待機時間
 import sys # システム終了
 import os # ファイル操作
+import requests # HTTP リクエスト
+import base64 # base64エンコード
+import cairosvg # SVG to PNG変換
+from io import BytesIO # バイナリデータ処理
 
 # LLM Output Format
 class StampInfo(BaseModel):
@@ -15,7 +19,56 @@ class StampInfo(BaseModel):
 class InsufficientQuotaError(Exception):
     pass
 
+def get_image_as_base64(emoji_id):
+    """
+    絵文字画像を取得し、SVGの場合はPNGに変換してbase64エンコードしたdata URLを返す
+    """
+    try:
+        url = f"https://q.trap.jp/api/1.0/public/emoji/{emoji_id}"
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+
+        content_type = response.headers.get('content-type', '').lower()
+        image_data = response.content
+
+        # SVG形式の検出
+        is_svg = (
+            'svg' in content_type or
+            image_data.startswith(b'<svg') or
+            image_data.startswith(b'<?xml') and b'<svg' in image_data[:1000]
+        )
+
+        if is_svg:
+            # SVGをPNGに変換
+            png_data = cairosvg.svg2png(bytestring=image_data, output_width=128, output_height=128)
+            mime_type = 'image/png'
+            final_data = png_data
+        else:
+            # PNG/JPEG/GIFなどはそのまま使用
+            if 'png' in content_type:
+                mime_type = 'image/png'
+            elif 'jpeg' in content_type or 'jpg' in content_type:
+                mime_type = 'image/jpeg'
+            elif 'gif' in content_type:
+                mime_type = 'image/gif'
+            elif 'webp' in content_type:
+                mime_type = 'image/webp'
+            else:
+                mime_type = 'image/png'  # デフォルト
+            final_data = image_data
+
+        # base64エンコード
+        encoded = base64.b64encode(final_data).decode('utf-8')
+        return f"data:{mime_type};base64,{encoded}"
+
+    except Exception as e:
+        print(f"警告: 画像の取得/変換に失敗 ID: {emoji_id}, エラー: {e}")
+        # フォールバック: 元のURL形式
+        return f"https://q.trap.jp/api/1.0/public/emoji/{emoji_id}"
+
 def createRequest(id, prompt):
+    image_url = get_image_as_base64(id)
+
     return {
         "model": "gpt-4.1-nano",
         "messages": [
@@ -54,7 +107,7 @@ def createRequest(id, prompt):
                 "role": "user",
                 "content": [
                     { "type": "text", "text": prompt },
-                    { "type": "image_url", "image_url": { "url": f"https://q.trap.jp/api/1.0/public/emoji/{id}" } }
+                    { "type": "image_url", "image_url": { "url": image_url } }
                 ],
             }
         ],
