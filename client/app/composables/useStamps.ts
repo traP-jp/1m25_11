@@ -1,10 +1,22 @@
 import { readonly, computed } from 'vue';
 
 export const useStamps = () => {
-  const list = useState<Schemas['StampSummary'][]>('stamps-list', () => []);
+  const apiClient = useApiClient();
+
+  // スタンプ一覧をAPIから取得
+  const { data: list, pending, error, refresh } = useAsyncData(
+    'stamps-list',
+    async () => {
+      const { data, error } = await apiClient.GET('/stamps');
+      if (error) {
+        throw new Error('Failed to fetch stamps');
+      }
+      return data ?? [];
+    },
+  );
 
   const map = computed(() =>
-    new Map(list.value.map(stamp => [stamp.stamp_id, stamp])),
+    new Map((list.value || []).map(stamp => [stamp.stamp_id, stamp])),
   );
 
   /**
@@ -23,12 +35,15 @@ export const useStamps = () => {
    * @returns StampSummary | undefined
    */
   const getStampByName = (stampName: string): Schemas['StampSummary'] | undefined => {
-    return list.value.find(stamp => stamp.stamp_name === stampName);
+    return list.value?.find(stamp => stamp.stamp_name === stampName);
   };
 
   return {
-    stampsList: readonly(list),
+    stampsList: readonly(computed(() => list.value || [])),
     stampsMap: readonly(map),
+    loading: pending,
+    error,
+    refresh,
     getStampById,
     getStampByName,
   };

@@ -11,8 +11,6 @@
 </template>
 
 <script setup lang="ts">
-const { stampsList } = useStamps();
-
 // ランダムに選ばれた10個のスタンプを保持するref
 const randomStamps = ref<Schemas['StampSummary'][]>([]);
 const apiClient = useApiClient();

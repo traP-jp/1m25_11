@@ -3,9 +3,28 @@
  * アプリケーション全体でユーザーデータを共有し、ユーザー名やユーザーIDでの検索をサポートする。
  */
 export const useUsers = () => {
-  // ユーザー一覧のstate（配列とMap形式で保持）
-  const userList = useState<Schemas['UserProfile'][]>('user-list', () => []);
-  const userMap = useState<Map<string, Schemas['UserProfile']>>('user-map', () => new Map());
+  const apiClient = useApiClient();
+
+  // ユーザー一覧をAPIから取得
+  const { data: userList, pending, error, refresh } = useAsyncData(
+    'users-list',
+    async () => {
+      const { data, error } = await apiClient.GET('/users-list');
+      if (error) {
+        throw new Error('Failed to fetch users');
+      }
+      return data ?? [];
+    },
+  );
+
+  // ユーザーマップを計算
+  const userMap = computed(() => {
+    const map = new Map<string, Schemas['UserProfile']>();
+    userList.value?.forEach((user) => {
+      map.set(user.user_id, user);
+    });
+    return map;
+  });
 
   /**
    * ユーザー名（traq_id）でユーザーを検索する
@@ -13,7 +32,7 @@ export const useUsers = () => {
    * @returns マッチしたユーザーの配列
    */
   const searchByUserName = (userName: string): Schemas['UserProfile'][] => {
-    if (!userName.trim()) return userList.value;
+    if (!userName.trim() || !userList.value) return userList.value || [];
 
     const searchTerm = userName.toLowerCase();
     return userList.value.filter(user =>
@@ -27,7 +46,7 @@ export const useUsers = () => {
    * @returns マッチしたユーザーの配列
    */
   const searchByUserId = (userId: string): Schemas['UserProfile'][] => {
-    if (!userId.trim()) return userList.value;
+    if (!userId.trim() || !userList.value) return userList.value || [];
 
     const searchTerm = userId.toLowerCase();
     return userList.value.filter(user =>
@@ -41,7 +60,7 @@ export const useUsers = () => {
    * @returns マッチしたユーザーの配列
    */
   const searchByDisplayName = (displayName: string): Schemas['UserProfile'][] => {
-    if (!displayName.trim()) return userList.value;
+    if (!displayName.trim() || !userList.value) return userList.value || [];
 
     const searchTerm = displayName.toLowerCase();
     return userList.value.filter(user =>
@@ -55,7 +74,7 @@ export const useUsers = () => {
    * @returns マッチしたユーザーの配列
    */
   const searchUsers = (query: string): Schemas['UserProfile'][] => {
-    if (!query.trim()) return userList.value;
+    if (!query.trim() || !userList.value) return userList.value || [];
 
     const searchTerm = query.toLowerCase();
     return userList.value.filter(user =>
@@ -80,21 +99,58 @@ export const useUsers = () => {
    * @returns 見つかったユーザー、または undefined
    */
   const getUserByName = (userName: string): Schemas['UserProfile'] | undefined => {
-    return userList.value.find(user => user.traq_id === userName);
+    return userList.value?.find(user => user.traq_id === userName);
   };
 
   // 読み取り専用の computed プロパティ
-  const users = computed(() => userList.value);
+  const users = computed(() => userList.value || []);
   const usersMap = computed(() => userMap.value);
 
   return {
     users,
     usersMap,
+    loading: pending,
+    error,
+    refresh,
     searchByUserName,
     searchByUserId,
     searchByDisplayName,
     searchUsers,
     getUserById,
     getUserByName,
+  };
+};
+
+/**
+ * 現在のユーザー情報を管理する composable。
+ */
+export const useCurrentUser = () => {
+  const apiClient = useApiClient();
+  const users = useUsers();
+
+  // 現在のユーザー情報をAPIから取得
+  const { data: me, pending, error, refresh } = useAsyncData(
+    'current-user',
+    async () => {
+      const { data, error } = await apiClient.GET('/me');
+      if (error) {
+        throw new Error('Failed to fetch current user');
+      }
+      return data ?? null;
+    },
+  );
+
+  // 現在のユーザーの詳細情報を計算
+  const currentUser = computed(() => {
+    if (!me.value?.user_id) return null;
+    return users.getUserById(me.value.user_id);
+  });
+
+  return {
+    me,
+    currentUser,
+    loading: pending,
+    error,
+    refresh,
   };
 };

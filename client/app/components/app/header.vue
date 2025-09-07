@@ -26,28 +26,24 @@
       Service Name
     </h1>
 
-    <UDropdownMenu
+    <UAvatar
+      v-if="currentUser"
+      :src="`https://q.trap.jp/api/v3/public/icon/${currentUser.traq_id}`"
+      class="text-5xl cursor-pointer"
+    />
+    <!-- <UDropdownMenu
       :items="dropdownItems"
       :ui="{
         content: 'w-48',
       }"
     >
-      <!-- <UAvatar
-        :src="`https://q.trap.jp/api/v3/public/icon/${userName.getUserById(user.user.value?.user_id)?.traq_id}`"
-        class="text-5xl cursor-pointer"
-      /> -->
-      <!-- <UAvatar
-        :src="`https://q.trap.jp/api/v3/public/icon/${currentUser.value?.traq_id || 'traP'}`"
-        class="text-5xl cursor-pointer"
-      /> -->
+    <div v-if="currentUser">
       <UAvatar
-        v-if="currentUser"
         :src="`https://q.trap.jp/api/v3/public/icon/${currentUser.traq_id}`"
         class="text-5xl cursor-pointer"
       />
-    </UDropdownMenu>
-
-    <!-- </div> -->
+    </div>
+    </UDropdownMenu> -->
   </UContainer>
 </template>
 
@@ -55,14 +51,7 @@
 import type { NavigationMenuItem, DropdownMenuItem } from '@nuxt/ui';
 
 const navigationSlideOver = ref(false);
-
-const { data: users } = await useApiClient().GET('/users-list');
-const { data: me } = await useApiClient().GET('/me');
-
-const currentUser = computed(() => {
-  if (!me?.user_id || !users) return null;
-  return users.find(user => user.user_id === me.user_id);
-});
+const { currentUser } = useCurrentUser();
 
 const navigationItems = ref<NavigationMenuItem[][]>([
   [
@@ -87,6 +76,16 @@ const navigationItems = ref<NavigationMenuItem[][]>([
       to: '/tag',
     },
     {
+      label: 'Profile',
+      icon: 'material-symbols:account-circle-outline-sharp',
+      to: '/profile',
+    },
+    {
+      label: 'Settings',
+      icon: 'material-symbols:settings-outline-sharp',
+      to: '/settings',
+    },
+    {
       label: 'Swagger viewer',
       to: '/developer',
       icon: 'material-symbols:info',
@@ -99,27 +98,18 @@ const navigationItems = ref<NavigationMenuItem[][]>([
   ],
 ]);
 
-const dropdownItems = ref<DropdownMenuItem[][]>([
-  [
-    {
-      label: `${currentUser.value?.user_display_name}`,
-      avatar: {
-        src: `https://q.trap.jp/api/v3/public/icon/${currentUser.value?.traq_id}`,
-      },
-      type: 'label',
-    },
-  ],
-  [
-    {
-      label: 'Profile',
-      icon: 'material-symbols:account-circle-outline-sharp',
-      to: '/profile',
-    },
-    {
-      label: 'Settings',
-      icon: 'material-symbols:settings-outline-sharp',
-      to: '/settings',
-    },
-  ],
-]);
+// const dropdownItems = ref<DropdownMenuItem[][]>([
+//   [
+//     {
+//       label: 'Profile',
+//       icon: 'material-symbols:account-circle-outline-sharp',
+//       to: '/profile',
+//     },
+//     {
+//       label: 'Settings',
+//       icon: 'material-symbols:settings-outline-sharp',
+//       to: '/settings',
+//     },
+//   ],
+// ]);
 </script>
