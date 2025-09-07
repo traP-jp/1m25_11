@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: ['@nuxt/ui', '@nuxt/eslint', '@nuxt/image'],
+  ssr: false,
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
   ui: {
@@ -9,6 +10,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       userName: 'traP',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE,
     },
   },
   compatibilityDate: '2025-07-15',

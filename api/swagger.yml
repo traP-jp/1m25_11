@@ -201,6 +201,9 @@ components:
                 $ref: "#/components/schemas/StampSummary"
               tag:
                 $ref: "#/components/schemas/TagSummary"
+            required:
+              - stamp
+              - tag
         descriptions_user_created:
           type: array
           items:
@@ -208,6 +211,8 @@ components:
             properties:
               stamp:
                 $ref: "#/components/schemas/StampSummary"
+            required:
+              - stamp
       required:
         - user_id
         - is_admin
@@ -266,7 +271,7 @@ components:
         monthly_count:
           type: integer
           description: 各スタンプが使用された回数 (直近30日間)
-      required: 
+      required:
         - stamp_id
         - total_count
         - monthly_count

@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 )
@@ -11,12 +10,12 @@ import (
 type (
 	// users table
 	User struct {
-		ID                      uuid.UUID `db:"-"`
-		IsAdmin                 bool                `db:"-"`
-		StampsUserOwned         []StampSummary      `db:"-"`
-		TagsUserCreated         []TagSummary        `db:"-"`
-		StampsUserTagged        []StampTagSummary   `db:"-"`
-		DescriptionsUserCreated []StampSummary      `db:"-"`
+		ID                      uuid.UUID         `json:"user_id"`
+		IsAdmin                 bool              `json:"is_admin"`
+		StampsUserOwned         []StampSummary    `json:"stamps_user_owned"`
+		TagsUserCreated         []TagSummary      `json:"tags_user_created"`
+		StampsUserTagged        []StampTagSummary `json:"stamps_user_tagged"`
+		DescriptionsUserCreated []StampSummary    `json:"descriptions_user_created"`
 	}
 
 	CreateUserParams struct {
@@ -38,11 +37,9 @@ func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, erro
 	if err := r.db.SelectContext(ctx, &user.StampsUserOwned, "SELECT id , name ,file_id FROM stamps WHERE creator_id = ?", userID); err != nil {
 		return nil, fmt.Errorf("select stamps by creatorID: %w", err)
 	}
-	log.Print(1)
 	if err := r.db.SelectContext(ctx, &user.TagsUserCreated, "SELECT id, name FROM tags WHERE creator_id = ?", userID); err != nil {
 		return nil, fmt.Errorf("select tags by creatorID: %w", err)
 	}
-	log.Print(2)
 	if err := r.db.SelectContext(ctx, &user.StampsUserTagged, `SELECT 
 			s.id AS "stamp.id", s.name AS "stamp.name", s.file_id AS "stamp.file_id",
 			t.id AS "tag.id", t.name AS "tag.name"
@@ -52,7 +49,6 @@ func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, erro
 			WHERE st.creator_id = ?`, userID); err != nil {
 		return nil, fmt.Errorf("select stamp_tags by creatorID: %w", err)
 	}
-	log.Print(3)
 	if err := r.db.SelectContext(ctx, &user.DescriptionsUserCreated, `SELECT
 			s.id , s.name , s.file_id 
 			FROM stamp_descriptions AS d
@@ -60,7 +56,6 @@ func (r *Repository) GetUser(ctx context.Context, userID uuid.UUID) (*User, erro
 			WHERE d.creator_id = ?`, userID); err != nil {
 		return nil, fmt.Errorf("select stamp_descriptions by creatorID: %w", err)
 	}
-	log.Print(4)	
 
 	return user, nil
 }

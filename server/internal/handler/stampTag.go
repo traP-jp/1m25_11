@@ -15,6 +15,7 @@ func (h *Handler) createStampTags(c echo.Context) error {
 		if errors.Is(err, repository.ErrStampNotFound) {
 			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
 		}
+
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
 	tagID, err := uuid.Parse(c.Param("tagId"))
@@ -22,9 +23,13 @@ func (h *Handler) createStampTags(c echo.Context) error {
 		if errors.Is(err, repository.ErrTagNotFound) {
 			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
 		}
+
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	creatorID := uuid.Nil // 仮でNil UUIDを用いている
+	creatorID, err := h.getUserID(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
+	}
 	err = h.repo.CreateStampTags(c.Request().Context(), repository.CreateStampTagParams{
 		StampID:   stampID,
 		TagID:     tagID,
@@ -40,6 +45,7 @@ func (h *Handler) createStampTags(c echo.Context) error {
 		if errors.Is(err, repository.ErrForbidden) {
 			return echo.NewHTTPError(http.StatusForbidden).SetInternal(err)
 		}
+
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
@@ -51,6 +57,7 @@ func (h *Handler) deleteStampTags(c echo.Context) error {
 		if errors.Is(err, repository.ErrStampNotFound) {
 			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
 		}
+
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
 	tagID, err := uuid.Parse(c.Param("tagId"))
@@ -58,6 +65,7 @@ func (h *Handler) deleteStampTags(c echo.Context) error {
 		if errors.Is(err, repository.ErrTagNotFound) {
 			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
 		}
+
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
 
@@ -72,6 +80,7 @@ func (h *Handler) deleteStampTags(c echo.Context) error {
 		if errors.Is(err, repository.ErrForbidden) {
 			return echo.NewHTTPError(http.StatusForbidden).SetInternal(err)
 		}
+
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 

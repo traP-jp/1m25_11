@@ -118,6 +118,7 @@ func (h *Handler) SearchStamps(c echo.Context) error {
 			if scoredStamps[i].Score != scoredStamps[j].Score {
 				return scoredStamps[i].Score > scoredStamps[j].Score
 			}
+
 			return scoredStamps[i].Stamp.Name < scoredStamps[j].Stamp.Name
 		})
 
@@ -146,8 +147,8 @@ func (h *Handler) SearchStamps(c echo.Context) error {
 }
 
 func calculateRelativityScore(stamp repository.StampForSearch, params repository.SearchStampsParams) float64 {
-	divisor := 0.0    
-	totalScore := 0.0 
+	divisor := 0.0
+	totalScore := 0.0
 	calculateSubScore := func(query, targetText string) float64 {
 		terms := strings.Fields(query)
 		if len(terms) == 0 {
@@ -159,6 +160,7 @@ func calculateRelativityScore(stamp repository.StampForSearch, params repository
 			x := 1.0 - math.Exp(float64(-count))
 			sumOfX += x
 		}
+
 		return sumOfX / float64(len(terms))
 	}
 	if params.Name != "" {
@@ -193,5 +195,6 @@ func calculateRelativityScore(stamp repository.StampForSearch, params repository
 	}
 
 	finalScore := totalScore / divisor
+
 	return finalScore
 }

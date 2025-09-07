@@ -1,58 +1,41 @@
-export const useStampDetail = (stampId: string | undefined) => {
-  const stampDetail = ref<Schemas['Stamp'] | null>(null);
-  const loading = ref(false);
-  const error = ref<string | null>(null);
+export const useStampDetail = (stampId: MaybeRef<string | undefined>) => {
+  const apiClient = useApiClient();
+  const idRef = toRef(stampId);
 
-  const fetchStampDetail = async () => {
-    if (!stampId) {
-      stampDetail.value = null;
-      return;
-    }
+  const { data, pending, error, refresh } = useAsyncData<Schemas['Stamp'] | null>(
 
-    loading.value = true;
-    error.value = null;
+    // リアクティブなユニークキーを生成
+    `stamp-detail-${idRef.value}`,
 
-    try {
-      const { data, error: apiError } = await apiClient.GET('/stamps/{stampId}', {
+    // データを取得
+    async () => {
+      const currentStampId = toValue(idRef);
+      if (!currentStampId) {
+        return null;
+      }
+
+      const { data, error } = await apiClient.GET('/stamps/{stampId}', {
         params: {
-          path: {
-            stampId,
-          },
+          path: { stampId: currentStampId },
         },
       });
 
-      if (apiError) {
-        console.error('Failed to fetch stamp detail:', apiError);
-        error.value = 'スタンプの詳細を取得できませんでした';
-        stampDetail.value = null;
+      if (error) {
+        throw new Error('Failed to fetch stamp detail');
       }
-      else {
-        stampDetail.value = data || null;
-      }
-    }
-    catch (err) {
-      console.error('Error fetching stamp detail:', err);
-      error.value = 'スタンプの詳細を取得できませんでした';
-      stampDetail.value = null;
-    }
-    finally {
-      loading.value = false;
-    }
-  };
 
-  // stampIdが変更されたときに自動で再取得
-  watch(
-    () => stampId,
-    () => {
-      fetchStampDetail();
+      return data ?? null;
     },
-    { immediate: true },
+    {
+      // stampIdの変更を監視するため、ゲッター関数を渡す
+      watch: [idRef],
+    },
   );
 
   return {
-    stampDetail: readonly(stampDetail),
-    loading: readonly(loading),
-    error: readonly(error),
-    refetch: fetchStampDetail,
+    stampDetail: data,
+    loading: pending,
+    error,
+    refetch: refresh,
   };
 };

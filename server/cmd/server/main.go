@@ -19,13 +19,15 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 
-	e.Use(middleware.CORS())
-
+	// Dynamic CORS (credentials allowed) based on ALLOWED_ORIGINS env
+	allowed := config.AllowedOrigins()
+	e.Logger.Infof("CORS allowed origins: %v", allowed)
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"https://1m25-11.trap.show", "http://localhost"},
-		AllowMethods:     []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.PATCH, echo.OPTIONS},
-		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
+		AllowOrigins:     allowed,
+		AllowMethods:     []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.PATCH, echo.OPTIONS, echo.HEAD},
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization, "X-Requested-With"},
 		AllowCredentials: true,
+		MaxAge:           600,
 	}))
 
 	// connect to and migrate database
@@ -48,7 +50,7 @@ func main() {
 	}
 
 	_, err = ss.NewJob(
-		gocron.CronJob("@daily", false),
+		gocron.CronJob("0 19 * * *", false),
 		gocron.NewTask(s.Handler.CronJobTask, context.Background()),
 	)
 

@@ -1169,11 +1169,11 @@ export interface components {
       stamps_user_owned: components['schemas']['StampSummary'][];
       tags_user_created: components['schemas']['TagSummary'][];
       stamps_user_tagged: {
-        stamp?: components['schemas']['StampSummary'];
-        tag?: components['schemas']['TagSummary'];
+        stamp: components['schemas']['StampSummary'];
+        tag: components['schemas']['TagSummary'];
       }[];
       descriptions_user_created: {
-        stamp?: components['schemas']['StampSummary'];
+        stamp: components['schemas']['StampSummary'];
       }[];
     };
     UserProfile: {
