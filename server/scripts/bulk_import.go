@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -35,12 +34,17 @@ func main() {
 	bulk_stamps_meta_url := "http://localhost:8080/api/v1/bulk/stamps-meta"
 	tags_url := "http://localhost:8080/api/v1/tags"
 
-	responseBites, err := os.ReadFile("response.json")
+	bearerToken := os.Getenv("BEARER_TOKEN")
+	if bearerToken == "" {
+		log.Fatal("BEARER_TOKEN environment variable is not set")
+	}
+
+	responseBytes, err := os.ReadFile("response.json")
 	if err != nil {
 		log.Fatalf("failed to read response.json: %v", err)
 	}
 	var responses []ResponseFromLlm
-	if err := json.Unmarshal(responseBites, &responses); err != nil {
+	if err := json.Unmarshal(responseBytes, &responses); err != nil {
 		log.Fatalf("failed to unmarshal response.json: %v", err)
 	}
 
@@ -58,7 +62,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to marshal tagInfos: %v", err)
 	}
-	resp, err := http.Post(bulk_tags_url, "application/json", bytes.NewReader(tagBody))
+
+	req, err := http.NewRequest("POST", bulk_tags_url, bytes.NewReader(tagBody))
+	if err != nil {
+		log.Fatalf("failed to create bulk tags request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+bearerToken)
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatalf("failed to send bulk tags request: %v", err)
 	}
@@ -68,7 +80,12 @@ func main() {
 	}
 
 	var tags []Tag
-	resp, err = http.Get(tags_url)
+	req, err = http.NewRequest("GET", tags_url, nil)
+	if err != nil {
+		log.Fatalf("failed to create get tags request: %v", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+bearerToken)
+	resp, err = client.Do(req)
 	if err != nil {
 		log.Fatalf("failed to get tags: %v", err)
 	}
@@ -77,7 +94,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to read body: %v", err)
 	}
-	fmt.Print(string(bodyBytes))
 	if err := json.Unmarshal(bodyBytes, &tags); err != nil {
 		log.Fatalf("failed to decode tags: %v", err)
 	}
@@ -108,8 +124,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to marshal stampMetaAdditions: %v", err)
 	}
-	fmt.Print(string(stampMetaBody))
-	resp, err = http.Post(bulk_stamps_meta_url, "application/json", bytes.NewReader(stampMetaBody))
+
+	req, err = http.NewRequest("POST", bulk_stamps_meta_url, bytes.NewReader(stampMetaBody))
+	if err != nil {
+		log.Fatalf("failed to create bulk stamps meta request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+bearerToken)
+	resp, err = client.Do(req)
 	if err != nil {
 		log.Fatalf("failed to send bulk stamps meta request: %v", err)
 	}
