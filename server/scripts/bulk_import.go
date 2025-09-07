@@ -30,18 +30,18 @@ type StampMetaAddition struct {
 }
 
 func main() {
-	bulk_tags_url := "http://localhost:8080/api/v1/bulk/tags"
-	bulk_stamps_meta_url := "http://localhost:8080/api/v1/bulk/stamps-meta"
-	tags_url := "http://localhost:8080/api/v1/tags"
+	bulk_tags_url := "https://1m25-11.trap.show/api/v1/bulk/tags"
+	bulk_stamps_meta_url := "https://1m25-11.trap.show/api/v1/bulk/stamps-meta"
+	tags_url := "https://1m25-11.trap.show/api/v1/tags"
 
 	bearerToken := os.Getenv("BEARER_TOKEN")
 	if bearerToken == "" {
 		log.Fatal("BEARER_TOKEN environment variable is not set")
 	}
 
-	responseBytes, err := os.ReadFile("response.jsonl")
+	responseBytes, err := os.ReadFile("llm_output.jsonl")
 	if err != nil {
-		log.Fatalf("failed to read response.jsonl: %v", err)
+		log.Fatalf("failed to read llm_output.jsonl: %v", err)
 	}
 	lines := bytes.Split(responseBytes, []byte{'\n'})
 	var responses []ResponseFromLlm
@@ -70,7 +70,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to marshal tagInfos: %v", err)
 	}
-
 	req, err := http.NewRequest("POST", bulk_tags_url, bytes.NewReader(tagBody))
 	if err != nil {
 		log.Fatalf("failed to create bulk tags request: %v", err)
