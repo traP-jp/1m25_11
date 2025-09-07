@@ -35,7 +35,6 @@ type StampForSearch struct {
 	CountMonthly int       `db:"count_monthly"`
 	Tags         string    `db:"tags"`
 	Descriptions string    `db:"descriptions"`
-	CreatorName  string    `db:"creator_name"`
 }
 
 func (r *Repository) SearchStamps(ctx context.Context, params SearchStampsParams) ([]StampForSearch, error) {
@@ -43,11 +42,9 @@ func (r *Repository) SearchStamps(ctx context.Context, params SearchStampsParams
 		SELECT
 			s.id, s.name, s.file_id, s.created_at, s.updated_at, s.count_monthly,
 			COALESCE(GROUP_CONCAT(DISTINCT t.name SEPARATOR ' '), '') AS tags,
-			COALESCE(GROUP_CONCAT(DISTINCT sd.description SEPARATOR ' '), '') AS descriptions,
-			COALESCE(u.name, '') AS creator_name
+			COALESCE(GROUP_CONCAT(DISTINCT sd.description SEPARATOR ' '), '') AS descriptions
 		FROM stamps s
 		LEFT JOIN stamp_descriptions sd ON s.id = sd.stamp_id
-		LEFT JOIN users u ON s.creator_id = u.id
 		LEFT JOIN stamp_tags st ON s.id = st.stamp_id
 		LEFT JOIN tags t ON st.tag_id = t.id
 	`
@@ -77,12 +74,6 @@ func (r *Repository) SearchStamps(ctx context.Context, params SearchStampsParams
 	case "only_not_unicode":
 		whereClauses = append(whereClauses, "s.is_unicode = FALSE")
 	}
-	switch params.StampTypeAnimation {
-	case "only_animated":
-		whereClauses = append(whereClauses, "s.is_animated = TRUE")
-	case "only_not_animated":
-		whereClauses = append(whereClauses, "s.is_animated = FALSE")
-	}
 	if params.CountMonthlyMin != nil {
 		whereClauses = append(whereClauses, "s.count_monthly >= ?")
 		args = append(args, *params.CountMonthlyMin)
@@ -97,7 +88,7 @@ func (r *Repository) SearchStamps(ctx context.Context, params SearchStampsParams
 		if len(terms) > 0 {
 			var clauses []string
 			for _, term := range terms {
-				clauses = append(clauses, fmt.Sprintf("%s COLLATE utf8mb4_unicode_ci LIKE ?", field))
+				clauses = append(clauses, fmt.Sprintf("%s LIKE ?", field))
 				args = append(args, "%"+term+"%")
 			}
 			havingClauses = append(havingClauses, "("+strings.Join(clauses, " OR ")+")")
@@ -110,9 +101,6 @@ func (r *Repository) SearchStamps(ctx context.Context, params SearchStampsParams
 	if params.Description != "" {
 		addHavingOrClause(params.Description, "descriptions")
 	}
-	if params.Creator != "" {
-		addHavingOrClause(params.Creator, "creator_name")
-	}
 	if len(params.Tags) > 0 {
 		addHavingOrClause(strings.Join(params.Tags, " "), "tags")
 	}
@@ -121,8 +109,8 @@ func (r *Repository) SearchStamps(ctx context.Context, params SearchStampsParams
 		if len(terms) > 0 {
 			var qClauses []string
 			for _, term := range terms {
-				qClauses = append(qClauses, "s.name COLLATE utf8mb4_unicode_ci LIKE ? OR descriptions COLLATE utf8mb4_unicode_ci LIKE ? OR tags COLLATE utf8mb4_unicode_ci LIKE ? OR creator_name COLLATE utf8mb4_unicode_ci LIKE ?")
-				args = append(args, "%"+term+"%", "%"+term+"%", "%"+term+"%", "%"+term+"%")
+				qClauses = append(qClauses, "s.name LIKE ? OR descriptions LIKE ? OR tags LIKE ?")
+				args = append(args, "%"+term+"%", "%"+term+"%", "%"+term+"%")
 			}
 			havingClauses = append(havingClauses, "("+strings.Join(qClauses, " OR ")+")")
 		}
@@ -138,8 +126,8 @@ func (r *Repository) SearchStamps(ctx context.Context, params SearchStampsParams
 		orderByClause = "ORDER BY s.count_monthly ASC, s.name ASC"
 	case "count_monthly_desc":
 		orderByClause = "ORDER BY s.count_monthly DESC, s.name ASC"
-	default: 
-		orderByClause = "ORDER BY s.name ASC" 
+	default:
+		orderByClause = "ORDER BY s.name ASC"
 	}
 
 	finalQuery := baseQuery
