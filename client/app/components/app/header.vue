@@ -32,8 +32,17 @@
         content: 'w-48',
       }"
     >
-      <UAvatar
+      <!-- <UAvatar
         :src="`https://q.trap.jp/api/v3/public/icon/${userName.getUserById(user.user.value?.user_id)?.traq_id}`"
+        class="text-5xl cursor-pointer"
+      /> -->
+      <!-- <UAvatar
+        :src="`https://q.trap.jp/api/v3/public/icon/${currentUser.value?.traq_id || 'traP'}`"
+        class="text-5xl cursor-pointer"
+      /> -->
+      <UAvatar
+        v-if="currentUser"
+        :src="`https://q.trap.jp/api/v3/public/icon/${currentUser.traq_id}`"
         class="text-5xl cursor-pointer"
       />
     </UDropdownMenu>
@@ -45,13 +54,15 @@
 <script setup lang="ts">
 import type { NavigationMenuItem, DropdownMenuItem } from '@nuxt/ui';
 
-const userName = useUsers();
-const user = useAuth();
-
-if (user.user.value) {
-  console.log(`userName: ${userName.getUserById(user.user.value?.user_id)?.traq_id}`);
-}
 const navigationSlideOver = ref(false);
+
+const { data: users } = await useApiClient().GET('/users-list');
+const { data: me } = await useApiClient().GET('/me');
+
+const currentUser = computed(() => {
+  if (!me?.user_id || !users) return null;
+  return users.find(user => user.user_id === me.user_id);
+});
 
 const navigationItems = ref<NavigationMenuItem[][]>([
   [
@@ -91,9 +102,9 @@ const navigationItems = ref<NavigationMenuItem[][]>([
 const dropdownItems = ref<DropdownMenuItem[][]>([
   [
     {
-      label: `${userName.getUserById(user.user.value?.user_id)?.user_display_name}`,
+      label: `${currentUser.value?.user_display_name}`,
       avatar: {
-        src: `https://q.trap.jp/api/v3/public/icon/${userName.getUserById(user.user.value?.user_id)?.traq_id}`,
+        src: `https://q.trap.jp/api/v3/public/icon/${currentUser.value?.traq_id}`,
       },
       type: 'label',
     },
