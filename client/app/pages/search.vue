@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <UContainer>
+    <SearchInput />
     <!-- 検索条件表示 -->
     <div
       v-if="searchQuery"
@@ -74,7 +75,7 @@
         トップページに戻る
       </UButton>
     </div>
-  </div>
+  </UContainer>
 </template>
 
 <script setup lang="ts">
