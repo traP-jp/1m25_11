@@ -11,6 +11,10 @@ class StampInfo(BaseModel):
     description: str
     keywords: list[str]
 
+# APIキー残高不足時に投げる専用例外
+class InsufficientQuotaError(Exception):
+    pass
+
 def createRequest(id, prompt):
     return {
         "model": "gpt-4.1-nano",
@@ -93,6 +97,26 @@ def make_api_request_with_retry(client, request_data, max_retries=5):
             return response
         except Exception as e:
             error_str = str(e).lower()
+
+            # 残高不足/課金上限系エラーは非再試行で即時中断
+            quota_signals = (
+                'insufficient_quota',
+                'insufficient quota',
+                'quota exceeded',
+                'exceeded your current quota',
+                'hard limit reached',
+                'out of credits',
+                'insufficient credits',
+                'insufficient balance',
+                'payment required',  # 402系
+                'billing',
+                '402',
+            )
+            if any(s in error_str for s in quota_signals):
+                print("エラー: APIキーの残高不足（または課金上限）を検知。再試行しません。")
+                raise InsufficientQuotaError(error_str)
+
+            # Rate Limitは指数バックオフで再試行
             if 'rate limit' in error_str or 'too many requests' in error_str:
                 if attempt < max_retries - 1:
                     wait_time = (2 ** attempt) * 60
@@ -103,6 +127,7 @@ def make_api_request_with_retry(client, request_data, max_retries=5):
                     print(f"Rate Limitエラー: 最大再試行回数に達しました")
                     raise
             else:
+                # それ以外は再試行せず即座に上位へ投げて中断判断させる
                 print(f"APIエラー: {e}")
                 raise
 
@@ -142,6 +167,8 @@ print(f"既に処理済み: {len(processed_ids)} 件")
 
 processed_count = 0
 skipped_count = 0
+aborted_due_to_quota = False  # 残高不足で中断したかのフラグ
+aborted_due_to_error = False  # 一般エラーで中断したかのフラグ
 
 for llm_input in inputs:
     input_id = llm_input.get('id')
@@ -180,12 +207,23 @@ for llm_input in inputs:
         processed_count += 1
         print(f"完了 {input_id}")
 
+    except InsufficientQuotaError:
+        print("APIキーの残高が不足しているため処理を中断します。残高を追加して再実行してください。")
+        aborted_due_to_quota = True
+        break
     except KeyError as e:
-        print(f"エラー: 必要なキーが見つかりません ID: {input_id}, キー: {e}")
-        continue
+        print(f"エラー: 必要なキーが見つかりません ID: {input_id}, キー: {e}。処理を中断します。")
+        aborted_due_to_error = True
+        break
     except Exception as e:
-        print(f"エラー: ID {input_id} の処理中に予期しないエラー: {e}")
-        continue
+        print(f"エラー: ID {input_id} の処理中に予期しないエラーが発生しました。処理を中断します。詳細: {e}")
+        aborted_due_to_error = True
+        break
+
+if aborted_due_to_quota:
+    print("\n注意: APIキーの残高不足により処理を途中で中断しました。")
+if aborted_due_to_error:
+    print("\n注意: Rate Limit以外のエラーにより処理を途中で中断しました。")
 
 print(f"\n処理完了:")
 print(f"  新規処理: {processed_count} 件")
