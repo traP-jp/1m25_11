@@ -1,10 +1,10 @@
 <template>
   <div
     class="flex flex-col h-32 w-24 justify-center gap-0.5 hover:bg-primary-100 cursor-pointer"
-    @click="selectStamp(stamp.stamp_id)"
+    @click="selectStamp(stamp.id)"
   >
     <NuxtImg
-      :src="getFileUrl(stamp.stamp_id)"
+      :src="getFileUrl(stamp.id)"
       class="mx-auto w-full px-3"
       loading="lazy"
       :alt="stamp.stamp_name"
@@ -18,9 +18,11 @@
 <script setup lang="ts">
 const selectedStampId = useSelectedStampId();
 
-defineProps<{
+const { stamp } = defineProps<{
   stamp: Schemas['StampSummary'];
 }>();
+
+console.log(stamp.stamp_id);
 
 const selectStamp = (stampId: string) => {
   selectedStampId.value = stampId;
