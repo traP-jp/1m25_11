@@ -26,29 +26,32 @@
       Service Name
     </h1>
 
-    <UDropdownMenu
+    <UAvatar
+      v-if="currentUser"
+      :src="`https://q.trap.jp/api/v3/public/icon/${currentUser.traq_id}`"
+      class="text-5xl cursor-pointer"
+    />
+    <!-- <UDropdownMenu
       :items="dropdownItems"
       :ui="{
         content: 'w-48',
       }"
     >
+    <div v-if="currentUser">
       <UAvatar
-        :src="`https://q.trap.jp/api/v3/public/icon/${userName}`"
+        :src="`https://q.trap.jp/api/v3/public/icon/${currentUser.traq_id}`"
         class="text-5xl cursor-pointer"
       />
-    </UDropdownMenu>
-
-    <!-- </div> -->
+    </div>
+    </UDropdownMenu> -->
   </UContainer>
 </template>
 
 <script setup lang="ts">
 import type { NavigationMenuItem, DropdownMenuItem } from '@nuxt/ui';
 
-const userName = useUser();
-console.log(`userName: ${userName.value}`);
-
 const navigationSlideOver = ref(false);
+const { currentUser } = useCurrentUser();
 
 const navigationItems = ref<NavigationMenuItem[][]>([
   [
@@ -73,6 +76,16 @@ const navigationItems = ref<NavigationMenuItem[][]>([
       to: '/tag',
     },
     {
+      label: 'Profile',
+      icon: 'material-symbols:account-circle-outline-sharp',
+      to: '/profile',
+    },
+    {
+      label: 'Settings',
+      icon: 'material-symbols:settings-outline-sharp',
+      to: '/settings',
+    },
+    {
       label: 'Swagger viewer',
       to: '/developer',
       icon: 'material-symbols:info',
@@ -85,27 +98,18 @@ const navigationItems = ref<NavigationMenuItem[][]>([
   ],
 ]);
 
-const dropdownItems = ref<DropdownMenuItem[][]>([
-  [
-    {
-      label: `${userName.value}`,
-      avatar: {
-        src: `https://q.trap.jp/api/v3/public/icon/${userName.value}`,
-      },
-      type: 'label',
-    },
-  ],
-  [
-    {
-      label: 'Profile',
-      icon: 'material-symbols:account-circle-outline-sharp',
-      to: '/profile',
-    },
-    {
-      label: 'Settings',
-      icon: 'material-symbols:settings-outline-sharp',
-      to: '/settings',
-    },
-  ],
-]);
+// const dropdownItems = ref<DropdownMenuItem[][]>([
+//   [
+//     {
+//       label: 'Profile',
+//       icon: 'material-symbols:account-circle-outline-sharp',
+//       to: '/profile',
+//     },
+//     {
+//       label: 'Settings',
+//       icon: 'material-symbols:settings-outline-sharp',
+//       to: '/settings',
+//     },
+//   ],
+// ]);
 </script>

@@ -3,7 +3,7 @@
 
 @theme static{
   --font-sans: 'Zen Kaku Gothic New', sans-serif;
-  --ui-radius: 0.0rem;
+  --ui-radius: 0em;
   --color-primary: #005bac;
   --color-secondary: #ac005b;
   --color-trap-blue-50: #f0f7ff;

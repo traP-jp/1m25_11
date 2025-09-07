@@ -1,36 +1,30 @@
-import { useState } from '#app';
-import { computed } from 'vue';
-
-/**
- * アプリケーション全体で利用可能な、リアクティブなユーザー名を管理する composable。
- * サーバーで X-Forwarded-User ヘッダーから値を取得し、useState に格納する。
- * @returns {Ref<string | null>} ユーザー名を保持するリアクティブな Ref オブジェクト
- */
-export const useUser = () => {
-  // 'user' というキーで state を定義。初期値は null。
-  const user = useState<string | null>('user', () => null);
-
-  // user.value がまだセットされていない場合のみ、ヘッダーから値を取得する処理を行う。
-  // これにより、サーバーで一度だけヘッダーが読み込まれ、クライアントではその値が再利用される。
-  if (import.meta.server && user.value === null) {
-    const headers = useRequestHeaders(['x-forwarded-user']);
-    const username = headers['x-forwarded-user'];
-    if (username) {
-      user.value = username;
-    }
-  }
-
-  return user;
-};
-
 /**
  * ユーザー一覧を管理し、検索機能を提供する composable。
  * アプリケーション全体でユーザーデータを共有し、ユーザー名やユーザーIDでの検索をサポートする。
  */
 export const useUsers = () => {
-  // ユーザー一覧のstate（配列とMap形式で保持）
-  const userList = useState<Schemas['UserProfile'][]>('user-list', () => []);
-  const userMap = useState<Map<string, Schemas['UserProfile']>>('user-map', () => new Map());
+  const apiClient = useApiClient();
+
+  // ユーザー一覧をAPIから取得
+  const { data: userList, pending, error, refresh } = useAsyncData(
+    'users-list',
+    async () => {
+      const { data, error } = await apiClient.GET('/users-list');
+      if (error) {
+        throw new Error('Failed to fetch users');
+      }
+      return data ?? [];
+    },
+  );
+
+  // ユーザーマップを計算
+  const userMap = computed(() => {
+    const map = new Map<string, Schemas['UserProfile']>();
+    userList.value?.forEach((user) => {
+      map.set(user.user_id, user);
+    });
+    return map;
+  });
 
   /**
    * ユーザー名（traq_id）でユーザーを検索する
@@ -38,7 +32,7 @@ export const useUsers = () => {
    * @returns マッチしたユーザーの配列
    */
   const searchByUserName = (userName: string): Schemas['UserProfile'][] => {
-    if (!userName.trim()) return userList.value;
+    if (!userName.trim() || !userList.value) return userList.value || [];
 
     const searchTerm = userName.toLowerCase();
     return userList.value.filter(user =>
@@ -52,7 +46,7 @@ export const useUsers = () => {
    * @returns マッチしたユーザーの配列
    */
   const searchByUserId = (userId: string): Schemas['UserProfile'][] => {
-    if (!userId.trim()) return userList.value;
+    if (!userId.trim() || !userList.value) return userList.value || [];
 
     const searchTerm = userId.toLowerCase();
     return userList.value.filter(user =>
@@ -66,7 +60,7 @@ export const useUsers = () => {
    * @returns マッチしたユーザーの配列
    */
   const searchByDisplayName = (displayName: string): Schemas['UserProfile'][] => {
-    if (!displayName.trim()) return userList.value;
+    if (!displayName.trim() || !userList.value) return userList.value || [];
 
     const searchTerm = displayName.toLowerCase();
     return userList.value.filter(user =>
@@ -80,7 +74,7 @@ export const useUsers = () => {
    * @returns マッチしたユーザーの配列
    */
   const searchUsers = (query: string): Schemas['UserProfile'][] => {
-    if (!query.trim()) return userList.value;
+    if (!query.trim() || !userList.value) return userList.value || [];
 
     const searchTerm = query.toLowerCase();
     return userList.value.filter(user =>
@@ -105,21 +99,58 @@ export const useUsers = () => {
    * @returns 見つかったユーザー、または undefined
    */
   const getUserByName = (userName: string): Schemas['UserProfile'] | undefined => {
-    return userList.value.find(user => user.traq_id === userName);
+    return userList.value?.find(user => user.traq_id === userName);
   };
 
   // 読み取り専用の computed プロパティ
-  const users = computed(() => userList.value);
+  const users = computed(() => userList.value || []);
   const usersMap = computed(() => userMap.value);
 
   return {
     users,
     usersMap,
+    loading: pending,
+    error,
+    refresh,
     searchByUserName,
     searchByUserId,
     searchByDisplayName,
     searchUsers,
     getUserById,
     getUserByName,
+  };
+};
+
+/**
+ * 現在のユーザー情報を管理する composable。
+ */
+export const useCurrentUser = () => {
+  const apiClient = useApiClient();
+  const users = useUsers();
+
+  // 現在のユーザー情報をAPIから取得
+  const { data: me, pending, error, refresh } = useAsyncData(
+    'current-user',
+    async () => {
+      const { data, error } = await apiClient.GET('/me');
+      if (error) {
+        throw new Error('Failed to fetch current user');
+      }
+      return data ?? null;
+    },
+  );
+
+  // 現在のユーザーの詳細情報を計算
+  const currentUser = computed(() => {
+    if (!me.value?.user_id) return null;
+    return users.getUserById(me.value.user_id);
+  });
+
+  return {
+    me,
+    currentUser,
+    loading: pending,
+    error,
+    refresh,
   };
 };

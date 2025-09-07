@@ -18,7 +18,10 @@ func (h *Handler) createDescriptions(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	creatorID := uuid.Nil // 仮でNil UUIDを用いている
+	creatorID, err := h.getUserID(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
+	}
 	payload := new(descriptionPayload)
 	if err = c.Bind(payload); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)

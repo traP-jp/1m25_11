@@ -2,26 +2,27 @@ package handler
 
 import (
 	"database/sql"
+	"net/http"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/traP-jp/1m25_11/server/internal/repository"
-	"net/http"
-	"time"
 )
 
 type (
 	DetailResponse struct {
-		ID           uuid.UUID                 `json:"stamp_id"`
-		Name         string                    `json:"stamp_name"`
-		FileID       uuid.UUID                 `json:"file_id"`
-		CreatorID    uuid.UUID                 `json:"creator_id"`
-		IsUnicode    bool                      `json:"is_unicode"`
-		CreatedAt    time.Time                 `json:"created_at"`
-		UpdatedAt    time.Time                 `json:"updated_at"`
-		CountMonthly int                       `json:"count_monthly"`
-		CountTotal   int64                     `json:"count_total"`
+		ID           uuid.UUID                      `json:"stamp_id"`
+		Name         string                         `json:"stamp_name"`
+		FileID       uuid.UUID                      `json:"file_id"`
+		CreatorID    uuid.UUID                      `json:"creator_id"`
+		IsUnicode    bool                           `json:"is_unicode"`
+		CreatedAt    time.Time                      `json:"created_at"`
+		UpdatedAt    time.Time                      `json:"updated_at"`
+		CountMonthly int                            `json:"count_monthly"`
+		CountTotal   int64                          `json:"count_total"`
 		Descriptions []*repository.StampDescription `json:"descriptions"`
-		Tags         []*repository.TagSummary  `json:"tags"`
+		Tags         []*repository.TagSummary       `json:"tags"`
 	}
 )
 

@@ -19,7 +19,7 @@ type (
 		DisplayName string    `json:"displayName"`
 		IconFileID  uuid.UUID `json:"iconFileId"`
 		Bot         bool      `json:"bot"`
-		State       int      `json:"state"`
+		State       int       `json:"state"`
 		UpdatedAt   time.Time `json:"updatedAt"`
 	}
 
@@ -28,7 +28,7 @@ type (
 		Name        string    `json:"traq_id"`
 		DisplayName string    `json:"user_display_name"`
 		IconFileID  uuid.UUID `json:"user_icon_file_id"`
-		State       int      `json:"user_state"`
+		State       int       `json:"user_state"`
 	}
 )
 
