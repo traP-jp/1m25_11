@@ -23,7 +23,7 @@
       </template>
     </USlideover>
     <h1 class="text-3xl">
-      Service Name
+      stamPedia
     </h1>
 
     <UAvatar
