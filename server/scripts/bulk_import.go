@@ -39,13 +39,21 @@ func main() {
 		log.Fatal("BEARER_TOKEN environment variable is not set")
 	}
 
-	responseBytes, err := os.ReadFile("response.json")
+	responseBytes, err := os.ReadFile("response.jsonl")
 	if err != nil {
-		log.Fatalf("failed to read response.json: %v", err)
+		log.Fatalf("failed to read response.jsonl: %v", err)
 	}
+	lines := bytes.Split(responseBytes, []byte{'\n'})
 	var responses []ResponseFromLlm
-	if err := json.Unmarshal(responseBytes, &responses); err != nil {
-		log.Fatalf("failed to unmarshal response.json: %v", err)
+	for _, line := range lines {
+		if len(bytes.TrimSpace(line)) == 0 {
+			continue
+		}
+		var resp ResponseFromLlm
+		if err := json.Unmarshal(line, &resp); err != nil {
+			log.Fatalf("failed to unmarshal line: %v", err)
+		}
+		responses = append(responses, resp)
 	}
 
 	tagNamesSet := make(map[string]struct{})
