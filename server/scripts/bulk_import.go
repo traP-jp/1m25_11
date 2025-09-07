@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -20,8 +21,8 @@ type TagInfo struct {
 	Name string `json:"name" db:"name"`
 }
 type Tag struct {
-	ID   uuid.UUID `json:"tag_id"`
-	Name string    `json:"tag_name"`
+	ID   uuid.UUID `json:"ID"`
+	Name string    `json:"Name"`
 }
 type StampMetaAddition struct {
 	ID          uuid.UUID   `json:"stamp_id"`
@@ -32,12 +33,12 @@ type StampMetaAddition struct {
 func main() {
 	bulk_tags_url := "https://1m25-11.trap.show/api/v1/bulk/tags"
 	bulk_stamps_meta_url := "https://1m25-11.trap.show/api/v1/bulk/stamps-meta"
-	tags_url := "https://1m25-11.trap.show/api/v1/tags"
+	// tags_url := "https://1m25-11.trap.show/api/v1/tags"
 
-	bearerToken := os.Getenv("BEARER_TOKEN")
-	if bearerToken == "" {
-		log.Fatal("BEARER_TOKEN environment variable is not set")
-	}
+	// bearerToken := os.Getenv("TRAQ_AUTH_TOKEN")
+	// if bearerToken == "" {
+	// 	log.Fatal("TRAQ_AUTH_TOKEN environment variable is not set")
+	// }
 
 	responseBytes, err := os.ReadFile("llm_output.jsonl")
 	if err != nil {
@@ -70,12 +71,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to marshal tagInfos: %v", err)
 	}
+	fmt.Println(string(tagBody))
 	req, err := http.NewRequest("POST", bulk_tags_url, bytes.NewReader(tagBody))
 	if err != nil {
 		log.Fatalf("failed to create bulk tags request: %v", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+bearerToken)
+	// req.Header.Set("Authorization", "Bearer "+bearerToken)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -87,17 +89,18 @@ func main() {
 	}
 
 	var tags []Tag
-	req, err = http.NewRequest("GET", tags_url, nil)
-	if err != nil {
-		log.Fatalf("failed to create get tags request: %v", err)
-	}
-	req.Header.Set("Authorization", "Bearer "+bearerToken)
-	resp, err = client.Do(req)
-	if err != nil {
-		log.Fatalf("failed to get tags: %v", err)
-	}
-	defer resp.Body.Close()
+	// req, err = http.NewRequest("GET", tags_url, nil)
+	// if err != nil {
+	// 	log.Fatalf("failed to create get tags request: %v", err)
+	// }
+	// req.Header.Set("Authorization", "Bearer "+bearerToken)
+	// resp, err = client.Do(req)
+	// if err != nil {
+	// 	log.Fatalf("failed to get tags: %v", err)
+	// }
+	// defer resp.Body.Close()
 	bodyBytes, err := io.ReadAll(resp.Body)
+	fmt.Println(string(bodyBytes))
 	if err != nil {
 		log.Fatalf("failed to read body: %v", err)
 	}
@@ -112,13 +115,17 @@ func main() {
 
 	stampMetaAdditions := []StampMetaAddition{}
 	for _, resp := range responses {
-		tagIDs := []uuid.UUID{}
+		tagIDSet := map[uuid.UUID]struct{}{}
 		for _, tagName := range resp.TagNames {
 			if tagID, ok := tagNameToID[tagName]; ok {
-				tagIDs = append(tagIDs, tagID)
+				tagIDSet[tagID] = struct{}{}
 			} else {
 				log.Printf("warning: tag name %s not found in tagNameToID map", tagName)
 			}
+		}
+		tagIDs := make([]uuid.UUID, 0, len(tagIDSet))
+		for tagID := range tagIDSet {
+			tagIDs = append(tagIDs, tagID)
 		}
 		stampMetaAdditions = append(stampMetaAdditions, StampMetaAddition{
 			ID:          resp.ID,
@@ -132,12 +139,13 @@ func main() {
 		log.Fatalf("failed to marshal stampMetaAdditions: %v", err)
 	}
 
+	fmt.Println(string(stampMetaBody))
 	req, err = http.NewRequest("POST", bulk_stamps_meta_url, bytes.NewReader(stampMetaBody))
 	if err != nil {
 		log.Fatalf("failed to create bulk stamps meta request: %v", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+bearerToken)
+	// req.Header.Set("Authorization", "Bearer "+bearerToken)
 	resp, err = client.Do(req)
 	if err != nil {
 		log.Fatalf("failed to send bulk stamps meta request: %v", err)
