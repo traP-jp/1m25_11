@@ -186,6 +186,70 @@ def make_api_request_with_retry(client, request_data, max_retries=5):
 
     raise Exception("予期しないエラー: 再試行ループを抜けました")
 
+def validate_response_format(content, input_id):
+    """
+    APIレスポンスの形式をチェックし、不正な場合はFalseを返す
+    """
+    try:
+        response_json = json.loads(content)
+
+        # 必須フィールドの存在チェック
+        if 'description' not in response_json or 'keywords' not in response_json:
+            print(f"警告: 必須フィールドが不足 ID: {input_id}")
+            return False, None
+
+        # descriptionに改行が含まれていないかチェック
+        if '\n' in response_json['description']:
+            print(f"警告: descriptionに改行が含まれています ID: {input_id}")
+            return False, None
+
+        # keywordsが配列かチェック
+        if not isinstance(response_json['keywords'], list):
+            print(f"警告: keywordsが配列ではありません ID: {input_id}")
+            return False, None
+
+        return True, response_json
+
+    except json.JSONDecodeError as e:
+        print(f"警告: JSONパースエラー ID: {input_id}, エラー: {e}")
+        return False, None
+
+def process_single_request(client, input_id, prompt, max_format_retries=3):
+    """
+    単一のリクエストを処理し、形式チェックして必要に応じて再試行
+    """
+    for format_attempt in range(max_format_retries):
+        try:
+            request_data = createRequest(input_id, prompt)
+            response = make_api_request_with_retry(client, request_data)
+            print(response)
+
+            content = response.choices[0].message.content
+            is_valid, response_json = validate_response_format(content, input_id)
+
+            if is_valid:
+                response_json['id'] = input_id
+                return response_json
+            else:
+                if format_attempt < max_format_retries - 1:
+                    print(f"形式エラーのため再試行します ({format_attempt + 1}/{max_format_retries}) ID: {input_id}")
+                    time.sleep(2)  # 短い待機時間
+                    continue
+                else:
+                    print(f"最大再試行回数に達しました。エラー応答を生成します ID: {input_id}")
+                    return {
+                        "id": input_id,
+                        "description": "形式エラーのため正常な応答を生成できませんでした",
+                        "keywords": ["エラー", "形式不正"]
+                    }
+
+        except Exception as e:
+            # API関連のエラーは上位に投げる
+            raise e
+
+    # ここには到達しないはず
+    raise Exception("予期しないエラー: 形式再試行ループを抜けました")
+
 client = OpenAI(
     base_url="https://llm-proxy.trap.jp/"
 )
@@ -237,22 +301,7 @@ for llm_input in inputs:
     print(f"start {input_id}")
 
     try:
-        request_data = createRequest(input_id, llm_input['prompt'])
-        response = make_api_request_with_retry(client, request_data)
-        print(response)
-
-        # APIレスポンスにIDを追加
-        try:
-            content = response.choices[0].message.content
-            response_json = json.loads(content)
-            response_json['id'] = input_id
-        except Exception:
-            print(f"警告: APIレスポンスのJSONパースに失敗 ID: {input_id}")
-            response_json = {
-                "id": input_id,
-                "description": f"パースエラーのため生成できませんでした\n{response}",
-                "keywords": ["エラー", "パース失敗"]
-            }
+        response_json = process_single_request(client, input_id, llm_input['prompt'])
 
         # 出力ファイルに追加
         append_output(response_json)
