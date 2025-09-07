@@ -20,6 +20,11 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 			return next(c)
 		}
+		if strings.Contains(c.Request().URL.Path, "/bulk") {
+
+			return next(c)
+		}
+
 		log.Printf("AuthMiddleware: Checking token")
 		_, err := h.getUserID(c)
 		if err != nil {
