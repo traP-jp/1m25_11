@@ -16,12 +16,11 @@ type (
 		CreatorID   uuid.UUID `db:"creator_id"`
 	}
 	StampDescription struct {
-		Description string    `db:"description"`
-		CreatorID   uuid.UUID `db:"creator_id"`
-		CreatedAt   time.Time `db:"created_at"`
-		UpdatedAt   time.Time `db:"updated_at"`
+		Description string    `db:"description" json:"description"`
+		CreatorID   uuid.UUID `db:"creator_id" json:"creator_id"`
+		CreatedAt   time.Time `db:"created_at" json:"created_at"`
+		UpdatedAt   time.Time `db:"updated_at" json:"updated_at"`
 	}
-	
 )
 
 func (r *Repository) CreateDescriptions(ctx context.Context, params CreateDescriptionParams) error {
