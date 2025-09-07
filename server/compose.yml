@@ -27,7 +27,7 @@ services:
 
   db:
     image: mariadb:10.11
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
     environment:
       MARIADB_ROOT_PASSWORD: pass
       MARIADB_DATABASE: app
