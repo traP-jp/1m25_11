@@ -159,6 +159,7 @@ for llm_input in inputs:
     try:
         request_data = createRequest(input_id, llm_input['prompt'])
         response = make_api_request_with_retry(client, request_data)
+        print(response)
 
         # APIレスポンスにIDを追加
         try:
