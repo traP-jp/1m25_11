@@ -13,11 +13,11 @@ class StampInfo(BaseModel):
 
 def createRequest(id, prompt):
     return {
-        "model": "gpt-5-nano",
+        "model": "gpt-4.1-nano",
         "messages": [
             {
                 "role": "system",
-                "content": "あなたは日本語で簡潔かつ客観的に記述するコンテンツ生成エンジンです。与えられた絵文字の画像と使用例（本文・リアクション）から、その絵文字の**概要・見た目・主な用法**を抽出し、「説明文」（約200字）と「キーワード」（検索用語の集合）を生成します。事実不明な細部は断定せず、汎用的で再利用可能な表現を優先します。"
+                "content": "あなたは日本語で簡潔かつ客観的に記述するコンテンツ生成エンジンです。与えられた絵文字の画像と使用例（本文・リアクション）から、その絵文字の概要・見た目・主な用法を抽出し、説明文とキーワードのみをJSONで返します。思考過程・推論の説明や前置きは一切出力しないでください。"
             },
             {
                 "role": "developer",
@@ -49,20 +49,13 @@ def createRequest(id, prompt):
             {
                 "role": "user",
                 "content": [
-                    {
-                        "type": "text",
-                        "text": prompt
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": { "url": f"https://q.trap.jp/api/1.0/public/emoji/{id}" },
-                    }
+                    { "type": "text", "text": prompt },
+                    { "type": "image_url", "image_url": { "url": f"https://q.trap.jp/api/1.0/public/emoji/{id}" } }
                 ],
             }
         ],
         "stream": False,
-        "reasoning": { "effort": "low" },
-        "text_format": StampInfo,
+        #"temperature": 0,
         "max_tokens": 2000
     }
 
@@ -96,13 +89,13 @@ def make_api_request_with_retry(client, request_data, max_retries=5):
     """Rate Limit対応の再試行機能付きAPIリクエスト"""
     for attempt in range(max_retries):
         try:
-            response = client.responses.create(**request_data)
+            response = client.chat.completions.create(**request_data)
             return response
         except Exception as e:
             error_str = str(e).lower()
             if 'rate limit' in error_str or 'too many requests' in error_str:
                 if attempt < max_retries - 1:
-                    wait_time = (2 ** attempt) * 60  # 60秒 → 120秒 → 240秒 → 480秒 → 960秒
+                    wait_time = (2 ** attempt) * 60
                     print(f"Rate Limitに達しました。{wait_time}秒後に再試行します。")
                     time.sleep(wait_time)
                     continue
@@ -169,13 +162,14 @@ for llm_input in inputs:
 
         # APIレスポンスにIDを追加
         try:
-            response_json = json.loads(response.output_text)
+            content = response.choices[0].message.content
+            response_json = json.loads(content)
             response_json['id'] = input_id
-        except json.JSONDecodeError:
+        except Exception:
             print(f"警告: APIレスポンスのJSONパースに失敗 ID: {input_id}")
             response_json = {
                 "id": input_id,
-                "description": "パースエラーのため生成できませんでした",
+                "description": f"パースエラーのため生成できませんでした\n{response}",
                 "keywords": ["エラー", "パース失敗"]
             }
 
