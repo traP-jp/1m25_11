@@ -4,12 +4,14 @@
 
 ハッカソンの開発メンバー
 
-- [yas-ako](https://github.com/yas-ako) yasako
-- [nyson411](https://github.com/nyson411) mamo
-- [iwnevaf](https://github.com/iwnevaf) dis
-- [hachimitsu-pichi](https://github.com/hachimitsu-pichi) hachimitsu
-- [ikea-6330](https://github.com/ikea-6330) ikea
-- [rurun418](https://github.com/rurun418) rurun
+カッコ内はtraQ ID
+
+- [yas-ako](https://github.com/yas-ako) (yasako)
+- [nyson411](https://github.com/nyson411) (mamo)
+- [iwnevaf](https://github.com/iwnevaf) (dislike_fruits)
+- [hachimitsu-pichi](https://github.com/hachimitsu-pichi) (hachimitsu)
+- [ikea-6330](https://github.com/ikea-6330) (ikea)
+- [rurun418](https://github.com/rurun418) (rurun)
 
 ## 使用技術
 
@@ -29,7 +31,7 @@ traQで使用可能な9000個以上のスタンプについて
 - タグ付け
 - 説明文の投稿
 
-を行うことで、
+を行うことで、検索できるようにする。
 
 ## 開発環境の準備
 
