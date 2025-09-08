@@ -4,7 +4,12 @@
 
 ハッカソンの開発メンバー
 
-- 
+- [yas-ako](https://github.com/yas-ako) yasako
+- [nyson411](https://github.com/nyson411) mamo
+- [iwnevaf](https://github.com/iwnevaf) dis
+- [hachimitsu-pichi](https://github.com/hachimitsu-pichi) hachimitsu
+- [ikea-6330](https://github.com/ikea-6330) ikea
+- [rurun418](https://github.com/rurun418) rurun
 
 ## 使用技術
 
