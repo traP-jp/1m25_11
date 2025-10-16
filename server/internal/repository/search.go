@@ -109,7 +109,7 @@ func (r *Repository) SearchStamps(ctx context.Context, params SearchStampsParams
 		if len(terms) > 0 {
 			var qClauses []string
 			for _, term := range terms {
-				qClauses = append(qClauses, "s.name LIKE ? OR descriptions LIKE ? OR tags LIKE ?")
+				qClauses = append(qClauses, "s.name COLLATE utf8mb4_unicode_ci LIKE ? OR descriptions COLLATE utf8mb4_unicode_ci LIKE ? OR tags COLLATE utf8mb4_unicode_ci LIKE ?")
 				args = append(args, "%"+term+"%", "%"+term+"%", "%"+term+"%")
 			}
 			havingClauses = append(havingClauses, "("+strings.Join(qClauses, " OR ")+")")

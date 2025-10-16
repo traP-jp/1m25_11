@@ -59,7 +59,7 @@
         </template>
         <div class="flex w-full flex-wrap justify-start gap-2 text-xs mt-2">
           <UBadge
-            v-for="tag in sampleTag"
+            v-for="tag in stampDetail.tags"
             :key="tag.tag_id"
             icon="material-symbols:tag"
             class="bg-gray-100 text-primary cursor-pointer hover:bg-gray-200 transition-colors"
@@ -153,11 +153,11 @@
           </h3>
         </template>
         <div
-          v-if="sampleDescriptions && sampleDescriptions.length > 0"
+          v-if="stampDetail.descriptions && stampDetail.descriptions.length > 0"
           class="space-y-3"
         >
           <div
-            v-for="description in sampleDescriptions"
+            v-for="description in stampDetail.descriptions"
             :key="description.creator_id"
             class="border-l-4 border-primary-200 pl-4 py-2"
           >

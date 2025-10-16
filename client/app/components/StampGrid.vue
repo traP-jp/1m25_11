@@ -11,5 +11,6 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ stamps: StampSummary[] }>();
+const props = defineProps<{ stamps: Schemas['StampSummary'][] }>();
+console.log('StampGrid props:', props);
 </script>

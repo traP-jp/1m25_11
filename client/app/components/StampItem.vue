@@ -18,9 +18,11 @@
 <script setup lang="ts">
 const selectedStampId = useSelectedStampId();
 
-defineProps<{
+const { stamp } = defineProps<{
   stamp: Schemas['StampSummary'];
 }>();
+
+console.log(stamp.stamp_id);
 
 const selectStamp = (stampId: string) => {
   selectedStampId.value = stampId;
