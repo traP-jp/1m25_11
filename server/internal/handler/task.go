@@ -68,9 +68,7 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 	}
 	log.Print("Retrieved all stamps, starting to fetch stats...")
 	for _, stamp := range allStamps {
-		if len(stampTotalCount) >= 50 {
-			break
-		}
+
 		var statsData repository.StampStatus
 
 		stampID := stamp.ID
@@ -111,4 +109,5 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 	}
 	log.Println("Successfully updated total counts for all stamps")
 	return
+
 }
