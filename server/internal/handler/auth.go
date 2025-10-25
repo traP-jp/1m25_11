@@ -1,11 +1,14 @@
 package handler
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"math/big"
 	"net/http"
 	"net/url"
@@ -13,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/labstack/echo/v4"
 	"github.com/traP-jp/1m25_11/server/pkg/config"
 )
@@ -42,6 +46,7 @@ func (h *Handler) login(c echo.Context) error {
 		MaxAge:   60 * 60, // 3600秒 = 1時間
 		Secure:   config.GetCookieSecure(),
 		HttpOnly: true,
+		Path:     "/",
 		SameSite: config.GetCookieSameSite(),
 	}
 	c.SetCookie(cookie)
@@ -63,19 +68,52 @@ func (h *Handler) callback(c echo.Context) error {
 	codeVerifier := resCodeVerifier.Value
 	tokenRes, err := h.sendTraqAuthToken(code, codeVerifier)
 	if err != nil {
+		log.Printf("failed to request token endpoint: %v", err)
+
 		return c.Redirect(http.StatusFound, topPageURL)
 	}
 	defer tokenRes.Body.Close()
-	var tokenData TokenData
-	err = json.NewDecoder(tokenRes.Body).Decode(&tokenData)
-	if err != nil {
+
+	// Check HTTP status code from token endpoint
+	if tokenRes.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(tokenRes.Body)
+		log.Printf("token endpoint returned status %d: %s", tokenRes.StatusCode, string(body))
+
 		return c.Redirect(http.StatusFound, topPageURL)
 	}
+
+	var tokenData TokenData
+	if err := json.NewDecoder(tokenRes.Body).Decode(&tokenData); err != nil {
+		log.Printf("failed to decode token response: %v", err)
+
+		return c.Redirect(http.StatusFound, topPageURL)
+	}
+	// Verify ID token signature and claims using OIDC provider
 	idToken := tokenData.IDToken
+	if idToken == "" {
+		log.Printf("no id_token in token response")
+
+		return c.Redirect(http.StatusFound, topPageURL)
+	}
+	ctx := context.Background()
+	provider, err := oidc.NewProvider(ctx, "https://q.trap.jp")
+	if err != nil {
+		log.Printf("failed to create oidc provider: %v", err)
+
+		return c.Redirect(http.StatusFound, topPageURL)
+	}
+	verifier := provider.Verifier(&oidc.Config{ClientID: clientID})
+	if _, err := verifier.Verify(ctx, idToken); err != nil {
+		log.Printf("id_token verification failed: %v", err)
+
+		return c.Redirect(http.StatusFound, topPageURL)
+	}
+	// id_token verified, proceed to set cookies and delete code verifier
 	deleteCookie := &http.Cookie{
 		Name:     h.codeVerifierKey(state),
 		Secure:   config.GetCookieSecure(),
 		HttpOnly: true,
+		Path:     "/",
 		SameSite: config.GetCookieSameSite(),
 		Value:    "",
 		MaxAge:   -1,
@@ -101,6 +139,7 @@ func (h *Handler) callback(c echo.Context) error {
 			Value:    chunk,
 			Secure:   config.GetCookieSecure(),
 			HttpOnly: true,
+			Path:     "/",
 			SameSite: config.GetCookieSameSite(),
 			MaxAge:   tokenData.ExpiresIn,
 		}
@@ -113,6 +152,7 @@ func (h *Handler) callback(c echo.Context) error {
 		Value:    strconv.Itoa(len(chunks)),
 		Secure:   config.GetCookieSecure(),
 		HttpOnly: true,
+		Path:     "/",
 		SameSite: config.GetCookieSameSite(),
 		MaxAge:   tokenData.ExpiresIn,
 	}
