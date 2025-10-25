@@ -62,14 +62,9 @@ func AllowedOrigins() []string {
 // IsDevelopment determines if the application is running in development mode
 // by checking if localhost is present in ALLOWED_ORIGINS
 func IsDevelopment() bool {
-	origins := AllowedOrigins()
-	for _, origin := range origins {
-		if strings.Contains(origin, "localhost") {
-			return true
-		}
-	}
-
-	return false
+	// Determine environment by explicit APP_ENV variable. Default to "development".
+	env := getEnv("APP_ENV", "development")
+	return env == "development"
 }
 
 // GetCookieSameSite returns the appropriate SameSite setting based on environment
