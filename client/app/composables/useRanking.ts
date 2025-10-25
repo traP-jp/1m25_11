@@ -1,9 +1,9 @@
 // 処理済みランキングデータの型定義（generated型を拡張）
-export interface ProcessedRankingItem extends Schemas['RankingResult'] {
+export type ProcessedRankingItem = Schemas['RankingResult'] & {
   stamp_name: string;
   rank: number;
-  count: number;  // 表示用（total_count または monthly_count）
-}
+  count: number; // 表示用（total_count または monthly_count）
+};
 
 export const useRanking = () => {
   const apiClient = useApiClient();
@@ -30,7 +30,7 @@ export const useRanking = () => {
       // 1. 両方のAPIを並行して取得
       const [rankingResponse, stampsResponse] = await Promise.all([
         apiClient.GET('/stamps/ranking'),
-        apiClient.GET('/stamps')
+        apiClient.GET('/stamps'),
       ]);
 
       console.log('API レスポンス - ranking:', rankingResponse);
@@ -59,20 +59,21 @@ export const useRanking = () => {
         total_count: item.total_count,
         monthly_count: item.monthly_count,
         stamp_name: stampMap.get(item.stamp_id)?.stamp_name ?? '不明なスタンプ',
-        rank: 0,  // ソート時に設定
-        count: item.total_count,  // 初期値
+        rank: 0, // ソート時に設定
+        count: item.total_count, // 初期値
       }));
 
       ranking.value = processedData;
       initialized.value = true;
 
       console.log('ランキングデータの処理完了:', processedData.length, '件');
-
-    } catch (err) {
+    }
+    catch (err) {
       console.error('ランキングデータの読み込みエラー:', err);
       error.value = err instanceof Error ? err : new Error('不明なエラーが発生しました');
       ranking.value = [];
-    } finally {
+    }
+    finally {
       loading.value = false;
     }
   };

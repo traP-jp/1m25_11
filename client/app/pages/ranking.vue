@@ -65,7 +65,7 @@
           </div>
           <div class="space-x-2">
             <UButton
-              color="red"
+              color="primary"
               variant="soft"
               @click="refresh"
             >
