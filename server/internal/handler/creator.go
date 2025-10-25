@@ -15,6 +15,17 @@ import (
 
 // クッキーからIDトークンを復元してユーザーIDを取得する関数
 func (h *Handler) getUserID(c echo.Context) (uuid.UUID, error) {
+	// Log which cookies the request included (names only) to help debugging
+	var presentNames []string
+	for _, ck := range c.Request().Cookies() {
+		presentNames = append(presentNames, ck.Name)
+	}
+	if len(presentNames) == 0 {
+		log.Printf("getUserID: request contained no cookies")
+	} else {
+		log.Printf("getUserID: request cookie names=%v", presentNames)
+	}
+
 	// 分割されたクッキーの数を取得
 	countCookie, err := c.Cookie(fmt.Sprintf("%s_count", tokenKey))
 	if err != nil {

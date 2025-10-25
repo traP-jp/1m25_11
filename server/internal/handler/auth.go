@@ -120,6 +120,7 @@ func (h *Handler) callback(c echo.Context) error {
 		MaxAge:   -1,
 	}
 	c.SetCookie(deleteCookie)
+	log.Printf("callback: set cookie %s (Path=%s, Secure=%t, SameSite=%v, MaxAge=%d)", deleteCookie.Name, deleteCookie.Path, deleteCookie.Secure, deleteCookie.SameSite, deleteCookie.MaxAge)
 
 	var chunks []string
 	const maxCookieSize = 3500 // クッキーの最大サイズ（バイト）
@@ -145,6 +146,7 @@ func (h *Handler) callback(c echo.Context) error {
 			MaxAge:   tokenData.ExpiresIn,
 		}
 		c.SetCookie(cookie)
+		log.Printf("callback: set cookie %s (Path=%s, Secure=%t, SameSite=%v, MaxAge=%d)", cookie.Name, cookie.Path, cookie.Secure, cookie.SameSite, cookie.MaxAge)
 	}
 
 	// クッキーの総数を記録するためのクッキーも設定
@@ -158,6 +160,7 @@ func (h *Handler) callback(c echo.Context) error {
 		MaxAge:   tokenData.ExpiresIn,
 	}
 	c.SetCookie(countCookie)
+	log.Printf("callback: set cookie %s (Path=%s, Secure=%t, SameSite=%v, MaxAge=%d)", countCookie.Name, countCookie.Path, countCookie.Secure, countCookie.SameSite, countCookie.MaxAge)
 
 	log.Printf("callback: set %d token cookies (count=%s)", len(chunks), countCookie.Value)
 
