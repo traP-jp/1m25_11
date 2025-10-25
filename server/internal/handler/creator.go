@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -17,12 +18,16 @@ func (h *Handler) getUserID(c echo.Context) (uuid.UUID, error) {
 	// 分割されたクッキーの数を取得
 	countCookie, err := c.Cookie(fmt.Sprintf("%s_count", tokenKey))
 	if err != nil {
+		log.Printf("getUserID: missing count cookie: %v", err)
 		return uuid.Nil, echo.NewHTTPError(http.StatusUnauthorized, "unauthorized: no auth token").SetInternal(err)
 	}
 	count, err := strconv.Atoi(countCookie.Value)
 	if err != nil {
+		log.Printf("getUserID: failed to parse token count (%s): %v", countCookie.Value, err)
 		return uuid.Nil, echo.NewHTTPError(http.StatusBadRequest, "failed to parse token count").SetInternal(err)
 	}
+
+	log.Printf("getUserID: token count=%d", count)
 
 	// 各クッキーを読み込んで結合
 	var idTokenBuilder strings.Builder
@@ -30,11 +35,14 @@ func (h *Handler) getUserID(c echo.Context) (uuid.UUID, error) {
 		cookieName := fmt.Sprintf("%s_%d", tokenKey, i)
 		cookie, err := c.Cookie(cookieName)
 		if err != nil {
+			log.Printf("getUserID: missing token chunk %d: %v", i, err)
 			return uuid.Nil, echo.NewHTTPError(http.StatusUnauthorized, fmt.Sprintf("unauthorized: missing token part %d", i)).SetInternal(err)
 		}
 		idTokenBuilder.WriteString(cookie.Value)
 	}
 	idTokenString := idTokenBuilder.String()
+
+	log.Printf("getUserID: reconstructed id_token length=%d", len(idTokenString))
 
 	// IDトークンのペイロードをデコード
 	parts := strings.Split(idTokenString, ".")

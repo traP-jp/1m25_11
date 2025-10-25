@@ -108,6 +108,7 @@ func (h *Handler) callback(c echo.Context) error {
 
 		return c.Redirect(http.StatusFound, topPageURL)
 	}
+	log.Printf("callback: id_token verified for state=%s", state)
 	// id_token verified, proceed to set cookies and delete code verifier
 	deleteCookie := &http.Cookie{
 		Name:     h.codeVerifierKey(state),
@@ -157,6 +158,8 @@ func (h *Handler) callback(c echo.Context) error {
 		MaxAge:   tokenData.ExpiresIn,
 	}
 	c.SetCookie(countCookie)
+
+	log.Printf("callback: set %d token cookies (count=%s)", len(chunks), countCookie.Value)
 
 	return c.Redirect(http.StatusFound, topPageURL)
 }
