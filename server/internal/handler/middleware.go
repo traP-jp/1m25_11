@@ -2,9 +2,9 @@ package handler
 
 import (
 	// "context"
+	"log"
 	"net/http"
 	"strings"
-	"log"
 
 	// "github.com/coreos/go-oidc/v3/oidc"
 	"github.com/labstack/echo/v4"
@@ -25,12 +25,17 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return next(c)
 		}
 
-		log.Printf("AuthMiddleware: Checking token")
+		// Log request headers relevant to cookie/CORS to help debug missing cookies
+		req := c.Request()
+		cookieHdr := req.Header.Get("Cookie")
+		originHdr := req.Header.Get("Origin")
+		refererHdr := req.Header.Get("Referer")
+		log.Printf("AuthMiddleware: Checking token; CookieHdr='%s' Origin='%s' Referer='%s' RemoteAddr='%s'", cookieHdr, originHdr, refererHdr, c.RealIP())
+
 		_, err := h.getUserID(c)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized: Invalid token")
 		}
-		
 
 		return next(c)
 	}
