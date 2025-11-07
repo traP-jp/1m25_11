@@ -61,6 +61,7 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 	log.Println("successfully cronJobTask")
 
 	stampTotalCount := make(map[uuid.UUID]int)
+	rawCount := make(map[uuid.UUID]int)
 	allStamps, err := h.repo.GetStampSummaries(ctx)
 	if err != nil {
 		log.Printf("Error retrieving all stamps: %v", err)
@@ -90,7 +91,8 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 		defer statsResp.Body.Close()
 		if statsResp.StatusCode != http.StatusOK {
 			stampTotalCount[stamp.ID] = 0
-
+			rawCount[stamp.ID] = 0
+			log.Printf("Non-200 status code for stamp stats (%s): %d", stampID, statsResp.StatusCode)
 			continue
 		} else {
 			if err := json.NewDecoder(statsResp.Body).Decode(&statsData); err != nil {
@@ -98,12 +100,12 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 				return
 			}
 			stampTotalCount[stamp.ID] = statsData.TotalCount
-
+			rawCount[stamp.ID] = statsData.Count
 		}
 
 	}
 	log.Print("Fetched all stamp stats, starting to update database...")
-	if err := h.repo.UpdateTotalCount(ctx, stampTotalCount); err != nil {
+	if err := h.repo.UpdateCount(ctx, stampTotalCount, rawCount); err != nil {
 		log.Printf("Error updating total count for stamps: %v", err)
 		return
 	}

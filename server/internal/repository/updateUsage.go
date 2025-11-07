@@ -11,6 +11,7 @@ type (
 	StampStatus struct {
 		ID         uuid.UUID `db:"id"`
 		TotalCount int       `db:"total_count"`
+		Count      int       `db:"count"`
 	}
 )
 
@@ -19,7 +20,7 @@ func (r *Repository) updateUsage() error {
 	return nil
 }
 
-func (r *Repository) UpdateTotalCount(ctx context.Context, stampTotalCount map[uuid.UUID]int) error {
+func (r *Repository) UpdateCount(ctx context.Context, stampTotalCount map[uuid.UUID]int, rawCCount map[uuid.UUID]int) error {
 	log.Printf("Updating total counts for %d stamps", len(stampTotalCount))
 	tx, err := r.db.BeginTxx(ctx, nil)
 
