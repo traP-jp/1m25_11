@@ -17,7 +17,7 @@ func New(repo *repository.Repository) *Handler {
 }
 
 func (h *Handler) SetupRoutes(api *echo.Group) {
-	//api.Use(h.AuthMiddleware)
+	api.Use(h.AuthMiddleware)
 	{
 		stampAPI := api.Group("/stamps")
 		{
