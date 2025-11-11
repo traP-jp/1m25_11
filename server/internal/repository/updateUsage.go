@@ -2,24 +2,17 @@ package repository
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"log"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
-type (
-	StampStatus struct {
-		ID         uuid.UUID `db:"id"`
-		TotalCount int       `db:"total_count"`
+func (r *Repository) UpdateCount(ctx context.Context, stampTotalCount map[uuid.UUID]int, rawCount map[uuid.UUID]int) error {
+	if len(stampTotalCount) == 0 {
+		log.Printf("UpdateCount: No stamps to update.")
+		return nil
 	}
-)
-
-func (r *Repository) updateUsage() error {
-
-	return nil
-}
-
-func (r *Repository) UpdateTotalCount(ctx context.Context, stampTotalCount map[uuid.UUID]int) error {
 	log.Printf("Updating total counts for %d stamps", len(stampTotalCount))
 	tx, err := r.db.BeginTxx(ctx, nil)
 
@@ -35,29 +28,48 @@ func (r *Repository) UpdateTotalCount(ctx context.Context, stampTotalCount map[u
 	}()
 
 	if err != nil {
-		log.Printf("Error starting transaction: ", err)
+		log.Printf("Error starting transaction:%v ", err)
 		return err
 	}
-	var caseBuilder strings.Builder
-	args := make([]interface{}, 0, len(stampTotalCount)*2)
-	ids := make([]interface{}, 0, len(stampTotalCount))
+	var caseBuilderTotal strings.Builder
+	var caseBuilderRaw strings.Builder
+	argsTotal := make([]interface{}, 0, len(stampTotalCount)*2)
+	argsRaw := make([]interface{}, 0, len(stampTotalCount)*2)
+	idsTotal := make([]interface{}, 0, len(stampTotalCount))
+	idsRaw := make([]interface{}, 0, len(stampTotalCount))
 	for id, totalCount := range stampTotalCount {
-		caseBuilder.WriteString("WHEN ? THEN ? ")
-		args = append(args, id, totalCount)
-		ids = append(ids, id)
+		rawC, ok := rawCount[id]
+		if !ok {
+			rawC = 0
+		}
+		caseBuilderTotal.WriteString("WHEN ? THEN ? ")
+		caseBuilderRaw.WriteString("WHEN ? THEN ? ")
+		argsTotal = append(argsTotal, id, totalCount)
+		argsRaw = append(argsRaw, id, rawC)
+		idsTotal = append(idsTotal, id)
+		idsRaw = append(idsRaw, id)
 	}
-	query := `UPDATE stamps SET count_total = CASE id ` + caseBuilder.String() + `ELSE count_total END`
-	log.Print(query, args, ids)
+	queryTotal := `UPDATE stamps SET count_total = CASE id ` + caseBuilderTotal.String() + `ELSE count_total END`
+	queryRaw := `UPDATE stamps SET count = CASE id ` + caseBuilderRaw.String() + `ELSE count END`
+	log.Print(queryTotal, argsTotal, idsTotal)
+	log.Print(queryRaw, argsRaw, idsRaw)
 
-	query = r.db.Rebind(query)
+	queryTotal = r.db.Rebind(queryTotal)
+	queryRaw = r.db.Rebind(queryRaw)
 
-	_, err = tx.ExecContext(ctx, query, args...)
+	_, err = tx.ExecContext(ctx, queryTotal, argsTotal...)
 	if err != nil {
-		log.Printf("Error executing update: ", err)
+		log.Printf("Error executing update:%v ", err)
+
 		return err
 	}
+	_, err = tx.ExecContext(ctx, queryRaw, argsRaw...)
+	if err != nil {
+		log.Printf("Error executing update:%v ", err)
 
-	log.Printf("Successfully updated total counts for %d stamps", len(stampTotalCount))
+		return err
+	}
+	log.Printf("Successfully updated both counts")
 
 	return nil
 }
