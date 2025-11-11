@@ -1,62 +1,73 @@
 import json
 import re
+import os
+import tempfile
+
+
+def atomic_write(path, data):
+    # 所詮は一時的なスクリプトなのでstep2_fetch.pyからコピペしただけ
+    dirpath = os.path.dirname(path)
+    fd, tmp = tempfile.mkstemp(dir=dirpath)
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, path)
+    except Exception:
+        try:
+            os.remove(tmp)
+        except Exception:
+            pass
+        raise
+
 
 def is_url(string):
     pattern = r'^(https?|ftp)://[^\s/$.?#].[^\s]*$'
     return re.match(pattern, string) is not None
+
 
 min_content_length = 10
 max_content_length = 200
 
 with open('targeted_stamps.json', 'r', encoding='utf-8') as f:
     all_stamps = json.load(f)
-with open('traQ_data.json', 'r', encoding='utf-8') as traQ_f:
-    all_traQ_messages = json.load(traQ_f)
-with open('traQing_data.json', 'r', encoding='utf-8') as traQing_f:
-    all_traQing_messages = json.load(traQing_f)
-
-all_requests = []
+DIR_TRAQ = 'out/traQ'
+DIR_TRAQING = 'out/traQing'
+OUT_DIR_REQUESTS = 'out/requests'
+os.makedirs(OUT_DIR_REQUESTS, exist_ok=True)
 
 for stamp in all_stamps:
-    
-    traQ_message_contents = []
-    for item in all_traQ_messages:
-        if item['stamp_name'] == stamp['name']:
-            traQ_messages = item['messages']
-            traQ_message_contents = [msg['content'] for msg in traQ_messages]
-            break
-    traQ_message_contents = [
-        msg for msg in traQ_message_contents 
-        if min_content_length <= len(msg) <= max_content_length and not is_url(msg)
-    ][:5]
 
-    traQing_message_contents_and_stamps = []
-    for item in all_traQing_messages:
-        if item['stamp_name'] == stamp['name']:
-            traQing_messages = item['messages']
-            for msg in traQing_messages:
-                content = msg['content']
-                stamp_names = []
-                for message_stamp in msg['stamps']:
-                    stamp_name = next((s['name'] for s in all_stamps if s['id'] == message_stamp['stampId']), None)
-                    stamp_names.append(stamp_name)
-                traQing_message_contents_and_stamps.append({"content": content, "stamps": stamp_names})
-            break
+    stamp_id = stamp['id']
+    traq_path = os.path.join(DIR_TRAQ, f"{stamp_id}.json")
+    traqing_path = os.path.join(DIR_TRAQING, f"{stamp_id}.json")
+    with open(traq_path, 'r', encoding='utf-8') as f_traq:
+        traQ_data = json.load(f_traq)
+    traQ_message_contents = [
+        msg['content'] for msg in traQ_data['messages']
+        if min_content_length <= len(msg['content']) <= max_content_length and not is_url(msg['content'])
+    ][:10]
+
+    with open(traqing_path, 'r', encoding='utf-8') as f_traqing:
+        traQing_data = json.load(f_traqing)
     traQing_message_contents_and_stamps = [
-        msg for msg in traQing_message_contents_and_stamps 
-        if min_content_length <= len(msg["content"]) <= max_content_length
-    ][:5]
+        {
+            "content": msg['content'],
+            "stamps": msg['stamps']
+        }
+        for msg in traQing_data['messages']
+        if min_content_length <= len(msg['content']) <= max_content_length and not is_url(msg['content'])
+    ][:10]
 
     request = {
-    "model": "gpt-5-nano",
-    "messages": [
-        {
-            "role": "system",
-            "content": "あなたは日本語で簡潔かつ客観的に記述するコンテンツ生成エンジンです。与えられた絵文字の画像と使用例（本文・リアクション）から、その絵文字の**概要・見た目・主な用法**を抽出し、「説明文」（約200字）と「キーワード」（検索用語の集合）を生成します。事実不明な細部は断定せず、汎用的で再利用可能な表現を優先します。"
-        },
-        {
-            "role": "developer",
-            "content": """出力は**厳密なJSONのみ**（余計な文言・改行・コードフェンス禁止）。
+        "model": "gpt-5-nano",
+        "messages": [
+            {
+                "role": "system",
+                "content": "あなたは日本語で簡潔かつ客観的に記述するコンテンツ生成エンジンです。与えられた絵文字の画像と使用例（本文・リアクション）から、その絵文字の**概要・見た目・主な用法**を抽出し、「説明文」（約200字）と「キーワード」（検索用語の集合）を生成します。事実不明な細部は断定せず、汎用的で再利用可能な表現を優先します。"
+            },
+            {
+                "role": "developer",
+                "content": """出力は**厳密なJSONのみ**（余計な文言・改行・コードフェンス禁止）。
 フォーマット:
 ```json
 {"description":"…約200字の日本語…","keywords":["…","…"]}
@@ -80,13 +91,13 @@ for stamp in all_stamps:
 4. キーワードを収集→正規化（小文字化/全半角統一）→重複除去→関連度順に並べ替え。
 * 品質チェック（出力直前）:
 * 文字数範囲OK / JSON妥当 / キーワード重複なし / 断定のしすぎがないか。"""
-        },
-        {
-            "role": "user",
-            "content": [
-                {
-                    "type": "text",
-                    "text": f"""次の入力をもとに**JSONのみ**を出力してください。
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": f"""次の入力をもとに**JSONのみ**を出力してください。
 
 ## 入力
 * 絵文字の名前: `{stamp['name']}`
@@ -113,18 +124,18 @@ for stamp in all_stamps:
 * 投稿は**参考**です。用途はこれらに**限定しない**でください。
 * 画像に描かれた**文字・図柄は最重要手がかり**として反映してください。
 * 出力は次のキーのみ: `description`, `keywords`。**追加キー禁止**。"""
-                },
-                {
-                    "type": "image_url",
-                    "image_url": { "url": f"https://q.trap.jp/api/1.0/public/emoji/{stamp['id']}" },
-                }
-            ],
-        }
-    ],
-    "stream": False,
-    "reasoning": { "effort": "low" },
-    "response_format": { "type": "json_object" },
-    "max_tokens": 2000
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": f"https://q.trap.jp/api/1.0/public/emoji/{stamp['id']}"},
+                    }
+                ],
+            }
+        ],
+        "stream": False,
+        "reasoning": {"effort": "low"},
+        "response_format": {"type": "json_object"},
+        "max_tokens": 2000
     }
     request_formatted = {
         "custom_id": stamp['id'],
@@ -133,9 +144,5 @@ for stamp in all_stamps:
         "body": request
     }
 
-    all_requests.append(request_formatted)
-
-with open('requests.jsonl', 'w', encoding='utf-8') as f:
-    for req in all_requests:
-        json.dump(req, f, ensure_ascii=False)
-        f.write('\n')
+    with open(os.path.join(OUT_DIR_REQUESTS, f"{stamp_id}.json"), 'w', encoding='utf-8') as f_request:
+        json.dump(request_formatted, f_request, ensure_ascii=False, indent=2)
