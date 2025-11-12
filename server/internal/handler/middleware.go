@@ -44,6 +44,7 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		return next(c)
 	}
 }
+
 func getToken(c echo.Context) string {
 	cookieToken, err := c.Cookie(tokenKey)
 	if err == nil && cookieToken != nil {

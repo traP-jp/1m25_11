@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/traP-jp/1m25_11/server/internal/repository"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/google/uuid"
+	"github.com/traP-jp/1m25_11/server/internal/repository"
 )
 
 func (h *Handler) Test(ctx context.Context) {
@@ -115,6 +116,4 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 		return
 	}
 	log.Println("Successfully updated total counts for all stamps")
-
-	return
 }

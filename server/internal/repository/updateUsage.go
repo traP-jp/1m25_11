@@ -36,7 +36,7 @@ func (r *Repository) UpdateTotalCount(ctx context.Context, stampTotalCount map[u
 	}()
 
 	if err != nil {
-		log.Printf("Error starting transaction: ", err)
+		log.Printf("Error starting transaction: %v", err)
 
 		return err
 	}
@@ -55,7 +55,7 @@ func (r *Repository) UpdateTotalCount(ctx context.Context, stampTotalCount map[u
 
 	_, err = tx.ExecContext(ctx, query, args...)
 	if err != nil {
-		log.Printf("Error executing update: ", err)
+		log.Printf("Error executing update: %v", err)
 
 		return err
 	}

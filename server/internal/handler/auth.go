@@ -22,7 +22,8 @@ import (
 )
 
 var requestURL = "https://q.trap.jp/api/v3/oauth2/authorize"
-var tokenURL = "https://q.trap.jp/api/v3/oauth2/token"
+
+// var tokenURL = "https://q.trap.jp/api/v3/oauth2/token"
 var tokenKey = "traq-auth-token"
 
 type TokenData struct {
@@ -103,12 +104,32 @@ func (h *Handler) callback(c echo.Context) error {
 		return c.Redirect(http.StatusFound, topPageURL)
 	}
 	verifier := provider.Verifier(&oidc.Config{ClientID: clientID})
-	if _, err := verifier.Verify(ctx, idToken); err != nil {
+	idTokenObj, err := verifier.Verify(ctx, idToken)
+	if err != nil {
 		log.Printf("id_token verification failed: %v", err)
 
 		return c.Redirect(http.StatusFound, topPageURL)
 	}
-	log.Printf("callback: id_token verified for state=%s", state)
+
+	// IDトークンからクレームを抽出して基本的な検証を実施
+	var claims struct {
+		Sub string `json:"sub"`
+		Iat int64  `json:"iat"`
+	}
+	if err := idTokenObj.Claims(&claims); err != nil {
+		log.Printf("failed to extract claims from id_token: %v", err)
+
+		return c.Redirect(http.StatusFound, topPageURL)
+	}
+
+	// subクレーム（ユーザーID）が存在することを確認
+	if claims.Sub == "" {
+		log.Printf("id_token missing required 'sub' claim")
+
+		return c.Redirect(http.StatusFound, topPageURL)
+	}
+
+	log.Printf("callback: id_token verified for state=%s, sub=%s", state, claims.Sub)
 	// id_tokenの検証が完了したので、Cookieを設定してcode_verifierを削除
 	deleteCookie := &http.Cookie{
 		Name:     h.codeVerifierKey(state),
@@ -167,7 +188,7 @@ func (h *Handler) callback(c echo.Context) error {
 	return c.Redirect(http.StatusFound, topPageURL)
 }
 
-func (h *Handler) getTraqAuthCode(c echo.Context) (string, string, string, error) {
+func (h *Handler) getTraqAuthCode(_ echo.Context) (string, string, string, error) {
 	state, err := h.randomString(10)
 	if err != nil {
 		return "", "", "", err
