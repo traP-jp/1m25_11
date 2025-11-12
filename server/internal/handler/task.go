@@ -64,6 +64,7 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 	allStamps, err := h.repo.GetStampSummaries(ctx)
 	if err != nil {
 		log.Printf("Error retrieving all stamps: %v", err)
+
 		return
 	}
 	log.Print("Retrieved all stamps, starting to fetch stats...")
@@ -79,6 +80,7 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 		statsReq, err := http.NewRequestWithContext(ctx, "GET", statsURL, nil)
 		if err != nil {
 			log.Printf("Error creating request for stamp stats (%s): %v", stampID, err)
+
 			return
 		}
 		statsReq.Header.Set("accept", "application/json")
@@ -87,6 +89,7 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 		statsResp, err := client.Do(statsReq)
 		if err != nil {
 			log.Printf("Error sending request for stamp stats (%s): %v", stampID, err)
+
 			return
 		}
 		defer statsResp.Body.Close()
@@ -97,6 +100,7 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 		} else {
 			if err := json.NewDecoder(statsResp.Body).Decode(&statsData); err != nil {
 				log.Printf("Error decoding stats response for stamp (%s): %v", stampID, err)
+
 				return
 			}
 			stampTotalCount[stamp.ID] = statsData.TotalCount
@@ -107,8 +111,10 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 	log.Print("Fetched all stamp stats, starting to update database...")
 	if err := h.repo.UpdateTotalCount(ctx, stampTotalCount); err != nil {
 		log.Printf("Error updating total count for stamps: %v", err)
+
 		return
 	}
 	log.Println("Successfully updated total counts for all stamps")
+
 	return
 }

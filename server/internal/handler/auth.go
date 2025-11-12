@@ -74,7 +74,7 @@ func (h *Handler) callback(c echo.Context) error {
 	}
 	defer tokenRes.Body.Close()
 
-	// Check HTTP status code from token endpoint
+	// トークンエンドポイントからのHTTPステータスコードを確認
 	if tokenRes.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(tokenRes.Body)
 		log.Printf("token endpoint returned status %d: %s", tokenRes.StatusCode, string(body))
@@ -88,7 +88,7 @@ func (h *Handler) callback(c echo.Context) error {
 
 		return c.Redirect(http.StatusFound, topPageURL)
 	}
-	// Verify ID token signature and claims using OIDC provider
+	// OIDCプロバイダーを使用してIDトークンの署名と要求を検証
 	idToken := tokenData.IDToken
 	if idToken == "" {
 		log.Printf("no id_token in token response")
@@ -109,7 +109,7 @@ func (h *Handler) callback(c echo.Context) error {
 		return c.Redirect(http.StatusFound, topPageURL)
 	}
 	log.Printf("callback: id_token verified for state=%s", state)
-	// id_token verified, proceed to set cookies and delete code verifier
+	// id_tokenの検証が完了したので、Cookieを設定してcode_verifierを削除
 	deleteCookie := &http.Cookie{
 		Name:     h.codeVerifierKey(state),
 		Secure:   config.GetCookieSecure(),

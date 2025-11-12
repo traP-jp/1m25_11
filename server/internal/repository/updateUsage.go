@@ -2,9 +2,10 @@ package repository
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"log"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 type (
@@ -36,6 +37,7 @@ func (r *Repository) UpdateTotalCount(ctx context.Context, stampTotalCount map[u
 
 	if err != nil {
 		log.Printf("Error starting transaction: ", err)
+
 		return err
 	}
 	var caseBuilder strings.Builder
@@ -54,6 +56,7 @@ func (r *Repository) UpdateTotalCount(ctx context.Context, stampTotalCount map[u
 	_, err = tx.ExecContext(ctx, query, args...)
 	if err != nil {
 		log.Printf("Error executing update: ", err)
+
 		return err
 	}
 

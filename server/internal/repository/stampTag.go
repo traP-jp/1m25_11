@@ -15,7 +15,7 @@ type (
 	}
 	StampTagSummary struct {
 		Stamp StampSummary `db:"stamp"`
-		Tag   TagSummary	`db:"tag"`
+		Tag   TagSummary   `db:"tag"`
 	}
 )
 

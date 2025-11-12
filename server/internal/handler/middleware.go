@@ -25,12 +25,16 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return next(c)
 		}
 
-		// Log request headers relevant to cookie/CORS to help debug missing cookies
+		// Cookie/CORSに関連するリクエストヘッダーをログに記録してデバッグを支援
+		// Cookie名のみをログに記録
 		req := c.Request()
-		cookieHdr := req.Header.Get("Cookie")
+		cookieNames := []string{}
+		for _, cookie := range req.Cookies() {
+			cookieNames = append(cookieNames, cookie.Name)
+		}
 		originHdr := req.Header.Get("Origin")
 		refererHdr := req.Header.Get("Referer")
-		log.Printf("AuthMiddleware: Checking token; CookieHdr='%s' Origin='%s' Referer='%s' RemoteAddr='%s'", cookieHdr, originHdr, refererHdr, c.RealIP())
+		log.Printf("AuthMiddleware: Checking token; CookieNames=%v Origin='%s' Referer='%s' RemoteAddr='%s'", cookieNames, originHdr, refererHdr, c.RealIP())
 
 		_, err := h.getUserID(c)
 		if err != nil {
