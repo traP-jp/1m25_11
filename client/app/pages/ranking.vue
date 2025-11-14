@@ -115,7 +115,6 @@
           variant="pill"
           class="w-full"
         >
-          >
           <!-- 総合ランキング -->
           <template #total_count>
             <UTable
