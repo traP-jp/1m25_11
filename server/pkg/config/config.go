@@ -41,9 +41,8 @@ func MySQL() *mysql.Config {
 	return c
 }
 
-// AllowedOrigins returns the list of CORS allowed origins.
-// Comma separated in ALLOWED_ORIGINS environment variable.
-// Defaults cover production & local development frontends.
+// AllowedOrigins はCORSで許可されるオリジンのリストを返す
+// ALLOWED_ORIGINS環境変数でカンマ区切りで指定
 func AllowedOrigins() []string {
 	raw := getEnv("ALLOWED_ORIGINS", "https://stampedia.trap.show,https://1m25-11.trap.show,http://localhost:3000")
 	parts := strings.Split(raw, ",")
@@ -59,20 +58,15 @@ func AllowedOrigins() []string {
 	return origins
 }
 
-// IsDevelopment determines if the application is running in development mode
-// by checking if localhost is present in ALLOWED_ORIGINS
+// 環境変数APP_ENVを確認して、開発モードで実行されているかを IsDevelopment に
 func IsDevelopment() bool {
-	origins := AllowedOrigins()
-	for _, origin := range origins {
-		if strings.Contains(origin, "localhost") {
-			return true
-		}
-	}
+	// APP_ENV変数で明示的に環境を判定。デフォルトは "development"
+	env := getEnv("APP_ENV", "development")
 
-	return false
+	return env == "development"
 }
 
-// GetCookieSameSite returns the appropriate SameSite setting based on environment
+// GetCookieSameSite は環境に基づいて適切なSameSite設定を返す
 func GetCookieSameSite() http.SameSite {
 	if IsDevelopment() {
 		return http.SameSiteLaxMode
@@ -81,7 +75,7 @@ func GetCookieSameSite() http.SameSite {
 	return http.SameSiteNoneMode
 }
 
-// GetCookieSecure returns the appropriate Secure setting based on environment
+// GetCookieSecure は環境に基づいて適切なSecure設定を返す
 func GetCookieSecure() bool {
 	// 開発環境ではHTTPも許可、本番環境ではHTTPS必須
 	return !IsDevelopment()

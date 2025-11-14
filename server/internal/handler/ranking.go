@@ -20,5 +20,14 @@ func (h *Handler) getRanking(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
-	return c.JSON(http.StatusOK, rankingResults)
+	res := make([]rankingResponse, len(rankingResults))
+	for i, r := range rankingResults {
+		res[i] = rankingResponse{
+			StampID:      r.StampID,
+			MonthlyCount: r.MonthlyCount,
+			TotalCount:   r.TotalCount,
+		}
+	}
+
+	return c.JSON(http.StatusOK, res)
 }
