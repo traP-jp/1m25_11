@@ -1,0 +1,4 @@
+*.json
+*.jsonl
+*.csv
+/production/top100/temp/*
