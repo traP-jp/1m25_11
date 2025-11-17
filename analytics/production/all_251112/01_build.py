@@ -96,24 +96,33 @@ def is_usable_message(message):
     return contains_japanese(message['content']) and min_length <= len(message['content']) and len(message['content']) <= max_length
 
 # メッセージの整形
-def format_message(message):
+def format_message(message, stamp_name):
     # message: { "id", "userId", "channelId", "content", "createdAt", "updatedAt", "pinned", "stamps", "threadId" }
     # message: { "name": str, "stamps": [str], }
     res = {}
     res["content"] = message['content']
-    res["stamps"] = list(dict.fromkeys(
+    stamps_list = list(dict.fromkeys(
         all_stamps_dict[item["stampId"]]
-        for item in message['stamps']
-        if item["stampId"] in all_stamps_dict
+        for item in message.get('stamps', [])
+        if item.get("stampId") in all_stamps_dict
     ))
+
+    # 10件を超える場合は制限するが、stamp_name は末尾に残す
+    if len(stamps_list) > 10:
+        if stamp_name and stamp_name in stamps_list:
+            others = [s for s in stamps_list if s != stamp_name]
+            stamps_list = others[:9] + [stamp_name]
+        else:
+            stamps_list = stamps_list[:10]
+    res["stamps"] = stamps_list
     return res
 
 # メッセージの配列の処理
-def format_messages(messages):
+def format_messages(messages, stamp_name):
     res = []
     for message in messages:
         if is_usable_message(message):
-            res.append(format_message(message))
+            res.append(format_message(message, stamp_name))
     return res[:5]
 
 ##### main
@@ -196,8 +205,8 @@ inputs = []
 
 for stamp in stamps:
     try:
-        traQ_content = format_messages(all_traQ_messages_dict.get(stamp['id'], []))
-        traQing_content = format_messages(all_traQing_messages_dict.get(stamp['id'], []))
+        traQ_content = format_messages(all_traQ_messages_dict.get(stamp['id'], []), stamp["name"])
+        traQing_content = format_messages(all_traQing_messages_dict.get(stamp['id'], []), stamp["name"])
         inputs.append({
             "id": stamp['id'],
             "prompt": createPrompt(stamp, str(traQ_content), str(traQing_content))
