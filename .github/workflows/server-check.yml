@@ -23,7 +23,7 @@ jobs:
       run:
         working-directory: server
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
         with:
           go-version-file: ./server/go.mod
@@ -39,7 +39,7 @@ jobs:
     steps:
       # リポジトリからソースコードを取得
       - name: Checkout Repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -63,7 +63,7 @@ jobs:
   #     run:
   #       working-directory: server
   #   steps:
-  #     - uses: actions/checkout@v5
+  #     - uses: actions/checkout@v6
   #     - uses: actions/setup-go@v6
   #       with:
   #         go-version-file: ./server/go.mod
@@ -79,7 +79,7 @@ jobs:
   #     run:
   #       working-directory: server
   #   steps:
-  #     - uses: actions/checkout@v5
+  #     - uses: actions/checkout@v6
   #     - uses: actions/setup-go@v6
   #       with:
   #         go-version-file: ./server/go.mod
@@ -102,7 +102,7 @@ jobs:
       - name: Dependabot metadata
         uses: dependabot/fetch-metadata@v2
         id: metadata
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Enable automerge
         if: |
           steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
