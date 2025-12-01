@@ -3,7 +3,7 @@ module github.com/traP-jp/1m25_11/server
 go 1.24.2
 
 require (
-	github.com/coreos/go-oidc/v3 v3.16.0
+	github.com/coreos/go-oidc/v3 v3.17.0
 	github.com/go-co-op/gocron/v2 v2.18.2
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/google/uuid v1.6.0
