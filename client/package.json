@@ -13,7 +13,7 @@
     "generate:openapi": "openapi-typescript ../api/swagger.yml -o shared/types/generated.d.ts"
   },
   "dependencies": {
-    "@iconify-json/material-symbols": "^1.2.40",
+    "@iconify-json/material-symbols": "^1.2.50",
     "@internationalized/date": "^3.9.0",
     "@nuxt/eslint": "^1.9.0",
     "@nuxt/image": "^1.11.0",
