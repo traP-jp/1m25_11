@@ -10,6 +10,10 @@ import (
 	"net/http"
 	"os"
 )
+type StampStatus struct {  
+    TotalCount int `json:"totalCount"`  
+    Count      int `json:"count"`  
+}  
 
 func (h *Handler) Test(ctx context.Context) {
 	log.Println("Starting test")
@@ -70,7 +74,7 @@ func (h *Handler) CronJobTask(ctx context.Context) {
 	log.Print("Retrieved all stamps, starting to fetch stats...")
 	for _, stamp := range allStamps {
 
-		var statsData repository.StampStatus
+		var statsData StampStatus
 
 		stampID := stamp.ID
 		statsURL := fmt.Sprintf("https://q.trap.jp/api/v3/stamps/%s/stats", stampID)

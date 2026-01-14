@@ -51,8 +51,7 @@ func (r *Repository) UpdateCount(ctx context.Context, stampTotalCount map[uuid.U
 	}
 	queryTotal := `UPDATE stamps SET count_total = CASE id ` + caseBuilderTotal.String() + `ELSE count_total END`
 	queryRaw := `UPDATE stamps SET count = CASE id ` + caseBuilderRaw.String() + `ELSE count END`
-	log.Print(queryTotal, argsTotal, idsTotal)
-	log.Print(queryRaw, argsRaw, idsRaw)
+	
 
 	queryTotal = r.db.Rebind(queryTotal)
 	queryRaw = r.db.Rebind(queryRaw)
