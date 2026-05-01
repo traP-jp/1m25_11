@@ -4,7 +4,7 @@ go 1.25.7
 
 require (
 	github.com/coreos/go-oidc/v3 v3.18.0
-	github.com/go-co-op/gocron/v2 v2.19.1
+	github.com/go-co-op/gocron/v2 v2.21.1
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/google/uuid v1.6.0
 	github.com/jmoiron/sqlx v1.4.0
