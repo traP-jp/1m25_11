@@ -17,6 +17,7 @@ type searchStampsParams struct {
 	Name               *string  `query:"name"`
 	Tag                []string `query:"tag"`
 	Description        *string  `query:"description"`
+	Creator            *string   `query:"creator"`
 	CreatedSince       *string  `query:"created_since"`
 	CreatedUntil       *string  `query:"created_until"`
 	UpdatedSince       *string  `query:"updated_since"`
@@ -58,6 +59,10 @@ func (h *Handler) SearchStamps(c echo.Context) error {
 	repoParams.Tags = params.Tag
 	if params.Description != nil {
 		repoParams.Description = *params.Description
+	}
+
+	if params.Creator != nil {
+		repoParams.Creator = *params.Creator
 	}
 
 	const layout = "2006-01-02"
