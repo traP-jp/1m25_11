@@ -53,10 +53,19 @@ func main() {
 		gocron.CronJob("0 19 * * *", false),
 		gocron.NewTask(s.Handler.CronJobTask, context.Background()),
 	)
-
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// UserCacheを毎日午前3時に更新
+	_, err = ss.NewJob(
+		gocron.CronJob("0 3 * * *", false),
+		gocron.NewTask(s.Handler.RefreshUserCache),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	ss.Start()
 
 	e.Logger.Fatal(e.Start(config.AppAddr()))

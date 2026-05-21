@@ -829,47 +829,6 @@ paths:
         "404":
           description: タグが見つからない
 
-  /login:
-    get:
-      tags:
-        - User
-      summary: traQ OAuth2.0ログイン開始
-      description: traQのOAuth2.0認証を開始するためのリダイレクトURLを取得します。
-      responses:
-        "302":
-          description: traQの認証ページへリダイレクト
-        "500":
-          description: サーバーエラー
-
-  /callback:
-    get:
-      tags:
-        - User
-      summary: OAuth2.0コールバック処理
-      description: traQからのOAuth2.0コールバックを処理し、認証を完了します。
-      parameters:
-        - name: code
-          in: query
-          required: true
-          description: traQから返される認証コード
-          schema:
-            type: string
-        - name: state
-          in: query
-          required: true
-          description: CSRF攻撃を防ぐためのstate パラメータ
-          schema:
-            type: string
-      responses:
-        "302":
-          description: 認証成功後のリダイレクト
-        "400":
-          description: リクエストが不正
-        "401":
-          description: 認証エラー
-        "500":
-          description: サーバーエラー
-
   /me:
     get:
       tags:

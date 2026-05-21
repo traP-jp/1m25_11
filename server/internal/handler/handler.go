@@ -6,14 +6,15 @@ import (
 )
 
 type Handler struct {
-	repo *repository.Repository
+	repo      *repository.Repository
+	userCache *UserCache
 }
 
-func New(repo *repository.Repository) *Handler {
+func New(repo *repository.Repository, userCache *UserCache) *Handler {
 	return &Handler{
-		repo: repo,
+		repo:      repo,
+		userCache: userCache,
 	}
-
 }
 
 func (h *Handler) SetupRoutes(api *echo.Group) {
@@ -55,15 +56,6 @@ func (h *Handler) SetupRoutes(api *echo.Group) {
 		{
 			bulkAPI.POST("/tags", h.BulkCreateTags)
 			bulkAPI.POST("/stamps-meta", h.BulkAddStampMeta)
-		}
-
-		loginAPI := api.Group("/login")
-		{
-			loginAPI.GET("", h.login)
-		}
-		callbackAPI := api.Group("/callback")
-		{
-			callbackAPI.GET("", h.callback)
 		}
 	}
 
