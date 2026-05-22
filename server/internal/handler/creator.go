@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -57,7 +58,7 @@ func (uc *UserCache) Refresh(botToken string) error {
 	newMap := make(map[string]uuid.UUID, len(users))
 	for _, u := range users {
 		if !u.Bot {
-			newMap[u.Name] = u.ID
+			newMap[strings.ToLower(u.Name)] = u.ID
 		}
 	}
 
@@ -104,9 +105,9 @@ func (h *Handler) RefreshUserCache() {
 // 本番: X-Forwarded-User ヘッダー（NeoShowcase が付与）を使用。
 // 開発: APP_ENV=development のとき DEV_USER 環境変数にフォールバック。
 func (h *Handler) getUserID(c echo.Context) (uuid.UUID, error) {
-	traqID := c.Request().Header.Get("X-Forwarded-User")
+	traqID := strings.ToLower(c.Request().Header.Get("X-Forwarded-User"))
 	if traqID == "" && config.IsDevelopment() {
-		traqID = os.Getenv("DEV_USER")
+		traqID = strings.ToLower(os.Getenv("DEV_USER"))
 	}
 	if traqID == "" {
 		return uuid.Nil, echo.NewHTTPError(http.StatusUnauthorized, "unauthorized")

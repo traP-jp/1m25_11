@@ -27,10 +27,10 @@ func checkEnv() {
 	}
 
 	appEnv := os.Getenv("APP_ENV")
-	switch {
-	case appEnv == "production":
+	switch appEnv {
+	case "production":
 		log.Println("[OK]   APP_ENV=production")
-	case appEnv == "":
+	case "":
 		log.Println("[WARN] APP_ENV: 未設定（development として動作、DEV_USER フォールバックが有効）")
 	default:
 		log.Printf("[WARN] APP_ENV=%s（DEV_USER フォールバックが有効）", appEnv)

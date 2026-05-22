@@ -6,6 +6,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
   user.value = userData ?? null;
 
   if (!user.value) {
-    window.location.href = `/_oauth/login?redirect=${encodeURIComponent(to.fullPath)}`;
+    return navigateTo(`/_oauth/login?redirect=${encodeURIComponent(to.fullPath)}`, { external: true });
   }
 });
