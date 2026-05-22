@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/traP-jp/1m25_11/server/pkg/config"
 )
 
 const userIDContextKey = "userID"
@@ -28,7 +27,7 @@ func (h *Handler) ProxySecretMiddleware(next echo.HandlerFunc) echo.HandlerFunc 
 	return func(c echo.Context) error {
 		secret := os.Getenv("PROXY_SECRET")
 		if secret == "" {
-			if !config.IsDevelopment() {
+			if os.Getenv("APP_ENV") != "development" {
 				return echo.NewHTTPError(http.StatusForbidden, "forbidden")
 			}
 
