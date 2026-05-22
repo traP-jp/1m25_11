@@ -75,9 +75,9 @@ func (h *Handler) createTags(c echo.Context) error {
 			Message: "Invalid request body.",
 		})
 	}
-	creatorID, err := h.getUserID(c)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
+	creatorID, ok := c.Get(userIDContextKey).(uuid.UUID)
+	if !ok {
+		return echo.NewHTTPError(http.StatusInternalServerError, "internal server error")
 	}
 
 	newTag, err := h.repo.CreateTags(c.Request().Context(), repository.CreateTagParams{

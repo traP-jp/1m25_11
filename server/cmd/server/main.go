@@ -30,18 +30,17 @@ func checkEnv() {
 	switch appEnv {
 	case "production":
 		log.Println("[OK]   APP_ENV=production")
-	case "":
-		log.Println("[WARN] APP_ENV: 未設定（development として動作、DEV_USER フォールバックが有効）")
+	case "development", "":
+		log.Println("[WARN] APP_ENV: development（DEV_USER フォールバックが有効）")
 	default:
-		log.Printf("[WARN] APP_ENV=%s（DEV_USER フォールバックが有効）", appEnv)
+		log.Fatalf("[FAIL] APP_ENV=%q は不正な値です（\"production\" または \"development\" を設定してください）", appEnv)
 	}
 
 	if os.Getenv("PROXY_SECRET") == "" {
 		if appEnv == "production" {
 			log.Fatal("[FAIL] PROXY_SECRET: 本番環境では必須")
-		} else {
-			log.Println("[WARN] PROXY_SECRET: 未設定（本番では必須）")
 		}
+		log.Println("[WARN] PROXY_SECRET: 未設定（本番では必須）")
 	} else {
 		log.Println("[OK]   PROXY_SECRET")
 	}
