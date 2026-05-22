@@ -114,6 +114,11 @@ func (h *Handler) getUserID(c echo.Context) (uuid.UUID, error) {
 
 	id, ok := h.userCache.GetUUID(traqID)
 	if !ok {
+		if h.userCache.Size() == 0 {
+			log.Printf("getUserID: user cache is empty, possible misconfiguration (traqID=%q)", traqID)
+
+			return uuid.Nil, echo.NewHTTPError(http.StatusServiceUnavailable, "user cache not initialized")
+		}
 		log.Printf("getUserID: unknown traQ ID %q (cache size=%d)", traqID, h.userCache.Size())
 
 		return uuid.Nil, echo.NewHTTPError(http.StatusUnauthorized, "user not found in cache")

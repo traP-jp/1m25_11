@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 
 	"github.com/go-co-op/gocron/v2"
 	"github.com/labstack/echo/v4"
@@ -12,7 +13,43 @@ import (
 	"github.com/traP-jp/1m25_11/server/pkg/database"
 )
 
+func checkEnv() {
+	isDev := config.IsDevelopment()
+
+	if os.Getenv("BOT_TOKEN_KEY") == "" {
+		if isDev {
+			log.Println("[WARN] BOT_TOKEN_KEY: 未設定（UserCache が空になる）")
+		} else {
+			log.Fatal("[FAIL] BOT_TOKEN_KEY: 本番環境では必須")
+		}
+	} else {
+		log.Println("[OK]   BOT_TOKEN_KEY")
+	}
+
+	appEnv := os.Getenv("APP_ENV")
+	switch {
+	case appEnv == "production":
+		log.Println("[OK]   APP_ENV=production")
+	case appEnv == "":
+		log.Println("[WARN] APP_ENV: 未設定（development として動作、DEV_USER フォールバックが有効）")
+	default:
+		log.Printf("[WARN] APP_ENV=%s（DEV_USER フォールバックが有効）", appEnv)
+	}
+
+	if appEnv == "production" && os.Getenv("DEV_USER") != "" {
+		log.Println("[WARN] DEV_USER: production では無効だが設定されている")
+	}
+
+	if os.Getenv("ALLOWED_ORIGINS") == "" {
+		log.Println("[WARN] ALLOWED_ORIGINS: 未設定（デフォルト値を使用）")
+	} else {
+		log.Println("[OK]   ALLOWED_ORIGINS")
+	}
+}
+
 func main() {
+	checkEnv()
+
 	e := echo.New()
 
 	// middlewares

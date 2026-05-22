@@ -18,45 +18,34 @@ func New(repo *repository.Repository, userCache *UserCache) *Handler {
 }
 
 func (h *Handler) SetupRoutes(api *echo.Group) {
-	api.Use(h.AuthMiddleware)
-	{
-		stampAPI := api.Group("/stamps")
-		{
-			stampAPI.GET("/search", h.SearchStamps)
-			stampAPI.GET("/ranking", h.getRanking)
-			stampAPI.GET("", h.getStamps)
-			stampAPI.GET("/:stampId", h.getDetails)
-			stampAPI.POST("/:stampId/tags/:tagId", h.createStampTags)
-			stampAPI.DELETE("/:stampId/tags/:tagId", h.deleteStampTags)
-			stampAPI.GET("/:stampId/descriptions", h.getDescriptions)
-			stampAPI.POST("/:stampId/descriptions", h.createDescriptions)
-			stampAPI.PUT("/:stampId/descriptions", h.updateDescriptions)
-			stampAPI.DELETE("/:stampId/descriptions", h.deleteDescriptions)
-		}
+	// /bulk は認証不要（Bot による一括インポート用）
+	bulkAPI := api.Group("/bulk")
+	bulkAPI.POST("/tags", h.BulkCreateTags)
+	bulkAPI.POST("/stamps-meta", h.BulkAddStampMeta)
 
-		tagAPI := api.Group("/tags")
-		{
-			tagAPI.GET("", h.getTags)
-			tagAPI.POST("", h.createTags)
-			tagAPI.GET("/:tagId", h.getTagDetails)
-			tagAPI.PUT("/:tagId", h.updateTags)
-			tagAPI.DELETE("/:tagId", h.deleteTags)
-			tagAPI.GET("/:tagId/stamps", h.getStampsByTag)
-		}
-		creatorAPI := api.Group("/me")
-		{
-			creatorAPI.GET("", h.GetUser)
-		}
-		userAPI := api.Group("/users-list")
-		{
-			userAPI.GET("", h.getUsersList)
-		}
+	protected := api.Group("")
+	protected.Use(h.AuthMiddleware)
 
-		bulkAPI := api.Group("/bulk")
-		{
-			bulkAPI.POST("/tags", h.BulkCreateTags)
-			bulkAPI.POST("/stamps-meta", h.BulkAddStampMeta)
-		}
-	}
+	stampAPI := protected.Group("/stamps")
+	stampAPI.GET("/search", h.SearchStamps)
+	stampAPI.GET("/ranking", h.getRanking)
+	stampAPI.GET("", h.getStamps)
+	stampAPI.GET("/:stampId", h.getDetails)
+	stampAPI.POST("/:stampId/tags/:tagId", h.createStampTags)
+	stampAPI.DELETE("/:stampId/tags/:tagId", h.deleteStampTags)
+	stampAPI.GET("/:stampId/descriptions", h.getDescriptions)
+	stampAPI.POST("/:stampId/descriptions", h.createDescriptions)
+	stampAPI.PUT("/:stampId/descriptions", h.updateDescriptions)
+	stampAPI.DELETE("/:stampId/descriptions", h.deleteDescriptions)
 
+	tagAPI := protected.Group("/tags")
+	tagAPI.GET("", h.getTags)
+	tagAPI.POST("", h.createTags)
+	tagAPI.GET("/:tagId", h.getTagDetails)
+	tagAPI.PUT("/:tagId", h.updateTags)
+	tagAPI.DELETE("/:tagId", h.deleteTags)
+	tagAPI.GET("/:tagId/stamps", h.getStampsByTag)
+
+	protected.GET("/me", h.GetUser)
+	protected.GET("/users-list", h.getUsersList)
 }
