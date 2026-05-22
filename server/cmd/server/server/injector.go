@@ -21,9 +21,7 @@ func Inject(db *sqlx.DB) *Server {
 	cache := &handler.UserCache{}
 	botToken := os.Getenv("BOT_TOKEN_KEY")
 	if botToken == "" {
-		if config.IsDevelopment() {
-			log.Println("UserCache: BOT_TOKEN_KEY not set, cache will be empty")
-		} else {
+		if !config.IsDevelopment() {
 			log.Fatal("UserCache: BOT_TOKEN_KEY is required in production")
 		}
 	} else if err := cache.Refresh(botToken); err != nil {

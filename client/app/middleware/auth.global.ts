@@ -6,9 +6,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
   user.value = userData ?? null;
 
   if (!user.value) {
-    if (import.meta.server) {
-      return;
-    }
     window.location.href = `/_oauth/login?redirect=${encodeURIComponent(to.fullPath)}`;
   }
 });
