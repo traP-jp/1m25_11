@@ -14,6 +14,18 @@ import (
 )
 
 func checkEnv() {
+	appEnv := os.Getenv("APP_ENV")
+	switch appEnv {
+	case "production":
+		log.Println("[OK]   APP_ENV=production")
+	case "development":
+		log.Println("[WARN] APP_ENV=development（DEV_USER フォールバックが有効）")
+	case "":
+		log.Fatal("[FAIL] APP_ENV: 未設定（\"production\" または \"development\" を明示してください）")
+	default:
+		log.Fatalf("[FAIL] APP_ENV=%q は不正な値です（\"production\" または \"development\" を設定してください）", appEnv)
+	}
+
 	isDev := config.IsDevelopment()
 
 	if os.Getenv("BOT_TOKEN_KEY") == "" {
@@ -24,16 +36,6 @@ func checkEnv() {
 		}
 	} else {
 		log.Println("[OK]   BOT_TOKEN_KEY")
-	}
-
-	appEnv := os.Getenv("APP_ENV")
-	switch appEnv {
-	case "production":
-		log.Println("[OK]   APP_ENV=production")
-	case "development", "":
-		log.Println("[WARN] APP_ENV: development（DEV_USER フォールバックが有効）")
-	default:
-		log.Fatalf("[FAIL] APP_ENV=%q は不正な値です（\"production\" または \"development\" を設定してください）", appEnv)
 	}
 
 	if os.Getenv("PROXY_SECRET") == "" {
