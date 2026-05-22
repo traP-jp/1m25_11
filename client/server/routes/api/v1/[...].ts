@@ -15,5 +15,10 @@ export default defineEventHandler(async (event) => {
     extraHeaders['x-forwarded-user'] = traqUser;
   }
 
+  const proxySecret = config.proxySecret as string | undefined;
+  if (proxySecret) {
+    extraHeaders['x-proxy-secret'] = proxySecret;
+  }
+
   return proxyRequest(event, target, { headers: extraHeaders });
 });

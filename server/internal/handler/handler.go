@@ -18,12 +18,13 @@ func New(repo *repository.Repository, userCache *UserCache) *Handler {
 }
 
 func (h *Handler) SetupRoutes(api *echo.Group) {
-	// /bulk は認証不要（Bot による一括インポート用）
 	bulkAPI := api.Group("/bulk")
+	bulkAPI.Use(h.BulkAuthMiddleware)
 	bulkAPI.POST("/tags", h.BulkCreateTags)
 	bulkAPI.POST("/stamps-meta", h.BulkAddStampMeta)
 
 	protected := api.Group("")
+	protected.Use(h.ProxySecretMiddleware)
 	protected.Use(h.AuthMiddleware)
 
 	stampAPI := protected.Group("/stamps")
