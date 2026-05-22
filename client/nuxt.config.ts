@@ -8,6 +8,8 @@ export default defineNuxtConfig({
     colorMode: false,
   },
   runtimeConfig: {
+    backendApiUrl: process.env.NUXT_BACKEND_API_URL,
+    proxySecret: process.env.NUXT_PROXY_SECRET,
     public: {
       userName: 'traP',
       apiBase: process.env.NUXT_PUBLIC_API_BASE,

@@ -26,9 +26,9 @@ func (h *Handler) createStampTags(c echo.Context) error {
 
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	creatorID, err := h.getUserID(c)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
+	creatorID, ok := c.Get(userIDContextKey).(uuid.UUID)
+	if !ok {
+		return echo.NewHTTPError(http.StatusInternalServerError, "internal server error")
 	}
 	err = h.repo.CreateStampTags(c.Request().Context(), repository.CreateStampTagParams{
 		StampID:   stampID,

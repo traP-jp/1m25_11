@@ -1,89 +1,129 @@
 package handler
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
+	"os"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/traP-jp/1m25_11/server/pkg/config"
 )
 
-// クッキーからIDトークンを復元してユーザーIDを取得する関数
-func (h *Handler) getUserID(c echo.Context) (uuid.UUID, error) {
-	// デバッグのため、リクエストに含まれるCookie名をログに記録（値は記録しない）
-	var presentNames []string
-	for _, ck := range c.Request().Cookies() {
-		presentNames = append(presentNames, ck.Name)
-	}
-	if len(presentNames) == 0 {
-		log.Printf("getUserID: request contained no cookies")
-	} else {
-		log.Printf("getUserID: request cookie names=%v", presentNames)
-	}
+var traqHTTPClient = &http.Client{Timeout: 10 * time.Second}
 
-	// 分割されたクッキーの数を取得
-	countCookie, err := c.Cookie(fmt.Sprintf("%s_count", tokenKey))
+// UserCache は traQ ID → UUID のインメモリキャッシュ
+type UserCache struct {
+	mu           sync.RWMutex
+	traqIDToUUID map[string]uuid.UUID
+}
+
+type traqUser struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+	Bot  bool      `json:"bot"`
+}
+
+// Refresh は traQ API からユーザー一覧を取得してキャッシュを更新する
+func (uc *UserCache) Refresh(botToken string) error {
+	req, err := http.NewRequest("GET", "https://q.trap.jp/api/v3/users", nil)
 	if err != nil {
-		log.Printf("getUserID: missing count cookie: %v", err)
-
-		return uuid.Nil, echo.NewHTTPError(http.StatusUnauthorized, "unauthorized: no auth token").SetInternal(err)
+		return fmt.Errorf("create request: %w", err)
 	}
-	count, err := strconv.Atoi(countCookie.Value)
+	q := req.URL.Query()
+	q.Add("include-suspended", "true")
+	req.URL.RawQuery = q.Encode()
+	req.Header.Add("Authorization", "Bearer "+botToken)
+
+	resp, err := traqHTTPClient.Do(req)
 	if err != nil {
-		log.Printf("getUserID: failed to parse token count (%s): %v", countCookie.Value, err)
+		return fmt.Errorf("fetch users: %w", err)
+	}
+	defer resp.Body.Close()
 
-		return uuid.Nil, echo.NewHTTPError(http.StatusBadRequest, "failed to parse token count").SetInternal(err)
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("traQ API returned %d", resp.StatusCode)
 	}
 
-	log.Printf("getUserID: token count=%d", count)
+	var users []traqUser
+	if err := json.NewDecoder(resp.Body).Decode(&users); err != nil {
+		return fmt.Errorf("decode users: %w", err)
+	}
 
-	// 各クッキーを読み込んで結合
-	var idTokenBuilder strings.Builder
-	for i := 0; i < count; i++ {
-		cookieName := fmt.Sprintf("%s_%d", tokenKey, i)
-		cookie, err := c.Cookie(cookieName)
-		if err != nil {
-			log.Printf("getUserID: missing token chunk %d: %v", i, err)
-
-			return uuid.Nil, echo.NewHTTPError(http.StatusUnauthorized, fmt.Sprintf("unauthorized: missing token part %d", i)).SetInternal(err)
+	newMap := make(map[string]uuid.UUID, len(users))
+	for _, u := range users {
+		if !u.Bot {
+			newMap[strings.ToLower(u.Name)] = u.ID
 		}
-		idTokenBuilder.WriteString(cookie.Value)
-	}
-	idTokenString := idTokenBuilder.String()
-
-	log.Printf("getUserID: reconstructed id_token length=%d", len(idTokenString))
-
-	// IDトークンのペイロードをデコード
-	parts := strings.Split(idTokenString, ".")
-	if len(parts) != 3 {
-		return uuid.Nil, echo.NewHTTPError(http.StatusBadRequest, "invalid ID token format")
 	}
 
-	payload := parts[1]
-	payloadBytes, err := base64.RawURLEncoding.DecodeString(payload)
-	if err != nil {
-		return uuid.Nil, echo.NewHTTPError(http.StatusBadRequest, "failed to decode token payload")
+	uc.mu.Lock()
+	uc.traqIDToUUID = newMap
+	uc.mu.Unlock()
+
+	log.Printf("UserCache: refreshed %d users", len(newMap))
+
+	return nil
+}
+
+// GetUUID は traQ ID から UUID を返す
+func (uc *UserCache) GetUUID(traqID string) (uuid.UUID, bool) {
+	uc.mu.RLock()
+	defer uc.mu.RUnlock()
+	id, ok := uc.traqIDToUUID[traqID]
+
+	return id, ok
+}
+
+// Size はキャッシュに登録されているユーザー数を返す
+func (uc *UserCache) Size() int {
+	uc.mu.RLock()
+	defer uc.mu.RUnlock()
+
+	return len(uc.traqIDToUUID)
+}
+
+// RefreshUserCache は UserCache を traQ API から再取得する（cron から呼ばれる）
+func (h *Handler) RefreshUserCache() {
+	botToken := os.Getenv("BOT_TOKEN_KEY")
+	if botToken == "" {
+		log.Println("RefreshUserCache: BOT_TOKEN_KEY not set, skipping")
+
+		return
+	}
+	if err := h.userCache.Refresh(botToken); err != nil {
+		log.Printf("RefreshUserCache: failed: %v", err)
+	}
+}
+
+// getUserID はリクエストから認証済みユーザーの UUID を取得する。
+// 本番: X-Forwarded-User ヘッダー（NeoShowcase が付与）を使用。
+// 開発: APP_ENV=development のとき DEV_USER 環境変数にフォールバック。
+func (h *Handler) getUserID(c echo.Context) (uuid.UUID, error) {
+	traqID := strings.ToLower(c.Request().Header.Get("X-Forwarded-User"))
+	if traqID == "" && config.IsDevelopment() {
+		traqID = strings.ToLower(os.Getenv("DEV_USER"))
+	}
+	if traqID == "" {
+		return uuid.Nil, echo.NewHTTPError(http.StatusUnauthorized, "unauthorized")
 	}
 
-	var payloadMap map[string]interface{}
-	if err := json.Unmarshal(payloadBytes, &payloadMap); err != nil {
-		return uuid.Nil, echo.NewHTTPError(http.StatusInternalServerError, "failed to parse token payload")
-	}
-
-	// ユーザーID（"sub"）を取得してUUIDに変換
-	creatorIDStr, ok := payloadMap["sub"].(string)
+	id, ok := h.userCache.GetUUID(traqID)
 	if !ok {
-		return uuid.Nil, echo.NewHTTPError(http.StatusBadRequest, "invalid token payload")
-	}
-	creatorID, err := uuid.Parse(creatorIDStr)
-	if err != nil {
-		return uuid.Nil, echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
+		if h.userCache.Size() == 0 {
+			log.Printf("getUserID: user cache is empty, possible misconfiguration (traqID=%q)", traqID)
+
+			return uuid.Nil, echo.NewHTTPError(http.StatusServiceUnavailable, "user cache not initialized")
+		}
+		log.Printf("getUserID: unknown traQ ID %q (cache size=%d)", traqID, h.userCache.Size())
+
+		return uuid.Nil, echo.NewHTTPError(http.StatusUnauthorized, "user not found in cache")
 	}
 
-	return creatorID, nil
+	return id, nil
 }

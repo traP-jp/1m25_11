@@ -18,9 +18,9 @@ func (h *Handler) createDescriptions(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	creatorID, err := h.getUserID(c)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusUnauthorized).SetInternal(err)
+	creatorID, ok := c.Get(userIDContextKey).(uuid.UUID)
+	if !ok {
+		return echo.NewHTTPError(http.StatusInternalServerError, "internal server error")
 	}
 	payload := new(descriptionPayload)
 	if err = c.Bind(payload); err != nil {
@@ -76,7 +76,10 @@ func (h *Handler) updateDescriptions(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	creatorID := uuid.Nil // 仮でNil UUIDを用いている
+	creatorID, ok := c.Get(userIDContextKey).(uuid.UUID)
+	if !ok {
+		return echo.NewHTTPError(http.StatusInternalServerError, "internal server error")
+	}
 	payload := new(descriptionPayload)
 	if err = c.Bind(payload); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
@@ -106,7 +109,10 @@ func (h *Handler) deleteDescriptions(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest).SetInternal(err)
 	}
-	creatorID := uuid.Nil // 仮でNil UUIDを用いている
+	creatorID, ok := c.Get(userIDContextKey).(uuid.UUID)
+	if !ok {
+		return echo.NewHTTPError(http.StatusInternalServerError, "internal server error")
+	}
 	if err = h.repo.DeleteDescriptions(c.Request().Context(), stampID, creatorID); err != nil {
 		if errors.Is(err, repository.ErrDescriptionNotFound) {
 			return echo.NewHTTPError(http.StatusNotFound).SetInternal(err)
