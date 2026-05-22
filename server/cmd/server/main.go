@@ -36,6 +36,16 @@ func checkEnv() {
 		log.Printf("[WARN] APP_ENV=%s（DEV_USER フォールバックが有効）", appEnv)
 	}
 
+	if os.Getenv("PROXY_SECRET") == "" {
+		if appEnv == "production" {
+			log.Fatal("[FAIL] PROXY_SECRET: 本番環境では必須")
+		} else {
+			log.Println("[WARN] PROXY_SECRET: 未設定（本番では必須）")
+		}
+	} else {
+		log.Println("[OK]   PROXY_SECRET")
+	}
+
 	if appEnv == "production" && os.Getenv("DEV_USER") != "" {
 		log.Println("[WARN] DEV_USER: production では無効だが設定されている")
 	}
