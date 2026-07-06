@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const target = `${config.backendApiUrl}${suffix}`;
 
   const traqUser = getRequestHeader(event, 'x-forwarded-user')
-    || (config.devUser as string | undefined);
+    || (import.meta.dev ? (config.devUser as string | undefined) : undefined);
   const extraHeaders: Record<string, string> = {};
   if (traqUser) {
     extraHeaders['x-forwarded-user'] = traqUser;

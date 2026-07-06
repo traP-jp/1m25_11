@@ -20,10 +20,16 @@ function onLoad() {
   const doc = iframe?.contentDocument;
   if (!doc?.body) return;
 
+  if (!doc.head) return;
+
   // iframe 自身のスクロールバーを無効化して、外側ページのみでスクロールさせる
-  const style = doc.createElement('style');
-  style.textContent = 'html, body { overflow: hidden !important; height: auto !important; }';
-  doc.head.appendChild(style);
+  const STYLE_ID = '__iframe-overflow-fix';
+  if (!doc.getElementById(STYLE_ID)) {
+    const style = doc.createElement('style');
+    style.id = STYLE_ID;
+    style.textContent = 'html, body { overflow: hidden !important; height: auto !important; }';
+    doc.head.appendChild(style);
+  }
 
   observer?.disconnect();
   observer = new ResizeObserver(() => {

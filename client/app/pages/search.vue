@@ -100,6 +100,6 @@ const searchParams = computed<SearchParams>(() => {
 
 const { stamps, loading, error, refetch } = useStampSearch(searchParams);
 
-const isLoading = computed(() => searchQuery.value && loading.value);
-const hasError = computed(() => searchQuery.value && error.value);
+const isLoading = computed(() => !!searchQuery.value && loading.value);
+const hasError = computed(() => !!searchQuery.value && !!error.value);
 </script>
