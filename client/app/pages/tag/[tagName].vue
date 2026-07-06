@@ -1,5 +1,5 @@
 <template>
-  <UContainer>
+  <div>
     <h1 class="text-3xl font-bold mb-4">
       タグ詳細
     </h1>
@@ -49,8 +49,8 @@
     <p class="text-xl font-medium">
       {{ route.params.tagName }} スタンプ一覧
     </p>
-    <StampGrid />
-  </UContainer>
+    <StampGrid :stamps="[]" />
+  </div>
 </template>
 
 <script setup lang="ts">

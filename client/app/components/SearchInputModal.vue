@@ -1,5 +1,5 @@
 <template>
-  <UContainer>
+  <div>
     <URadioGroup
       v-model="searchIsUnicode"
       value-key="value"
@@ -71,7 +71,7 @@
         class="hover:cursor-pointer w-7/12 grid place-items-center"
       />
     </div>
-  </UContainer>
+  </div>
 </template>
 
 <script setup lang="ts">

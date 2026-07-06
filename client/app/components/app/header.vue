@@ -1,36 +1,37 @@
 <template>
-  <UContainer class="h-20 flex items-center justify-between font-bold">
-    <!-- <div class="w-full h-20 flex items-center-safe justify-around font-bold text-3xl"> -->
-    <USlideover
-      v-model:open="navigationSlideOver"
-      title="メニュー"
-      side="left"
-      :close="{
-        color: 'primary',
-        class: 'rounded-full',
-      }"
-    >
-      <UIcon
-        name="material-symbols:dehaze"
-        class="cursor-pointer text-4xl text-primary"
-      />
-      <template #body>
-        <UNavigationMenu
-          orientation="vertical"
-          :items="navigationItems"
-          @click="navigationSlideOver=false"
+  <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <UContainer class="h-20 flex items-center justify-between font-bold">
+      <!-- <div class="w-full h-20 flex items-center-safe justify-around font-bold text-3xl"> -->
+      <USlideover
+        v-model:open="navigationSlideOver"
+        title="メニュー"
+        side="left"
+        :close="{
+          color: 'primary',
+          class: 'rounded-full',
+        }"
+      >
+        <UIcon
+          name="material-symbols:dehaze"
+          class="cursor-pointer text-4xl text-primary"
         />
-      </template>
-    </USlideover>
-    <h1 class="text-3xl">
-      stamPedia
-    </h1>
+        <template #body>
+          <UNavigationMenu
+            orientation="vertical"
+            :items="navigationItems"
+            @click="navigationSlideOver=false"
+          />
+        </template>
+      </USlideover>
+      <h1 class="text-3xl">
+        stamPedia
+      </h1>
 
-    <UAvatar
-      v-if="currentUser"
-      :src="`https://q.trap.jp/api/v3/public/icon/${currentUser.traq_id}`"
-      class="text-5xl cursor-pointer"
-    />
+      <UAvatar
+        v-if="currentUser"
+        :src="`https://q.trap.jp/api/v3/public/icon/${currentUser.traq_id}`"
+        class="text-5xl cursor-pointer"
+      />
     <!-- <UDropdownMenu
       :items="dropdownItems"
       :ui="{
@@ -44,11 +45,12 @@
       />
     </div>
     </UDropdownMenu> -->
-  </UContainer>
+    </UContainer>
+  </header>
 </template>
 
 <script setup lang="ts">
-import type { NavigationMenuItem, DropdownMenuItem } from '@nuxt/ui';
+import type { NavigationMenuItem } from '@nuxt/ui';
 
 const navigationSlideOver = ref(false);
 const { currentUser } = useCurrentUser();
@@ -63,7 +65,7 @@ const navigationItems = ref<NavigationMenuItem[][]>([
     {
       label: 'Search',
       icon: 'material-symbols:search',
-      to: 'search',
+      to: '/search',
     },
     {
       label: 'Ranking',

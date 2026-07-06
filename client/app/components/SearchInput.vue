@@ -1,5 +1,5 @@
 <template>
-  <UContainer>
+  <div>
     <!-- 検索欄 -->
     <UInput
       v-model="searchValue"
@@ -40,7 +40,7 @@
         @click="handleSearch"
       />
     </div>
-  </UContainer>
+  </div>
 </template>
 
 <script setup lang="ts">
