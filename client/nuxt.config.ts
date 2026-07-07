@@ -8,11 +8,12 @@ export default defineNuxtConfig({
     colorMode: false,
   },
   runtimeConfig: {
-    backendApiUrl: process.env.NUXT_BACKEND_API_URL,
-    proxySecret: process.env.NUXT_PROXY_SECRET,
+    backendApiUrl: '',
+    proxySecret: '',
+    devUser: '',
     public: {
       userName: 'traP',
-      apiBase: process.env.NUXT_PUBLIC_API_BASE,
+      apiBase: '',
     },
   },
   compatibilityDate: '2025-07-15',
@@ -20,6 +21,14 @@ export default defineNuxtConfig({
     server: {
       allowedHosts: [
         '.ngrok-free.app',
+      ],
+    },
+    optimizeDeps: {
+      include: [
+        '@internationalized/date',
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
+        'openapi-fetch',
       ],
     },
   },

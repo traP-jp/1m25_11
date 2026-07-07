@@ -1,5 +1,5 @@
 <template>
-  <UContainer>
+  <div>
     <div
       v-if="props.stampId"
       class="flex flex-col items-center space-y-4 p-4 pb-0"
@@ -205,7 +205,7 @@
     >
       <p>スタンプの詳細情報がありません</p>
     </div>
-  </UContainer>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -286,52 +286,4 @@ const share = () => {
     console.error('Error sharing:', err);
   });
 };
-
-// const { data: usersData } = await useApiClient().GET('/users-list');
-
-const sampleTag: Schemas['TagSummary'][] = [
-  {
-    tag_id: 'sample-tag-id1',
-    tag_name: 'タグ1',
-  },
-  {
-    tag_id: 'sample-tag-id2',
-    tag_name: 'タグ2',
-  },
-  {
-    tag_id: 'sample-tag-id3',
-    tag_name: 'サンプルタグ3',
-  },
-  {
-    tag_id: 'sample-tag-id4',
-    tag_name: 'タグtag４',
-  },
-];
-
-const sampleDescriptions: Schemas['StampDescription'][] = [
-  {
-    description: 'スタンプ説明文説明文',
-    creator_id: '3b261ff3-f940-4e2c-a626-27387b6dd71b',
-    created_at: '2024-01-15T10:30:00Z',
-    updated_at: '2024-01-15T10:30:00Z',
-  },
-  {
-    description: 'あああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ',
-    creator_id: '01960efa-f1ed-7d54-bf3d-6d62fe8af5aa',
-    created_at: '2024-02-20T14:45:00Z',
-    updated_at: '2024-02-20T14:45:00Z',
-  },
-  {
-    description: '-nya シリーズ\nあああｓ',
-    creator_id: '01963cec-d1bb-7a6e-b8df-16c7ca978464',
-    created_at: '2024-03-10T09:15:00Z',
-    updated_at: '2024-03-10T09:15:00Z',
-  },
-  {
-    description: '凍結されたユーザーのテスト',
-    creator_id: '2cc1df43-d5d7-42aa-8831-00a4efe48ce4',
-    created_at: '2024-03-10T09:15:00Z',
-    updated_at: '2024-03-10T09:15:00Z',
-  },
-];
 </script>

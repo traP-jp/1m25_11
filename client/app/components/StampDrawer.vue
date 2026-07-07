@@ -28,18 +28,11 @@ const goToDetailPage = () => {
 <template>
   <UDrawer
     v-model:open="drawerOpen"
-    class=" max-h-[90%]"
-    :ui="{ header: ' top-0 -mt-px bg-white w-full pb-3', container: 'pt-0 mt-4 pb-0 gap-0', body: 'overflow-y-scroll' }"
     @update:open="handleDrawerClose"
   >
-    <template #title>
-      スタンプの詳細
-    </template>
-    <template #description>
-      スタンプの詳細情報を表示します
-    </template>
     <template #header>
-      <UContainer class="flex items-center justify-end">
+      <div class="flex items-center justify-between w-full">
+        <span class="font-semibold">スタンプの詳細</span>
         <div class="flex items-center gap-2">
           <UButton
             color="primary"
@@ -54,7 +47,7 @@ const goToDetailPage = () => {
             @click="closeStampDrawer"
           />
         </div>
-      </UContainer>
+      </div>
     </template>
     <template #body>
       <StampDetail :stamp-id="selectedStampId" />
