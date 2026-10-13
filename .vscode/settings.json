@@ -21,7 +21,7 @@
       "(?:'|\"|`)([^']*)(?:'|\"|`)"
     ]
   ],
-  "editor.defaultFormatter": null,
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "[yaml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
   },
@@ -38,7 +38,7 @@
     "fmt",
     "--stdin"
   ],
-  "[typescript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
-  }
+  // "[typescript]": {
+  //   "editor.defaultFormatter": "vscode.typescript-language-features"
+  // }
 }
